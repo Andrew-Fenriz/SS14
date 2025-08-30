@@ -30,6 +30,7 @@ using Robust.Shared.Prototypes;
 using Robust.Shared.Utility;
 using Content.Shared.Atmos.Components;
 using System.Linq;
+using Content.Shared.Tag;
 
 namespace Content.Server.NPC.Systems;
 
@@ -54,6 +55,7 @@ public sealed class NPCUtilitySystem : EntitySystem
     [Dependency] private readonly EntityWhitelistSystem _whitelistSystem = default!;
     [Dependency] private readonly MobThresholdSystem _thresholdSystem = default!;
     [Dependency] private readonly TurretTargetSettingsSystem _turretTargetSettings = default!;
+    [Dependency] private readonly TagSystem _tagSystem = default!;
 
     private EntityQuery<PuddleComponent> _puddleQuery;
     private EntityQuery<TransformComponent> _xformQuery;
@@ -556,6 +558,25 @@ public sealed class NPCUtilitySystem : EntitySystem
                     if (!_puddleQuery.TryGetComponent(ent, out var puddleComp) ||
                         !_solutions.TryGetSolution(ent, puddleComp.SolutionName, out _, out var sol) ||
                         _puddle.CanFullyEvaporate(sol))
+                    {
+                        _entityList.Add(ent);
+                    }
+                }
+
+                foreach (var ent in _entityList)
+                {
+                    entities.Remove(ent);
+                }
+
+                break;
+            }
+            case TagFilter tagFilter:
+            {
+                _entityList.Clear();
+
+                foreach (var ent in entities)
+                {
+                    if (!_tagSystem.HasAnyTag(ent, tagFilter.Tags.Select(t => new ProtoId<TagPrototype>(t))))
                     {
                         _entityList.Add(ent);
                     }

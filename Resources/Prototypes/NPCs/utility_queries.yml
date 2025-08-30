@@ -203,6 +203,41 @@
       curve: !type:BoolCurve
 
 - type: utilityQuery
+  id: NearbyTrash
+  query:
+  - !type:ComponentQuery
+    components:
+    - type: Item
+  - !type:TagFilter
+    tags:
+    - Trash
+    - Cartridge
+    - Recyclable
+  considerations:
+  - !type:TargetDistanceCon
+    curve: !type:PresetCurve
+      preset: TargetDistance
+  - !type:TargetAccessibleCon
+    curve: !type:BoolCurve
+  - !type:TargetInLOSOrCurrentCon
+    curve: !type:BoolCurve
+
+- type: utilityQuery
+  id: NearbyDisposalUnit
+  query:
+  - !type:ComponentQuery
+    components:
+    - type: DisposalUnit
+  considerations:
+  - !type:TargetDistanceCon
+    curve: !type:PresetCurve
+      preset: TargetDistance
+  - !type:TargetAccessibleCon
+    curve: !type:BoolCurve
+  - !type:TargetInLOSOrCurrentCon
+    curve: !type:BoolCurve
+
+- type: utilityQuery
   id: NearbyGunTargets
   query:
     - !type:NearbyHostilesQuery

@@ -1,0 +1,15 @@
+{
+  "version": 1,
+  "size": {
+    "x": 32,
+    "y": 32
+  },
+  "license": "CC-BY-SA-3.0",
+  "copyright": "Taken from vgstation at https://github.com/vgstation-coders/vgstation13/blob/Bleeding-Edge/icons/obj/aibots.dmi",
+  "states": [
+    {
+      "name": "trashbot",
+      "directions": 4
+    }
+  ]
+}

@@ -7,7 +7,8 @@ using Robust.Shared.Timing;
 namespace Content.Shared.Storage.EntitySystems;
 
 /// <summary>
-/// <see cref="MagnetPickupComponent"/>
+/// Picks up nearby items for entities with <see cref="MagnetPickupComponent"/>.
+/// Works both for items in slots and for entities with built-in storage.
 /// </summary>
 public sealed class MagnetPickupSystem : EntitySystem
 {
@@ -38,21 +39,21 @@ public sealed class MagnetPickupSystem : EntitySystem
     public override void Update(float frameTime)
     {
         base.Update(frameTime);
-        var query = EntityQueryEnumerator<MagnetPickupComponent, StorageComponent, TransformComponent, MetaDataComponent>();
+        var query = EntityQueryEnumerator<MagnetPickupComponent, StorageComponent, TransformComponent>();
         var currentTime = _timing.CurTime;
 
-        while (query.MoveNext(out var uid, out var comp, out var storage, out var xform, out var meta))
+        while (query.MoveNext(out var uid, out var comp, out var storage, out var xform))
         {
             if (comp.NextScan > currentTime)
                 continue;
 
             comp.NextScan += ScanDelay;
 
-            if (!_inventory.TryGetContainingSlot((uid, xform, meta), out var slotDef))
-                continue;
-
-            if ((slotDef.SlotFlags & comp.SlotFlags) == 0x0)
-                continue;
+            if (_inventory.TryGetContainingSlot((uid, xform, null), out var slotDef))
+            {
+                if ((slotDef.SlotFlags & comp.SlotFlags) == 0)
+                    continue;
+            }
 
             // No space
             if (!_storage.HasSpace((uid, storage)))
