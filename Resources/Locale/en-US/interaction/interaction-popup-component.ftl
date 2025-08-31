@@ -61,6 +61,7 @@ petting-failure-scurret = You reach out to pet {THE($target)}, but {SUBJECT($tar
 petting-success-honkbot = You pet {THE($target)} on {POSS-ADJ($target)} slippery metal head.
 petting-success-mimebot = You pet {THE($target)} on {POSS-ADJ($target)} cold metal head.
 petting-success-cleanbot = You pet {THE($target)} on {POSS-ADJ($target)} damp metal head.
+petting-success-trashbot = You pet {THE($target)} on {POSS-ADJ($target)} dirty metal head.
 petting-success-medibot = You pet {THE($target)} on {POSS-ADJ($target)} sterile metal head.
 petting-success-firebot = You pet {THE($target)} on {POSS-ADJ($target)} warm metal head.
 petting-success-generic-cyborg = You pet {THE($target)} on {POSS-ADJ($target)} metal head.
@@ -76,6 +77,7 @@ petting-success-station-ai = You pet {THE($target)} on {POSS-ADJ($target)} cold,
 
 petting-failure-honkbot = You reach out to pet {THE($target)}, but {SUBJECT($target)} {CONJUGATE-BASIC($target, "honk", "honks")} in refusal!
 petting-failure-cleanbot = You reach out to pet {THE($target)}, but {SUBJECT($target)} {CONJUGATE-BE($target)} busy mopping!
+petting-failure-trashbot = You try to pet {THE($target)}, but {SUBJECT($target)} {CONJUGATE-BE($target)} too busy compacting trash!
 petting-failure-mimebot = You reach out to pet {THE($target)}, but {SUBJECT($target)} {CONJUGATE-BE($target)} busy miming!
 petting-failure-medibot = You reach out to pet {THE($target)}, but {POSS-ADJ($target)} syringe nearly stabs your hand!
 petting-failure-firebot = You reach out to pet {THE($target)}, but {SUBJECT($target)} sprays you in the face before you can get close!

@@ -317,6 +317,9 @@
   - type: Sprite
     sprite: Mobs/Silicon/Bots/trashbot.rsi
     state: trashbot
+  - type: Construction
+    graph: TrashBot
+    node: bot
   - type: MovementSpeedModifier
     baseWalkSpeed: 2
     baseSprintSpeed: 3

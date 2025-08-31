@@ -58,6 +58,7 @@ construction-graph-tag-radio = radio
 construction-graph-tag-pipe = gas pipe
 construction-graph-tag-human-head = human head
 construction-graph-tag-bucket = bucket
+construction-graph-tag-trash-bag = trash bag
 construction-graph-tag-borg-arm = borg arm
 construction-graph-tag-borg-head = borg head
 construction-graph-tag-medkit = medkit

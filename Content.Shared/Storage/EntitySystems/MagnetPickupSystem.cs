@@ -1,3 +1,4 @@
+using Content.Shared.Clothing.Components;
 using Content.Shared.Inventory;
 using Content.Shared.Storage.Components;
 using Content.Shared.Whitelist;
@@ -41,6 +42,7 @@ public sealed class MagnetPickupSystem : EntitySystem
         base.Update(frameTime);
         var query = EntityQueryEnumerator<MagnetPickupComponent, StorageComponent, TransformComponent>();
         var currentTime = _timing.CurTime;
+        var clothingQuery = GetEntityQuery<ClothingComponent>();
 
         while (query.MoveNext(out var uid, out var comp, out var storage, out var xform))
         {
@@ -49,10 +51,14 @@ public sealed class MagnetPickupSystem : EntitySystem
 
             comp.NextScan += ScanDelay;
 
-            if (_inventory.TryGetContainingSlot((uid, xform, null), out var slotDef))
+            if (clothingQuery.TryGetComponent(uid, out var clothing) && clothing.Slots != SlotFlags.NONE)
             {
-                if ((slotDef.SlotFlags & comp.SlotFlags) == 0)
+
+                if (!_inventory.TryGetContainingSlot((uid, xform, null), out var slotDef) ||
+                    (slotDef.SlotFlags & clothing.Slots) == 0)
+                {
                     continue;
+                }
             }
 
             // No space
@@ -75,6 +81,9 @@ public sealed class MagnetPickupSystem : EntitySystem
                 if (near == parentUid)
                     continue;
 
+                if (!_storage.CanInsert(uid, near, out _, storageComp: storage))
+                    continue;
+
                 // TODO: Probably move this to storage somewhere when it gets cleaned up
                 // TODO: This sucks but you need to fix a lot of stuff to make it better
                 // the problem is that stack pickups delete the original entity, which is fine, but due to
@@ -87,10 +96,8 @@ public sealed class MagnetPickupSystem : EntitySystem
                     continue;
 
                 // Play pickup animation for either the stack entity or the original entity.
-                if (stacked != null)
-                    _storage.PlayPickupAnimation(stacked.Value, nearCoords, finalCoords, nearXform.LocalRotation);
-                else
-                    _storage.PlayPickupAnimation(near, nearCoords, finalCoords, nearXform.LocalRotation);
+                var animateEntity = stacked ?? near;
+                _storage.PlayPickupAnimation(animateEntity, nearCoords, finalCoords, nearXform.LocalRotation);
 
                 playedSound = true;
             }
