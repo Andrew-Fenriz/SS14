@@ -7,7 +7,7 @@ public sealed class RecipeManager
 {
     [Dependency] private readonly IPrototypeManager _prototypeManager = default!;
 
-    public List<FoodRecipePrototype> Recipes { get; private set; } = new();
+    public List<FoodRecipePrototype> Recipes { get; private set; } = [];
 
     public void Initialize()
     {
@@ -26,7 +26,7 @@ public sealed class RecipeManager
         Recipes = _prototypeManager
             .EnumeratePrototypes<FoodRecipePrototype>()
             .Where(x => !x.SecretRecipe)
-            .OrderByDescending(x => x.IngredientCount())
+            .OrderByDescending(x => x.Ingredients.Count())
             .ToList();
     }
 }

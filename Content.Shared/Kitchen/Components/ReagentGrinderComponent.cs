@@ -16,25 +16,13 @@ namespace Content.Shared.Kitchen.Components;
 [Access(typeof(SharedReagentGrinderSystem))]
 public sealed partial class ReagentGrinderComponent : Component
 {
-    /// <summary>
-    /// The container slot id for the beaker.
-    /// </summary>
     public const string BeakerSlotId = "beakerSlot";
 
-    /// <summary>
-    /// The container id for the internal storage.
-    /// </summary>
     public const string InputContainerId = "inputContainer";
 
-    /// <summary>
-    /// The cached container for the internal storage.
-    /// </summary>
     [ViewVariables]
     public Container InputContainer = default!;
 
-    /// <summary>
-    /// The amount of entities that fit into the container.
-    /// </summary>
     [DataField, AutoNetworkedField]
     public int StorageMaxEntities = 6;
 
@@ -51,48 +39,36 @@ public sealed partial class ReagentGrinderComponent : Component
     [DataField, AutoNetworkedField]
     public float WorkTimeMultiplier = 1.0f;
 
-    /// <summary>
-    /// Sound played when pressing a button on the UI.
-    /// </summary>
     [DataField]
     public SoundSpecifier ClickSound = new SoundPathSpecifier("/Audio/Machines/machine_switch.ogg", AudioParams.Default.WithVolume(-2f));
 
-    /// <summary>
-    /// Sound played when grinding.
-    /// </summary>
     [DataField]
     public SoundSpecifier GrindSound = new SoundPathSpecifier("/Audio/Machines/blender.ogg");
 
-    /// <summary>
-    /// Sound played when juicing.
-    /// </summary>
     [DataField]
     public SoundSpecifier JuiceSound = new SoundPathSpecifier("/Audio/Machines/juicer.ogg");
 
-    /// <summary>
-    /// Grind automatically when inserting items?
-    /// </summary>
     [DataField, AutoNetworkedField]
     public GrinderAutoMode AutoMode = GrinderAutoMode.Off;
 
-    /// <summary>
-    /// The sound currently being played.
-    /// </summary>
     [DataField]
     public EntityUid? AudioStream;
 
-    /// <summary>
-    /// The time the grinder will finish grinding/juicing.
-    /// </summary>
     [DataField(customTypeSerializer: typeof(TimeOffsetSerializer))]
     [AutoNetworkedField, AutoPausedField]
     public TimeSpan? EndTime;
 
-    /// <summary>
-    /// The currently active program (if the grinder is working).
-    /// </summary>
+    [DataField, AutoNetworkedField]
+    public float TimeRemaining;
+
+    [DataField, AutoNetworkedField]
+    public float TotalTime;
+
     [DataField, AutoNetworkedField]
     public GrinderProgram? Program;
+
+    [ViewVariables]
+    public bool IsOperating => EndTime.HasValue;
 }
 
 /// <summary>

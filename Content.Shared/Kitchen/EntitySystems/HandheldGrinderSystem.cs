@@ -120,7 +120,7 @@ internal sealed class HandheldGrinderSystem : EntitySystem
     /// <param name="item">The item it is being used on.</param>
     /// <param name="reason">Reason the grinder cannot be used. Null if the function returns true.</param>
     /// <returns>True if the grinder can be used, otherwise false.</returns>
-    public bool CanGrinderBeUsed(Entity<HandheldGrinderComponent> ent, EntityUid item, [NotNullWhen(false)] out string? reason)
+    private bool CanGrinderBeUsed(Entity<HandheldGrinderComponent> ent, EntityUid item, [NotNullWhen(false)] out string? reason)
     {
         reason = null;
         if (ent.Comp.Program == GrinderProgram.Grind && !_reagentGrinder.CanGrind(item))
@@ -129,13 +129,9 @@ internal sealed class HandheldGrinderSystem : EntitySystem
             return false;
         }
 
-        if (ent.Comp.Program == GrinderProgram.Juice && !_reagentGrinder.CanJuice(item))
-        {
-            reason = Loc.GetString("handheld-grinder-cannot-juice", ("item", item));
-            return false;
-        }
-
-        return true;
+        if (ent.Comp.Program != GrinderProgram.Juice || _reagentGrinder.CanJuice(item)) return true;
+        reason = Loc.GetString("handheld-grinder-cannot-juice", ("item", item));
+        return false;
     }
 }
 

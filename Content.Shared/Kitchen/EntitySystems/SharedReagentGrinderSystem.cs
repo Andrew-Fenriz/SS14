@@ -34,6 +34,7 @@ public abstract class SharedReagentGrinderSystem : EntitySystem
     [Dependency] private readonly SharedContainerSystem _containerSystem = default!;
     [Dependency] private readonly SharedDestructibleSystem _destructible = default!;
     [Dependency] private readonly SharedJitteringSystem _jitter = default!;
+    [Dependency] private readonly KitchenDeviceSystem _kitchenDevice = default!;
     [Dependency] private readonly SharedPowerReceiverSystem _power = default!;
     [Dependency] private readonly SharedPowerStateSystem _powerState = default!;
 
@@ -44,6 +45,7 @@ public abstract class SharedReagentGrinderSystem : EntitySystem
         SubscribeLocalEvent<InsideReagentGrinderComponent, SolutionChangedEvent>(OnBeakerSolutionContainerChanged);
 
         SubscribeLocalEvent<ReagentGrinderComponent, ComponentStartup>(OnGrinderStartup);
+        SubscribeLocalEvent<ReagentGrinderComponent, ComponentShutdown>(OnGrinderShutdown);
         SubscribeLocalEvent<ReagentGrinderComponent, ContainerIsRemovingAttemptEvent>(OnEntRemovingAttempt);
         SubscribeLocalEvent<ReagentGrinderComponent, EntRemovedFromContainerMessage>(OnEntRemoved);
         SubscribeLocalEvent<ReagentGrinderComponent, EntInsertedIntoContainerMessage>(OnEntInserted);
@@ -69,6 +71,14 @@ public abstract class SharedReagentGrinderSystem : EntitySystem
         ent.Comp.InputContainer = _containerSystem.EnsureContainer<Container>(ent.Owner, ReagentGrinderComponent.InputContainerId);
     }
 
+    private void OnGrinderShutdown(Entity<ReagentGrinderComponent> ent, ref ComponentShutdown args)
+    {
+        if (ent.Comp.AudioStream.HasValue)
+            ent.Comp.AudioStream = _audioSystem.Stop(ent.Comp.AudioStream);
+
+        RemCompDeferred<ActiveReagentGrinderComponent>(ent);
+    }
+
     private void OnEntRemovingAttempt(Entity<ReagentGrinderComponent> ent, ref ContainerIsRemovingAttemptEvent args)
     {
         // Allow server states to be applied without cancelling container changes.
@@ -80,7 +90,7 @@ public abstract class SharedReagentGrinderSystem : EntitySystem
             return;
 
         // Cannot remove items while the grinder is active.
-        if (IsActive(ent.AsNullable()))
+        if (HasComp<ActiveReagentGrinderComponent>(ent))
             args.Cancel();
     }
 
@@ -88,14 +98,13 @@ public abstract class SharedReagentGrinderSystem : EntitySystem
     {
         base.Update(frameTime);
 
-        var curTime = _timing.CurTime;
         var query = EntityQueryEnumerator<ActiveReagentGrinderComponent, ReagentGrinderComponent>();
-        while (query.MoveNext(out var uid, out _, out var grinderComp))
+        while (query.MoveNext(out var uid, out _, out var grinder))
         {
-            if (grinderComp.EndTime == null || grinderComp.EndTime > curTime)
+            if (grinder.EndTime == null || _timing.CurTime < grinder.EndTime.Value)
                 continue;
 
-            FinishGrinding((uid, grinderComp));
+            FinishGrinding((uid, grinder));
         }
     }
 
@@ -112,11 +121,11 @@ public abstract class SharedReagentGrinderSystem : EntitySystem
         if (_timing.ApplyingState)
             return;
 
-        if (args.Container.ID == ReagentGrinderComponent.BeakerSlotId) // Beaker removed.
-        {
-            RemComp<InsideReagentGrinderComponent>(args.Entity);
-            _appearanceSystem.SetData(uid, ReagentGrinderVisualState.BeakerAttached, false);
-        }
+        if (args.Container.ID != ReagentGrinderComponent.BeakerSlotId) // Beaker removed.
+            return;
+
+        RemComp<InsideReagentGrinderComponent>(args.Entity);
+        _appearanceSystem.SetData(uid, ReagentGrinderVisualState.BeakerAttached, false);
     }
 
     private void OnEntInserted(EntityUid uid, ReagentGrinderComponent comp, EntInsertedIntoContainerMessage args)
@@ -139,11 +148,11 @@ public abstract class SharedReagentGrinderSystem : EntitySystem
         }
 
         // Start grinder when in auto mode.
-        if (comp.AutoMode != GrinderAutoMode.Off)
-        {
-            var program = comp.AutoMode == GrinderAutoMode.Grind ? GrinderProgram.Grind : GrinderProgram.Juice;
-            StartGrinder((uid, comp), program);
-        }
+        if (comp.AutoMode == GrinderAutoMode.Off)
+            return;
+
+        var program = comp.AutoMode == GrinderAutoMode.Grind ? GrinderProgram.Grind : GrinderProgram.Juice;
+        StartGrinder((uid, comp), program);
     }
 
     private void OnInteractUsing(Entity<ReagentGrinderComponent> ent, ref InteractUsingEvent args)
@@ -168,8 +177,7 @@ public abstract class SharedReagentGrinderSystem : EntitySystem
             return;
 
         // Cap the chamber. Don't want someone putting in 500 entities and ejecting them all at once.
-        // Maybe I should have done that for the microwave too?
-        if (ent.Comp.InputContainer.ContainedEntities.Count >= ent.Comp.StorageMaxEntities)
+        if (!_kitchenDevice.CanInsertItem(ent, heldEnt, ent.Comp.InputContainer, ent.Comp.StorageMaxEntities, null, false, ent.Comp.IsOperating))
         {
             _popupSystem.PopupClient(Loc.GetString("reagent-grinder-component-interact-full"), ent.Owner, args.User);
             return;
@@ -202,26 +210,30 @@ public abstract class SharedReagentGrinderSystem : EntitySystem
 
     private void OnEjectChamberAllMessage(Entity<ReagentGrinderComponent> ent, ref ReagentGrinderEjectChamberAllMessage message)
     {
-        if (IsActive(ent.AsNullable()) || ent.Comp.InputContainer.ContainedEntities.Count <= 0)
+        if (ent.Comp.IsOperating)
+            return;
+
+        if (!KitchenDeviceSystem.HasContents(ent.Comp.InputContainer))
             return;
 
         _audioSystem.PlayPredicted(ent.Comp.ClickSound, ent.Owner, message.Actor);
-        _containerSystem.EmptyContainer(ent.Comp.InputContainer);
+        _kitchenDevice.EjectAll(ent.Comp.InputContainer);
         // UpdateUi is called in the resulting ContainerModifiedMessage.
     }
 
     private void OnEjectChamberContentMessage(Entity<ReagentGrinderComponent> ent, ref ReagentGrinderEjectChamberContentMessage message)
     {
-        if (IsActive(ent.AsNullable()))
+        if (ent.Comp.IsOperating)
             return;
 
         if (!TryGetEntity(message.EntityId, out var toRemove))
             return;
 
-        if (_containerSystem.Remove(toRemove.Value, ent.Comp.InputContainer))
-        {
-            _audioSystem.PlayPredicted(ent.Comp.ClickSound, ent.Owner, message.Actor);
-        }
+        if (!ent.Comp.InputContainer.Contains(toRemove.Value))
+            return;
+
+        _audioSystem.PlayPredicted(ent.Comp.ClickSound, ent.Owner, message.Actor);
+        _containerSystem.Remove(toRemove.Value, ent.Comp.InputContainer);
         // UpdateUi is called in the resulting ContainerModifiedMessage.
     }
 
@@ -230,43 +242,46 @@ public abstract class SharedReagentGrinderSystem : EntitySystem
     /// </summary>
     private void StartGrinder(Entity<ReagentGrinderComponent> ent, GrinderProgram program)
     {
-        if (IsActive(ent.AsNullable()))
+        if (ent.Comp.IsOperating)
             return;
 
         if (!_power.IsPowered(ent.Owner))
             return;
 
+        if (!KitchenDeviceSystem.HasContents(ent.Comp.InputContainer))
+            return;
+
         var beaker = _itemSlotsSystem.GetItemOrNull(ent, ReagentGrinderComponent.BeakerSlotId);
 
         // Do we have anything to grind/juice and a container to put the reagents in?
-        if (ent.Comp.InputContainer.ContainedEntities.Count <= 0 || !HasComp<FitsInDispenserComponent>(beaker))
+        if (!HasComp<FitsInDispenserComponent>(beaker))
             return;
 
-        SoundSpecifier? sound;
         switch (program)
         {
-            case GrinderProgram.Grind when ent.Comp.InputContainer.ContainedEntities.All(x => CanGrind(x)):
-                sound = ent.Comp.GrindSound;
-                break;
-            case GrinderProgram.Juice when ent.Comp.InputContainer.ContainedEntities.All(x => CanJuice(x)):
-                sound = ent.Comp.JuiceSound;
-                break;
-            default:
+            case GrinderProgram.Grind when !ent.Comp.InputContainer.ContainedEntities.All(x => CanGrind(x)):
+                return;
+            case GrinderProgram.Juice when !ent.Comp.InputContainer.ContainedEntities.All(x => CanJuice(x)):
                 return;
         }
 
-        EnsureComp<ActiveReagentGrinderComponent>(ent);
-        _jitter.AddJitter(ent, -10, 100);
-        _powerState.TrySetWorkingState(ent.Owner, true); // Not all grinders need power.
+        var workTimeSeconds = (float)ent.Comp.WorkTime.TotalSeconds;
+        var scaledTime = workTimeSeconds * ent.Comp.WorkTimeMultiplier;
+        ent.Comp.EndTime = _timing.CurTime + TimeSpan.FromSeconds(scaledTime);
         ent.Comp.Program = program;
-        ent.Comp.EndTime = _timing.CurTime + ent.Comp.WorkTime * ent.Comp.WorkTimeMultiplier;
+
+        EnsureComp<ActiveReagentGrinderComponent>(ent);
+
+        _jitter.AddJitter(ent, -10, 100);
+        _powerState.TrySetWorkingState(ent.Owner, true);
         Dirty(ent);
         UpdateUi(ent);
 
         // Unpredicted because we don't have the user in the update loop
         // TODO: Make the audio API sane https://github.com/space-wizards/RobustToolbox/issues/6436
-        if (_net.IsServer)
-            ent.Comp.AudioStream = _audioSystem.PlayPvs(sound, ent,
+        if (!_net.IsServer) return;
+        var sound = program == GrinderProgram.Grind ? ent.Comp.GrindSound : ent.Comp.JuiceSound;
+        ent.Comp.AudioStream = _audioSystem.PlayPvs(sound, ent,
             AudioParams.Default.WithPitchScale(1 / ent.Comp.WorkTimeMultiplier))?.Entity; //slightly higher pitched
     }
 
@@ -291,45 +306,67 @@ public abstract class SharedReagentGrinderSystem : EntitySystem
         if (beaker is null || !_solutionContainersSystem.TryGetFitsInDispenser(beaker.Value, out var beakerSolutionEntity, out var beakerSolution))
             return;
 
-        // Convert items into reagents.
-        foreach (var item in ent.Comp.InputContainer.ContainedEntities.ToList())
-        {
-            var solution = GetGrinderSolution(item, program);
-
-            if (solution is null)
-                continue;
-
-            // Delete the item or reduce its stack size.
-            if (TryComp<StackComponent>(item, out var stack))
-            {
-                var totalVolume = solution.Volume * stack.Count;
-                if (totalVolume <= 0)
-                    continue;
-
-                // Maximum number of items we can process in the stack without going over AvailableVolume
-                // We add a small tolerance, because floats are inaccurate.
-                var fitsCount = (int)(stack.Count * FixedPoint2.Min(beakerSolution.AvailableVolume / totalVolume + 0.01, 1));
-                if (fitsCount <= 0)
-                    continue;
-
-                // Make a copy of the solution to scale
-                // Otherwise we'll actually change the volume of the remaining stack too
-                var scaledSolution = new Solution(solution);
-                scaledSolution.ScaleSolution(fitsCount);
-                solution = scaledSolution;
-
-                _stackSystem.SetCount((item, stack), stack.Count - fitsCount); // Setting to 0 will QueueDel
-            }
-            else
-            {
-                if (solution.Volume > beakerSolution.AvailableVolume)
-                    continue;
-
-                _destructible.DestroyEntity(item);
-            }
-            _solutionContainersSystem.TryAddSolution(beakerSolutionEntity.Value, solution);
-        }
+        var context = new GrinderProcessingContext(program, beakerSolutionEntity, beakerSolution, _solutionContainersSystem, _destructible);
+        _kitchenDevice.ProcessContainerContents(ent.Comp.InputContainer, ProcessGrinderItem, context);
         // UpdateUi is called when the entity in the grinder is deleted or the solution in the beaker is changed.
+    }
+
+    private bool ProcessGrinderItem(EntityUid item, GrinderProcessingContext ctx)
+    {
+        var solution = GetGrinderSolution(item, ctx.Program);
+        if (solution is null)
+            return true;
+
+        // Delete the item or reduce its stack size.
+        if (TryComp<StackComponent>(item, out var stack))
+        {
+            var totalVolume = solution.Volume * stack.Count;
+            if (totalVolume <= 0)
+                return true;
+
+            // Maximum number of items we can process in the stack without going over AvailableVolume
+            // We add a small tolerance, because floats are inaccurate.
+            var fitsCount = (int)(stack.Count * FixedPoint2.Min(ctx.BeakerSolution.AvailableVolume / totalVolume + 0.01, 1));
+            if (fitsCount <= 0)
+                return true;
+
+            // Make a copy of the solution to scale
+            // Otherwise we'll actually change the volume of the remaining stack too
+            var scaledSolution = new Solution(solution);
+            scaledSolution.ScaleSolution(fitsCount);
+            solution = scaledSolution;
+
+            _stackSystem.SetCount((item, stack), stack.Count - fitsCount); // Setting to 0 will QueueDel
+        }
+        else
+        {
+            if (solution.Volume > ctx.BeakerSolution.AvailableVolume)
+                return true;
+
+            ctx.Destructible.DestroyEntity(item);
+        }
+
+        if (ctx.BeakerSolutionEntity is {} solnEnt)
+            ctx.SolutionContainers.TryAddSolution(solnEnt, solution);
+
+        return true;
+    }
+
+    /// <summary>
+    /// Context for grinder item processing.
+    /// </summary>
+    private sealed class GrinderProcessingContext(
+        GrinderProgram program,
+        Entity<SolutionComponent>? beakerSolutionEntity,
+        Solution beakerSolution,
+        SharedSolutionContainerSystem solutionContainers,
+        SharedDestructibleSystem destructible)
+    {
+        public readonly GrinderProgram Program = program;
+        public readonly Entity<SolutionComponent>? BeakerSolutionEntity = beakerSolutionEntity;
+        public readonly Solution BeakerSolution = beakerSolution;
+        public readonly SharedSolutionContainerSystem SolutionContainers = solutionContainers;
+        public readonly SharedDestructibleSystem Destructible = destructible;
     }
 
     /// <summary>
@@ -337,12 +374,7 @@ public abstract class SharedReagentGrinderSystem : EntitySystem
     /// </summary>
     public bool IsActive(Entity<ReagentGrinderComponent?> ent)
     {
-        if (!Resolve(ent, ref ent.Comp))
-            return false;
-
-        // Don't use ActiveGrinderComponent for this because it is being removed deferred, meaning it will get updated at the end of the tick.
-        // ActiveReagentGrinderComponent is only for improving the EntityQueryEnumerator performance in the update loop.
-        return ent.Comp.EndTime != null;
+        return Resolve(ent, ref ent.Comp) && ent.Comp.IsOperating;
     }
 
     /// <summary>
