@@ -18,7 +18,7 @@ public sealed class ReagentGrinderSystem : SharedReagentGrinderSystem
     [Dependency] private readonly SharedPowerReceiverSystem _power = default!;
     [Dependency] private readonly SharedSolutionContainerSystem _solutionContainer = default!;
 
-    public override void UpdateUi(EntityUid uid)
+    protected override void UpdateUi(EntityUid uid)
     {
         if (!TryComp<ReagentGrinderComponent>(uid, out var comp))
             return;

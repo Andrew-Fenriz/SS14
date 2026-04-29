@@ -6,6 +6,12 @@
   components:
   - type: Microwave
     capacity: 12
+    malfunctionWhenCookedWhitelist:
+      tags:
+      - Metal
+    burnWhenCookedWhitelist:
+      tags:
+      - Plastic
   - type: Appearance
   - type: GenericVisualizer
     visuals:
@@ -161,6 +167,12 @@
     capacity: 12
     canMicrowaveIdsSafely: false
     explosionChance: 0.3
+    malfunctionWhenCookedWhitelist:
+      tags:
+      - Metal
+    burnWhenCookedWhitelist:
+      tags:
+      - Plastic
   - type: Sprite
     sprite: Structures/Machines/microwave_syndie.rsi
     drawdepth: SmallObjects

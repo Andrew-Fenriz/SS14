@@ -15,7 +15,6 @@ using Content.Shared.Inventory.Events;
 using Content.Shared.Item;
 using Content.Shared.Kitchen.Components;
 using Content.Shared.Mobs.Systems;
-using Content.Shared.Movement.Events;
 using Content.Shared.Nutrition.Components;
 using Content.Shared.Popups;
 using Content.Shared.Random.Helpers;

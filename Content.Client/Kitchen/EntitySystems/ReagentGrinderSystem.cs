@@ -20,7 +20,7 @@ public sealed class ReagentGrinderSystem : SharedReagentGrinderSystem
         UpdateUi(ent);
     }
 
-    public override void UpdateUi(EntityUid uid)
+    protected override void UpdateUi(EntityUid uid)
     {
         if (_userInterface.TryGetOpenUi(uid, ReagentGrinderUiKey.Key, out var bui))
             bui.Update();

@@ -6,5 +6,5 @@ namespace Content.Shared.Kitchen;
 [ByRefEvent]
 public struct GetSecretRecipesEvent()
 {
-    public List<FoodRecipePrototype> Recipes = new();
+    public List<FoodRecipePrototype> Recipes = [];
 }

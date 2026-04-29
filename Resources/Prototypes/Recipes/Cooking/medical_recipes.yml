@@ -1,33 +1,38 @@
-- type: microwaveMealRecipe
+- type: foodRecipe
   id: RecipeAloeCream
   result: AloeCream
   time: 10
   group: Medicinal
-  solids:
-    FoodAloe: 1
+  ingredients:
+    solids:
+      FoodAloe: 1
 
-- type: microwaveMealRecipe
+- type: foodRecipe
   id: RecipeMedicatedSuture
   result: MedicatedSuture
   time: 10
   group: Medicinal
-  solids:
-    FoodPoppy: 1
-    Brutepack: 1
-    MaterialCloth1: 1
-  reagents:
-    TranexamicAcid: 20
-    Cryptobiolin: 20
+  ingredients:
+    solids:
+      FoodPoppy: 1
+    materials:
+      Brutepack: 10
+      Cloth: 1
+    reagents:
+      TranexamicAcid: 20
+      Cryptobiolin: 20
 
-- type: microwaveMealRecipe
+- type: foodRecipe
   id: RecipeRegenerativeMesh
   result: RegenerativeMesh
   time: 10
   group: Medicinal
-  solids:
-    FoodAloe: 1
-    Ointment: 1
-    MaterialCloth1: 1
-  reagents:
-    Sigynate: 20
-    Dermaline: 20
+  ingredients:
+    solids:
+      FoodAloe: 1
+    materials:
+      Ointment: 10
+      Cloth: 1
+    reagents:
+      Sigynate: 20
+      Dermaline: 20

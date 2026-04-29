@@ -1,4 +1,4 @@
-using Content.Shared.Kitchen.Components;
+using Content.Shared.Kitchen;
 using JetBrains.Annotations;
 using Robust.Client.UserInterface;
 

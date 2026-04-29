@@ -96,14 +96,6 @@ public sealed partial class ReagentGrinderComponent : Component
 }
 
 /// <summary>
-/// Marker component for active reagent grinders used to improve the EntityQueryEnumerator performance in the update loop.
-/// If you want to check if the grinder is currently active use <see cref="SharedReagentGrinderSystem.IsActive"/> instead,
-/// because this component is being removed deferred, i.e. in the following game tick.
-/// </summary>
-[RegisterComponent, NetworkedComponent]
-public sealed partial class ActiveReagentGrinderComponent : Component;
-
-/// <summary>
 /// Marker component added to beakers inserted into a reagent grinder.
 /// Used to update the UI when the solution in the beaker changes.
 /// </summary>

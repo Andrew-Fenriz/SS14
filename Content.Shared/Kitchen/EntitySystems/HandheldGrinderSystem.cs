@@ -7,7 +7,6 @@ using Content.Shared.Interaction;
 using Content.Shared.Kitchen.Components;
 using Content.Shared.Popups;
 using Content.Shared.Stacks;
-using Robust.Shared.Audio.Systems;
 using Robust.Shared.Containers;
 using Robust.Shared.Serialization;
 
@@ -20,9 +19,9 @@ internal sealed class HandheldGrinderSystem : EntitySystem
     [Dependency] private readonly SharedStackSystem _stackSystem = default!;
     [Dependency] private readonly SharedDestructibleSystem _destructibleSystem = default!;
     [Dependency] private readonly SharedDoAfterSystem _doAfter = default!;
-    [Dependency] private readonly SharedAudioSystem _audio = default!;
     [Dependency] private readonly SharedPuddleSystem _puddle = default!;
     [Dependency] private readonly SharedPopupSystem _popup = default!;
+    [Dependency] private readonly KitchenDeviceSystem _kitchenDevice = default!;
 
     public override void Initialize()
     {
@@ -75,12 +74,12 @@ internal sealed class HandheldGrinderSystem : EntitySystem
         };
 
         if (_doAfter.TryStartDoAfter(doAfter))
-            ent.Comp.AudioStream = _audio.PlayPredicted(ent.Comp.Sound, ent, args.User)?.Entity ?? ent.Comp.AudioStream;
+            _kitchenDevice.StartLoopingSound(ent, ent.Comp.Sound, ref ent.Comp.AudioStream);
     }
 
     private void OnHandheldDoAfter(Entity<HandheldGrinderComponent> ent, ref HandheldGrinderDoAfterEvent args)
     {
-        ent.Comp.AudioStream = _audio.Stop(ent.Comp.AudioStream);
+        _kitchenDevice.StopLoopingSound(ref ent.Comp.AudioStream);
 
         if (args.Cancelled)
             return;
@@ -120,7 +119,7 @@ internal sealed class HandheldGrinderSystem : EntitySystem
     /// <param name="item">The item it is being used on.</param>
     /// <param name="reason">Reason the grinder cannot be used. Null if the function returns true.</param>
     /// <returns>True if the grinder can be used, otherwise false.</returns>
-    public bool CanGrinderBeUsed(Entity<HandheldGrinderComponent> ent, EntityUid item, [NotNullWhen(false)] out string? reason)
+    private bool CanGrinderBeUsed(Entity<HandheldGrinderComponent> ent, EntityUid item, [NotNullWhen(false)] out string? reason)
     {
         reason = null;
         if (ent.Comp.Program == GrinderProgram.Grind && !_reagentGrinder.CanGrind(item))
