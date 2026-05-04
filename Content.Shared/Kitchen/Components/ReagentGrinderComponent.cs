@@ -58,13 +58,13 @@ public sealed partial class ReagentGrinderComponent : Component
     [AutoNetworkedField, AutoPausedField]
     public TimeSpan? EndTime;
 
-    [DataField, AutoNetworkedField]
+    [DataField]
     public float TimeRemaining;
 
-    [DataField, AutoNetworkedField]
+    [DataField]
     public float TotalTime;
 
-    [DataField, AutoNetworkedField]
+    [DataField]
     public GrinderProgram? Program;
 
     [ViewVariables]

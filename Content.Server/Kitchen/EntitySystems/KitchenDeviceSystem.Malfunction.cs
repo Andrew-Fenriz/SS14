@@ -24,9 +24,11 @@ public sealed partial class KitchenDeviceSystem
 
     public void RollMalfunction(Entity<MalfunctionComponent> ent)
     {
-        if (ent.Comp.NextCheckTime == TimeSpan.Zero) return;
+        if (ent.Comp.NextCheckTime == TimeSpan.Zero) 
+            return;
 
-        if (ent.Comp.NextCheckTime > _timing.CurTime) return;
+        if (ent.Comp.NextCheckTime > _timing.CurTime) 
+            return;
 
         ent.Comp.NextCheckTime = _timing.CurTime + TimeSpan.FromSeconds(ent.Comp.CheckInterval);
         Dirty(ent);

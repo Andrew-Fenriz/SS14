@@ -73,10 +73,10 @@ public partial class KitchenDeviceSystem
 
     private static void ProcessContainerContents<TContext>(Container container, IEntityManager entityManager, Func<EntityUid, TContext, bool> processor, TContext context)
     {
-        var snapshot = container.ContainedEntities.ToArray();
+        var snapshot = container.ContainedEntities.Where(entityManager.EntityExists).ToArray();
         foreach (var item in snapshot)
         {
-            if (!item.IsValid() || !entityManager.EntityExists(item))
+            if (!item.IsValid())
                 continue;
 
             if (!processor(item, context))
@@ -91,10 +91,10 @@ public partial class KitchenDeviceSystem
 
     private static void ProcessContainerContents(Container container, IEntityManager entityManager, Func<EntityUid, bool> processor)
     {
-        var snapshot = container.ContainedEntities.ToArray();
+        var snapshot = container.ContainedEntities.Where(entityManager.EntityExists).ToArray();
         foreach (var item in snapshot)
         {
-            if (!item.IsValid() || !entityManager.EntityExists(item))
+            if (!item.IsValid())
                 continue;
 
             if (!processor(item))

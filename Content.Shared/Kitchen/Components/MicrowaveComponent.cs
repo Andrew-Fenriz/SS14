@@ -54,7 +54,7 @@ public sealed partial class MicrowaveComponent : Component
     /// For right now, I don't think any recipe cook time should be greater than 60 seconds.
     /// </summary>
     [DataField, AutoNetworkedField]
-    public uint CurrentCookTimerTime = 0;
+    public uint CurrentCookTimerTime;
 
     [DataField, AutoNetworkedField]
     public TimeSpan CurrentCookTimeEnd = TimeSpan.Zero;
@@ -80,20 +80,19 @@ public sealed partial class MicrowaveComponent : Component
     [ViewVariables]
     public bool IsOperating => EndTime.HasValue;
 
-    [DataField, AutoNetworkedField]
+    [DataField]
     public float TimeRemaining;
 
-    [DataField, AutoNetworkedField]
+    [DataField]
     public float TotalTime;
 
     [DataField(customTypeSerializer: typeof(TimeOffsetSerializer))]
-    [AutoNetworkedField]
     public TimeSpan? EndTime;
 
-    [DataField, AutoNetworkedField]
+    [DataField]
     public string? RecipeId;
 
-    [DataField, AutoNetworkedField]
+    [DataField]
     public int PortionCount;
 
     #endregion
