@@ -1,7 +1,7 @@
 using Content.Server.Administration;
 using Content.Shared.Administration;
 using Content.Shared.Damage;
-using Content.Shared.StatusEffect;
+using Content.Shared.StatusEffectNew;
 using Robust.Shared.Console;
 using Robust.Shared.Prototypes;
 
@@ -15,8 +15,6 @@ public sealed partial class ElectrocuteCommand : LocalizedEntityCommands
     [Dependency] private IPrototypeManager _prototype = default!;
 
     public override string Command => "electrocute";
-
-    private static readonly ProtoId<StatusEffectPrototype> ElectrocutionStatusEffect = "Electrocution";
 
     public override void Execute(IConsoleShell shell, string argStr, string[] args)
     {
@@ -34,7 +32,7 @@ public sealed partial class ElectrocuteCommand : LocalizedEntityCommands
             return;
         }
 
-        if (!_statusEffects.CanApplyEffect(uid.Value, ElectrocutionStatusEffect))
+        if (!_statusEffects.CanAddStatusEffect(uid.Value, "Electrocution"))
         {
             shell.WriteError(Loc.GetString("cmd-electrocute-entity-cannot-be-electrocuted"));
             return;

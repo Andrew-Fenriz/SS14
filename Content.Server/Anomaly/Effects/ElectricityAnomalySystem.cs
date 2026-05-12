@@ -4,7 +4,6 @@ using Content.Server.Lightning;
 using Content.Shared.Anomaly.Components;
 using Content.Shared.Anomaly.Effects.Components;
 using Content.Shared.Damage;
-using Content.Shared.StatusEffect;
 using Robust.Shared.Prototypes;
 using Robust.Shared.Random;
 using Robust.Shared.Timing;
@@ -33,7 +32,7 @@ public sealed partial class ElectricityAnomalySystem : EntitySystem
     {
         var range = anomaly.Comp.MaxElectrocuteRange * args.Stability * args.PowerModifier;
 
-        int boltCount = (int)MathF.Floor(MathHelper.Lerp((float)anomaly.Comp.MinBoltCount, (float)anomaly.Comp.MaxBoltCount, args.Severity));
+        int boltCount = (int)MathF.Floor(MathHelper.Lerp(anomaly.Comp.MinBoltCount, anomaly.Comp.MaxBoltCount, args.Severity));
 
         _lightning.ShootRandomLightnings(anomaly, range, boltCount);
     }
@@ -65,9 +64,9 @@ public sealed partial class ElectricityAnomalySystem : EntitySystem
             var duration = elec.MaxElectrocuteDuration * anom.Severity;
             var damageSpec = new DamageSpecifier(_prototypeManager.Index(ElectrocutionSystem.DamageType), damage);
 
-            foreach (var (ent, comp) in _lookup.GetEntitiesInRange<StatusEffectsComponent>(_transform.GetMapCoordinates(uid, xform), range))
+            foreach (var ent in _lookup.GetEntitiesInRange(_transform.GetMapCoordinates(uid, xform), range))
             {
-                _electrocution.TryDoElectrocution(ent, uid, damageSpec, duration, true, statusEffects: comp, ignoreInsulation: true);
+                _electrocution.TryDoElectrocution(ent, uid, damageSpec, duration, true, ignoreInsulation: true);
             }
         }
     }
