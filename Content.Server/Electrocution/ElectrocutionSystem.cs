@@ -182,7 +182,8 @@ public sealed partial class ElectrocutionSystem : SharedElectrocutionSystem
         if (_meleeWeapon.GetDamage(args.Used, args.User).Empty)
             return;
 
-        TryDoElectrocution(args.User, uid, component.UnarmedHitShock, component.UnarmedHitStun, false);
+        if (!component.UnarmedHitShock.Empty)
+            TryDoElectrocution(args.User, uid, component.UnarmedHitShock, component.UnarmedHitStun, false);
     }
 
     private void OnElectrifiedInteractUsing(EntityUid uid, ElectrifiedComponent electrified, InteractUsingEvent args)
@@ -227,6 +228,10 @@ public sealed partial class ElectrocutionSystem : SharedElectrocutionSystem
             for (var i = targets.Count - 1; i >= 0; i--)
             {
                 var (entity, depth) = targets[i];
+
+                if (electrified.ShockDamage.Empty)
+                    continue;
+
                 var scaledDamage = electrified.ShockDamage * MathF.Pow(RecursiveDamageMultiplier, depth);
                 lastRet = TryDoElectrocution(
                     entity,
@@ -256,6 +261,10 @@ public sealed partial class ElectrocutionSystem : SharedElectrocutionSystem
             for (var i = targets.Count - 1; i >= 0; i--)
             {
                 var (entity, depth) = targets[i];
+
+                if (electrified.ShockDamage.Empty)
+                    continue;
+
                 var scaledDamage = electrified.ShockDamage * MathF.Pow(RecursiveDamageMultiplier, depth) * damageScalar;
                 lastRet = TryDoElectrocutionPowered(
                     entity,
