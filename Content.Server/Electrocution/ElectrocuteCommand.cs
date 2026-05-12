@@ -1,6 +1,7 @@
 using Content.Server.Administration;
 using Content.Shared.Administration;
 using Content.Shared.Damage;
+using Content.Shared.Electrocution;
 using Content.Shared.StatusEffectNew;
 using Robust.Shared.Console;
 using Robust.Shared.Prototypes;
@@ -32,7 +33,7 @@ public sealed partial class ElectrocuteCommand : LocalizedEntityCommands
             return;
         }
 
-        if (!_statusEffects.CanAddStatusEffect(uid.Value, "Electrocution"))
+        if (!_statusEffects.CanAddStatusEffect(uid.Value, SharedElectrocutionSystem.ElectrocutionId))
         {
             shell.WriteError(Loc.GetString("cmd-electrocute-entity-cannot-be-electrocuted"));
             return;

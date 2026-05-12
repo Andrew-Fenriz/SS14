@@ -317,9 +317,8 @@ public sealed partial class ElectrocutionSystem : SharedElectrocutionSystem
         _interactionSystem.GetEntitiesInteractingWithTarget(uid, interacters);
 
         foreach (var other in interacters
-        .Where(other => other != sourceUid)
-        .Where(other => !relayEntitiesVisited
-        .Contains(other)))
+            .Where(other => other != sourceUid)
+            .Where(other => !relayEntitiesVisited.Contains(other)))
         {
             // Anyone else still operating on the target gets zapped too
             TryDoElectrocution(other, uid, shockDamage, time, true, isElectrocutionRelay: true, relayEntitiesVisited: relayEntitiesVisited);
@@ -398,14 +397,15 @@ public sealed partial class ElectrocutionSystem : SharedElectrocutionSystem
         if (siemensCoefficient <= 0)
             return false;
 
-        if (!_statusEffects.CanAddStatusEffect(uid, "Electrocution"))
+        if (!refresh)
         {
-            return false;
+            if (!_statusEffects.CanAddStatusEffect(uid, ElectrocutionId))
+                return false;
         }
 
         if (refresh
-            ? !_statusEffects.TrySetStatusEffectDuration(uid, "Electrocution", time)
-            : !_statusEffects.TryAddStatusEffectDuration(uid, "Electrocution", time))
+            ? !_statusEffects.TryUpdateStatusEffectDuration(uid, ElectrocutionId, time)
+            : !_statusEffects.TryAddStatusEffectDuration(uid, ElectrocutionId, time))
             return false;
 
         var shouldStun = siemensCoefficient > 0.5f;

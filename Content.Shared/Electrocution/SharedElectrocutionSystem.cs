@@ -1,10 +1,13 @@
 using Content.Shared.Damage;
 using Content.Shared.Inventory;
+using Robust.Shared.Prototypes;
 
 namespace Content.Shared.Electrocution;
 
 public abstract partial class SharedElectrocutionSystem : EntitySystem
 {
+    public static readonly EntProtoId ElectrocutionId = "StatusEffectElectrocution";
+
     [Dependency] private SharedAppearanceSystem _appearance = default!;
 
     public override void Initialize()
