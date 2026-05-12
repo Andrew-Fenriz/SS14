@@ -79,3 +79,19 @@
   - type: StatusEffectAlert
     alert: Stun
   - type: StunnedStatusEffect
+
+- type: entity
+  parent: MobStatusEffectDebuff
+  id: StatusEffectElectrocution
+  name: electrocution
+  components:
+  - type: StatusEffect
+    whitelist:
+      components:
+      - MobState
+    blacklist:
+      tags:
+      - StunImmune
+  - type: StatusEffectAlert
+    alert: Electrocuted
+  - type: ElectrocutedStatusEffect

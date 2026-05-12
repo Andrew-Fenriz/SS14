@@ -33,6 +33,9 @@ alerts-walking-desc = You are walking, moving at a slow pace.
 alerts-stunned-name = [color=yellow]Stunned[/color]
 alerts-stunned-desc = You're [color=yellow]stunned[/color]! Something is impairing your ability to move or interact with objects.
 
+alerts-electrocuted-name = [color=yellow]Electrocuted[/color]
+alerts-electrocuted-desc = You're being [color=yellow]shocked by electricity[/color]! Get away from the source or wait it out.
+
 alerts-knockdown-name = [color=yellow]Knocked Down[/color]
 alerts-knockdown-desc = You're [color=yellow]Knocked Down[/color]! Something has slipped or pushed you over, encumbering your movement.
 

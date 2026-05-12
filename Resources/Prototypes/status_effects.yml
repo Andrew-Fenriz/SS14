@@ -19,10 +19,6 @@
   id: Stutter
 
 - type: statusEffect
-  id: Electrocution
-  alert: Stun
-
-- type: statusEffect
   id: Drunk
 
 - type: statusEffect

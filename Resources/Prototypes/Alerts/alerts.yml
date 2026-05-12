@@ -147,6 +147,14 @@
   description: alerts-stunned-desc
 
 - type: alert
+  id: Electrocuted
+  icons:
+  - sprite: /Textures/Interface/Alerts/electrocuted.rsi
+    state: electrocuted
+  name: alerts-electrocuted-name
+  description: alerts-electrocuted-desc
+
+- type: alert
   id: Knockdown
   clickEvent: !type:KnockedDownAlertEvent
   icons:
