@@ -52,7 +52,9 @@
     radius: 5
     color: "#4080FF"
   - type: Electrified
-    shockDamage: 2
+    shockDamage:
+      types:
+        Shock: 2
     shockTime: 0.8
     requirePower: false
   - type: EmitSoundOnCollide

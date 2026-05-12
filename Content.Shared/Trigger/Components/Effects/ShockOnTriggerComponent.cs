@@ -1,3 +1,4 @@
+using Content.Shared.Damage;
 using Robust.Shared.GameStates;
 
 namespace Content.Shared.Trigger.Components.Effects;
@@ -24,7 +25,7 @@ public sealed partial class ShockOnTriggerComponent : BaseXOnTriggerComponent
     /// The force of an electric shock when the trigger is triggered.
     /// </summary>
     [DataField, AutoNetworkedField]
-    public int Damage = 5;
+    public DamageSpecifier Damage = new();
 
     /// <summary>
     /// Duration of electric shock when the trigger is triggered.

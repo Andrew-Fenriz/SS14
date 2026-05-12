@@ -351,7 +351,9 @@
   - type: SelfUnremovableClothing
   - type: ShockOnTrigger
     targetContainer: true
-    damage: 5
+    damage:
+      types:
+        Shock: 5
     duration: 3
   - type: TriggerOnSignal
   - type: DeviceLinkSink

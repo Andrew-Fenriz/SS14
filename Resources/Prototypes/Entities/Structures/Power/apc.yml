@@ -148,6 +148,9 @@
     requirePower: true
     mediumVoltageNode: input
     lowVoltageNode: output
+    shockDamage:
+      types:
+        Shock: 7.5
   - type: LightningTarget
     priority: 1
   - type: StaticPrice

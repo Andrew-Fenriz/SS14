@@ -1278,6 +1278,9 @@
     lightningPrototype: Lightning
   - type: Electrified
     requirePower: false
+    shockDamage:
+      types:
+        Shock: 7.5
   - type: Tag
     tags:
       - HideContextMenu

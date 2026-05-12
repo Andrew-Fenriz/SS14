@@ -176,6 +176,9 @@
     castShadows: false
   - type: ElectricityAnomaly
   - type: Electrified
+    shockDamage:
+      types:
+        Shock: 7.5
 
 - type: entity
   id: AnomalyFlesh

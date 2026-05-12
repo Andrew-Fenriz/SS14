@@ -105,6 +105,9 @@
     enabled: false
   - type: PoweredLight
     bulb: Tube
+    unarmedHitShock:
+      types:
+        Shock: 20
   - type: ContainerContainer
     containers:
       light_bulb: !type:ContainerSlot

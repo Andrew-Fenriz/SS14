@@ -1,5 +1,6 @@
 using Content.Server.Administration;
 using Content.Shared.Administration;
+using Content.Shared.Damage;
 using Content.Shared.StatusEffect;
 using Robust.Shared.Console;
 using Robust.Shared.Prototypes;
@@ -11,6 +12,7 @@ public sealed partial class ElectrocuteCommand : LocalizedEntityCommands
 {
     [Dependency] private ElectrocutionSystem _electrocution = default!;
     [Dependency] private StatusEffectsSystem _statusEffects = default!;
+    [Dependency] private IPrototypeManager _prototype = default!;
 
     public override string Command => "electrocute";
 
@@ -44,6 +46,7 @@ public sealed partial class ElectrocuteCommand : LocalizedEntityCommands
         if (args.Length < 3 || !int.TryParse(args[2], out var damage))
             damage = 10;
 
-        _electrocution.TryDoElectrocution(uid.Value, null, damage, TimeSpan.FromSeconds(seconds), refresh: true, ignoreInsulation: true);
+        var damageSpec = new DamageSpecifier(_prototype.Index(ElectrocutionSystem.DamageType), damage);
+        _electrocution.TryDoElectrocution(uid.Value, null, damageSpec, TimeSpan.FromSeconds(seconds), refresh: true, ignoreInsulation: true);
     }
 }

@@ -40,6 +40,9 @@
   - type: Electrified
     enabled: false
     usesApcPower: true
+    shockDamage:
+      types:
+        Shock: 7.5
   - type: WallMount
   - type: ApcPowerReceiver
   - type: ExtensionCableReceiver

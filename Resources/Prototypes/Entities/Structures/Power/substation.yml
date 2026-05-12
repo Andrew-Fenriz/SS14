@@ -146,6 +146,9 @@
     requirePower: true
     highVoltageNode: input
     mediumVoltageNode: output
+    shockDamage:
+      types:
+        Shock: 7.5
 
 # Compact Wall Substation Base
 - type: entity

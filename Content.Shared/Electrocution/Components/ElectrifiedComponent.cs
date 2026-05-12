@@ -1,3 +1,4 @@
+using Content.Shared.Damage;
 using Robust.Shared.GameStates;
 using Robust.Shared.Audio;
 
@@ -97,7 +98,7 @@ public sealed partial class ElectrifiedComponent : Component
     public float MediumVoltageTimeMultiplier = 1.5f;
 
     [DataField, AutoNetworkedField]
-    public float ShockDamage = 7.5f;
+    public DamageSpecifier ShockDamage = new();
 
     /// <summary>
     /// Shock time, in seconds.

@@ -42,6 +42,9 @@
   - type: Electrified
     enabled: false
     usesApcPower: true
+    shockDamage:
+      types:
+        Shock: 7.5
   - type: ActivatableUIRequiresPower
   - type: Construction
     graph: Timer

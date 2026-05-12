@@ -53,6 +53,9 @@
     onBump: false
     requirePower: true
     highVoltageNode: output
+    shockDamage:
+      types:
+        Shock: 7.5
   - type: RequireProjectileTarget
   - type: GuideHelp
     guides:

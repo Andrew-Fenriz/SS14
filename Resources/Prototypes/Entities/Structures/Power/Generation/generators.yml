@@ -81,6 +81,9 @@
     onBump: false
     requirePower: true
     highVoltageNode: output
+    shockDamage:
+      types:
+        Shock: 7.5
   - type: GuideHelp
     guides:
     - ShuttleCraft

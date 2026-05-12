@@ -154,3 +154,6 @@
       shader: unshaded
   - type: Electrified
     requirePower: false
+    shockDamage:
+      types:
+        Shock: 7.5

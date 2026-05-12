@@ -91,6 +91,9 @@
   - type: Electrified
     enabled: false
     usesApcPower: true
+    shockDamage:
+      types:
+        Shock: 7.5
   - type: PointLight
     enabled: false
     castShadows: false
@@ -169,6 +172,9 @@
   - type: Electrified
     enabled: false
     usesApcPower: true
+    shockDamage:
+      types:
+        Shock: 7.5
   - type: Rotatable
 
 # Vending machines

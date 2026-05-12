@@ -115,6 +115,9 @@
     requirePower: true
     highVoltageNode: input
     mediumVoltageNode: ame
+    shockDamage:
+      types:
+        Shock: 7.5
 
 - type: entity
   categories: [ HideSpawnMenu ]
@@ -226,3 +229,6 @@
     onBump: false
     requirePower: true
     highVoltageNode: ame
+    shockDamage:
+      types:
+        Shock: 7.5

@@ -1,4 +1,5 @@
-﻿using Content.Shared.Electrocution;
+using Content.Shared.Damage;
+using Content.Shared.Electrocution;
 using Content.Shared.StatusEffect;
 using Robust.Shared.Prototypes;
 
@@ -18,9 +19,11 @@ public sealed partial class ElectrocuteEntityEffectSystem : EntityEffectSystem<S
     {
         var effect = args.Effect;
 
+        var damage = effect.ShockDamage * args.Scale;
+
         _electrocution.TryDoElectrocution(entity,
             null,
-            (int)(args.Scale * effect.ShockDamage),
+            damage,
             effect.ElectrocuteTime,
             effect.Refresh,
             siemensCoefficient: effect.SiemensCoefficient,
@@ -41,7 +44,7 @@ public sealed partial class Electrocute : EntityEffectBase<Electrocute>
     /// Shock damage we apply to the entity.
     /// </summary>
     [DataField]
-    public int ShockDamage = 5;
+    public DamageSpecifier ShockDamage = new();
 
     /// <summary>
     /// Do we refresh the duration? Or add more duration if it already exists.

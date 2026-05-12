@@ -8,6 +8,9 @@
   - type: Electrified
     enabled: false
     usesApcPower: true
+    shockDamage:
+      types:
+        Shock: 7.5
   - type: DeviceNetwork
     deviceNetId: AtmosDevices
     receiveFrequencyId: AtmosMonitor

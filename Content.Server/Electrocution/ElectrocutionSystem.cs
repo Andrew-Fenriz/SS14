@@ -37,7 +37,6 @@ namespace Content.Server.Electrocution;
 public sealed partial class ElectrocutionSystem : SharedElectrocutionSystem
 {
     [Dependency] private IAdminLogManager _adminLogger = default!;
-    [Dependency] private IPrototypeManager _prototypeManager = default!;
     [Dependency] private IRobustRandom _random = default!;
     [Dependency] private DamageableSystem _damageable = default!;
     [Dependency] private EntityLookupSystem _entityLookup = default!;
@@ -56,7 +55,7 @@ public sealed partial class ElectrocutionSystem : SharedElectrocutionSystem
     [Dependency] private TurfSystem _turf = default!;
 
     private static readonly ProtoId<StatusEffectPrototype> StatusKeyIn = "Electrocution";
-    private static readonly ProtoId<DamageTypePrototype> DamageType = "Shock";
+    public static readonly ProtoId<DamageTypePrototype> DamageType = "Shock";
     private static readonly ProtoId<TagPrototype> WindowTag = "Window";
 
     // Multiply and shift the log scale for shock damage.
@@ -228,10 +227,11 @@ public sealed partial class ElectrocutionSystem : SharedElectrocutionSystem
             for (var i = targets.Count - 1; i >= 0; i--)
             {
                 var (entity, depth) = targets[i];
+                var scaledDamage = electrified.ShockDamage * MathF.Pow(RecursiveDamageMultiplier, depth);
                 lastRet = TryDoElectrocution(
                     entity,
                     uid,
-                    (int) (electrified.ShockDamage * MathF.Pow(RecursiveDamageMultiplier, depth)),
+                    scaledDamage,
                     TimeSpan.FromSeconds(electrified.ShockTime * MathF.Pow(RecursiveTimeMultiplier, depth)),
                     true,
                     electrified.SiemensCoefficient
@@ -256,11 +256,12 @@ public sealed partial class ElectrocutionSystem : SharedElectrocutionSystem
             for (var i = targets.Count - 1; i >= 0; i--)
             {
                 var (entity, depth) = targets[i];
+                var scaledDamage = electrified.ShockDamage * MathF.Pow(RecursiveDamageMultiplier, depth) * damageScalar;
                 lastRet = TryDoElectrocutionPowered(
                     entity,
                     uid,
                     node,
-                    (int) (electrified.ShockDamage * MathF.Pow(RecursiveDamageMultiplier, depth) * damageScalar),
+                    scaledDamage,
                     TimeSpan.FromSeconds(electrified.ShockTime * MathF.Pow(RecursiveTimeMultiplier, depth) * timeScalar),
                     true,
                     electrified.SiemensCoefficient);
@@ -290,7 +291,7 @@ public sealed partial class ElectrocutionSystem : SharedElectrocutionSystem
 
     /// <inheritdoc/>
     public override bool TryDoElectrocution(
-        EntityUid uid, EntityUid? sourceUid, int shockDamage, TimeSpan time, bool refresh, float siemensCoefficient = 1f,
+        EntityUid uid, EntityUid? sourceUid, DamageSpecifier? shockDamage, TimeSpan time, bool refresh, float siemensCoefficient = 1f,
         StatusEffectsComponent? statusEffects = null, bool ignoreInsulation = false)
     {
         if (!DoCommonElectrocutionAttempt(uid, sourceUid, ref siemensCoefficient, ignoreInsulation)
@@ -305,7 +306,7 @@ public sealed partial class ElectrocutionSystem : SharedElectrocutionSystem
         EntityUid uid,
         EntityUid sourceUid,
         Node node,
-        int shockDamage,
+        DamageSpecifier? shockDamage,
         TimeSpan time,
         bool refresh,
         float siemensCoefficient = 1f,
@@ -368,19 +369,11 @@ public sealed partial class ElectrocutionSystem : SharedElectrocutionSystem
     }
 
     private bool DoCommonElectrocution(EntityUid uid, EntityUid? sourceUid,
-        int? shockDamage, TimeSpan time, bool refresh, float siemensCoefficient = 1f,
+        DamageSpecifier? shockDamage, TimeSpan time, bool refresh, float siemensCoefficient = 1f,
         StatusEffectsComponent? statusEffects = null)
     {
         if (siemensCoefficient <= 0)
             return false;
-
-        if (shockDamage != null)
-        {
-            shockDamage = (int) (shockDamage * siemensCoefficient);
-
-            if (shockDamage.Value <= 0)
-                return false;
-        }
 
         if (!Resolve(uid, ref statusEffects, false) ||
             !_statusEffects.CanApplyEffect(uid, StatusKeyIn, statusEffects))
@@ -403,9 +396,9 @@ public sealed partial class ElectrocutionSystem : SharedElectrocutionSystem
 
         // TODO: Sparks here.
 
-        if (shockDamage is { } dmg)
+        if (shockDamage != null && !shockDamage.Empty)
         {
-            if (_damageable.TryChangeDamage(uid, new DamageSpecifier(_prototypeManager.Index(DamageType), dmg), out var damage, origin: sourceUid))
+            if (_damageable.TryChangeDamage(uid, shockDamage, out var damage, origin: sourceUid))
             {
                 _adminLogger.Add(LogType.Electrocution,
                     $"{ToPrettyString(uid):entity} received {damage:damage} powered electrocution damage{(sourceUid != null ? " from " + ToPrettyString(sourceUid.Value) : ""):source}");

@@ -41,6 +41,9 @@
       highVoltageNode: high
       mediumVoltageNode: medium
       lowVoltageNode: low
+      shockDamage:
+        types:
+          Shock: 7.5
     - type: NodeContainer
       nodes:
         high:

@@ -1,3 +1,4 @@
+using Content.Shared.Damage;
 using Content.Shared.DeviceLinking;
 using Content.Shared.Light.EntitySystems;
 using Robust.Shared.Audio;
@@ -74,7 +75,7 @@ namespace Content.Shared.Light.Components
         /// Shock damage done to a mob that hits the light with an unarmed attack
         /// </summary>
         [DataField]
-        public int UnarmedHitShock = 20;
+        public DamageSpecifier UnarmedHitShock = new();
 
         /// <summary>
         /// Stun duration applied to a mob that hits the light with an unarmed attack

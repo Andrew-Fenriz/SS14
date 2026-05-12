@@ -52,6 +52,9 @@
     highVoltageNode: power
     mediumVoltageNode: power
     lowVoltageNode: power
+    shockDamage:
+      types:
+        Shock: 7.5
   - type: CableVis
     node: power
   - type: RCDDeconstructable

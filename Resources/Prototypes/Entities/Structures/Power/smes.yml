@@ -85,6 +85,9 @@
       requirePower: true
       highVoltageNode: input
       mediumVoltageNode: output
+      shockDamage:
+        types:
+          Shock: 7.5
     - type: Damageable
       damageModifierSet: StructuralMetallicStrong
     - type: Injurable

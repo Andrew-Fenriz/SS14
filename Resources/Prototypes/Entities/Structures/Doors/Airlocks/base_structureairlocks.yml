@@ -104,6 +104,9 @@
   - type: Electrified
     enabled: false
     usesApcPower: true
+    shockDamage:
+      types:
+        Shock: 7.5
   - type: WiresPanel
   - type: WiresPanelSecurity
   - type: Wires

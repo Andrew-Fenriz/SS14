@@ -142,6 +142,9 @@
     color: "#ffffaa"
     castShadows: false
   - type: Electrified
+    shockDamage:
+      types:
+        Shock: 7.5
 
 - type: entity
   parent: BaseAnomalyCore

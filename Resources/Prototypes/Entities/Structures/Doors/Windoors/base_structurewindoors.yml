@@ -145,6 +145,9 @@
   - type: Electrified
     enabled: false
     usesApcPower: true
+    shockDamage:
+      types:
+        Shock: 7.5
   - type: WiresPanel
   - type: Wires
     boardName: wires-board-name-windoor
