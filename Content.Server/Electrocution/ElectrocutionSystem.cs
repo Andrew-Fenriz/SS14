@@ -1,3 +1,4 @@
+using System.Linq;
 using Content.Server.Administration.Logs;
 using Content.Server.NodeContainer.EntitySystems;
 using Content.Server.Power.Components;
@@ -53,6 +54,7 @@ public sealed partial class ElectrocutionSystem : SharedElectrocutionSystem
     [Dependency] private TagSystem _tag = default!;
     [Dependency] private MetaDataSystem _metaData = default!;
     [Dependency] private TurfSystem _turf = default!;
+    [Dependency] private SharedInteractionSystem _interactionSystem = default!;
 
     private static readonly ProtoId<StatusEffectPrototype> StatusKeyIn = "Electrocution";
     public static readonly ProtoId<DamageTypePrototype> DamageType = "Shock";
@@ -69,6 +71,8 @@ public sealed partial class ElectrocutionSystem : SharedElectrocutionSystem
     private const float JitterTimeMultiplier = 0.75f;
     private const float JitterAmplitude = 80f;
     private const float JitterFrequency = 8f;
+
+    private const int MaxElectrocutionEntitiesChainSize = 5;
 
     public override void Initialize()
     {
@@ -292,13 +296,36 @@ public sealed partial class ElectrocutionSystem : SharedElectrocutionSystem
     /// <inheritdoc/>
     public override bool TryDoElectrocution(
         EntityUid uid, EntityUid? sourceUid, DamageSpecifier? shockDamage, TimeSpan time, bool refresh, float siemensCoefficient = 1f,
-        StatusEffectsComponent? statusEffects = null, bool ignoreInsulation = false)
+        StatusEffectsComponent? statusEffects = null, bool ignoreInsulation = false, bool isElectrocutionRelay = false,
+        HashSet<EntityUid>? relayEntitiesVisited = null)
     {
         if (!DoCommonElectrocutionAttempt(uid, sourceUid, ref siemensCoefficient, ignoreInsulation)
             || !DoCommonElectrocution(uid, sourceUid, shockDamage, time, refresh, siemensCoefficient, statusEffects))
             return false;
 
         RaiseLocalEvent(uid, new ElectrocutedEvent(uid, sourceUid, siemensCoefficient), true);
+
+        if (!isElectrocutionRelay || sourceUid == null)
+            return true;
+
+        relayEntitiesVisited ??= new HashSet<EntityUid>();
+
+        relayEntitiesVisited.Add(uid);
+
+        if (relayEntitiesVisited.Count >= MaxElectrocutionEntitiesChainSize)
+            return true;
+
+        var interacters = new HashSet<EntityUid>();
+        _interactionSystem.GetEntitiesInteractingWithTarget(uid, interacters);
+
+        foreach (var other in interacters
+        .Where(other => other != sourceUid)
+        .Where(other => !relayEntitiesVisited
+        .Contains(other)))
+        {
+            // Anyone else still operating on the target gets zapped too
+            TryDoElectrocution(other, uid, shockDamage, time, true, isElectrocutionRelay: true, relayEntitiesVisited: relayEntitiesVisited);
+        }
         return true;
     }
 
