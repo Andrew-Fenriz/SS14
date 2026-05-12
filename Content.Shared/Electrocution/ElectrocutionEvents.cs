@@ -19,16 +19,10 @@ public sealed class ElectrocutionAttemptEvent : CancellableEntityEventArgs, IInv
     }
 }
 
-public sealed class ElectrocutedEvent : EntityEventArgs
+public sealed class ElectrocutedEvent(EntityUid targetUid, EntityUid? sourceUid, float siemensCoefficient)
+    : EntityEventArgs
 {
-    public readonly EntityUid TargetUid;
-    public readonly EntityUid? SourceUid;
-    public readonly float SiemensCoefficient;
-
-    public ElectrocutedEvent(EntityUid targetUid, EntityUid? sourceUid, float siemensCoefficient)
-    {
-        TargetUid = targetUid;
-        SourceUid = sourceUid;
-        SiemensCoefficient = siemensCoefficient;
-    }
+    public readonly EntityUid TargetUid = targetUid;
+    public readonly EntityUid? SourceUid = sourceUid;
+    public readonly float SiemensCoefficient = siemensCoefficient;
 }
