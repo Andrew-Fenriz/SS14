@@ -66,8 +66,14 @@ public abstract partial class SharedElectrocutionSystem : EntitySystem
     /// <param name="relayEntitiesVisited">Data structure that contains visited entities from relay to prevent infinite loops.</param>
     /// <returns>Whether the entity <see cref="uid"/> was stunned by the shock.</returns>
     public virtual bool TryDoElectrocution(
-        EntityUid uid, EntityUid? sourceUid, DamageSpecifier? shockDamage, TimeSpan time, bool refresh, float siemensCoefficient = 1f,
-        bool ignoreInsulation = false, bool isElectrocutionRelay = false,
+        EntityUid uid,
+        EntityUid? sourceUid,
+        DamageSpecifier? shockDamage,
+        TimeSpan time,
+        bool refresh,
+        float siemensCoefficient = 1f,
+        bool ignoreInsulation = false,
+        bool isElectrocutionRelay = false,
         HashSet<EntityUid>? relayEntitiesVisited = null)
     {
         // only done serverside

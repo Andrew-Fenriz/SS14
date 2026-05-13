@@ -300,8 +300,13 @@ public sealed partial class ElectrocutionSystem : SharedElectrocutionSystem
 
     /// <inheritdoc/>
     public override bool TryDoElectrocution(
-        EntityUid uid, EntityUid? sourceUid, DamageSpecifier? shockDamage, TimeSpan time, bool refresh, float siemensCoefficient = 1f,
-        bool ignoreInsulation = false, bool isElectrocutionRelay = false,
+        EntityUid uid,
+        EntityUid? sourceUid,
+        DamageSpecifier? shockDamage,
+        TimeSpan time, bool refresh,
+        float siemensCoefficient = 1f,
+        bool ignoreInsulation = false,
+        bool isElectrocutionRelay = false,
         HashSet<EntityUid>? relayEntitiesVisited = null)
     {
         if (!DoCommonElectrocutionAttempt(uid, sourceUid, ref siemensCoefficient, ignoreInsulation))
