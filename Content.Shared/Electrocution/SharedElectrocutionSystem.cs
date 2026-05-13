@@ -6,7 +6,7 @@ namespace Content.Shared.Electrocution;
 
 public abstract partial class SharedElectrocutionSystem : EntitySystem
 {
-    public static readonly EntProtoId ElectrocutionId = "StatusEffectElectrocution";
+    public static readonly EntProtoId ElectrocutionId = "StatusEffectElectrocuted";
 
     [Dependency] private SharedAppearanceSystem _appearance = default!;
 
