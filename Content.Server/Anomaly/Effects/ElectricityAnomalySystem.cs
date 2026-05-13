@@ -19,7 +19,7 @@ public sealed partial class ElectricityAnomalySystem : EntitySystem
     [Dependency] private ElectrocutionSystem _electrocution = default!;
     [Dependency] private EmpSystem _emp = default!;
     [Dependency] private EntityLookupSystem _lookup = default!;
-    [Dependency] private IPrototypeManager _prototypeManager = default!;
+    [Dependency] private IPrototypeManager _prototype = default!;
 
     /// <inheritdoc/>
     public override void Initialize()
@@ -62,7 +62,7 @@ public sealed partial class ElectricityAnomalySystem : EntitySystem
             var range = elec.MaxElectrocuteRange * anom.Stability;
             var damage = (int) (elec.MaxElectrocuteDamage * anom.Severity);
             var duration = elec.MaxElectrocuteDuration * anom.Severity;
-            var damageSpec = new DamageSpecifier(_prototypeManager.Index(ElectrocutionSystem.DamageType), damage);
+            var damageSpec = new DamageSpecifier(_prototype.Index(ElectrocutionSystem.DamageType), damage);
 
             foreach (var ent in _lookup.GetEntitiesInRange(_transform.GetMapCoordinates(uid, xform), range))
             {

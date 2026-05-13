@@ -54,7 +54,7 @@ public sealed partial class ElectrocutionSystem : SharedElectrocutionSystem
     [Dependency] private TagSystem _tag = default!;
     [Dependency] private MetaDataSystem _metaData = default!;
     [Dependency] private TurfSystem _turf = default!;
-    [Dependency] private SharedInteractionSystem _interactionSystem = default!;
+    [Dependency] private SharedInteractionSystem _interaction = default!;
 
     public static readonly ProtoId<DamageTypePrototype> DamageType = "Shock";
     private static readonly ProtoId<TagPrototype> WindowTag = "Window";
@@ -323,7 +323,7 @@ public sealed partial class ElectrocutionSystem : SharedElectrocutionSystem
             return true;
 
         var interacters = new HashSet<EntityUid>();
-        _interactionSystem.GetEntitiesInteractingWithTarget(uid, interacters);
+        _interaction.GetEntitiesInteractingWithTarget(uid, interacters);
 
         foreach (var other in interacters
             .Where(other => other != sourceUid)
