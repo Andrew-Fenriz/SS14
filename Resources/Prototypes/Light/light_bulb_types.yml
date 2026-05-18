@@ -1,0 +1,10 @@
+- type: lightBulbType
+  id: Tube
+  brokenPrototype: LightTubeBroken
+  agedPrototype: LightTubeOld
+  flickersWhenAged: true
+
+- type: lightBulbType
+  id: Bulb
+  brokenPrototype: LightBulbBroken
+  agedPrototype: LightBulbOld

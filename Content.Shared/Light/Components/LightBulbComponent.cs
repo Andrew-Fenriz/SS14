@@ -1,5 +1,7 @@
+using Content.Shared.Light.Prototypes;
 using Robust.Shared.Audio;
 using Robust.Shared.GameStates;
+using Robust.Shared.Prototypes;
 using Robust.Shared.Serialization;
 
 namespace Content.Shared.Light.Components;
@@ -21,7 +23,7 @@ public sealed partial class LightBulbComponent : Component
     /// The type of lightbulb. Tube/bulb/etc...
     /// </summary>
     [DataField("bulb")]
-    public LightBulbType Type = LightBulbType.Tube;
+    public ProtoId<LightBulbTypePrototype> Type = "Tube";
 
     /// <summary>
     /// The initial state of the lightbulb.
@@ -93,7 +95,7 @@ public enum LightBulbState : byte
 {
     Normal,
     Broken,
-    Burned,
+    Burned
 }
 
 [Serializable, NetSerializable]
@@ -104,14 +106,7 @@ public enum LightBulbVisuals : byte
 }
 
 [Serializable, NetSerializable]
-public enum LightBulbType : byte
-{
-    Bulb,
-    Tube,
-}
-
-[Serializable, NetSerializable]
 public enum LightBulbVisualLayers : byte
 {
-    Base,
+    Base
 }

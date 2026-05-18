@@ -1,6 +1,3 @@
-﻿using Content.Shared.Light.Components;
-using Robust.Shared.Prototypes;
-
 namespace Content.Server.GameTicking.Rules.VariationPass.Components;
 
 /// <summary>
@@ -23,16 +20,4 @@ public sealed partial class PoweredLightVariationPassComponent : Component
 
     [DataField]
     public float AgedLightTubeFlickerChance = 0.03f;
-
-    [DataField]
-    public EntProtoId BrokenLightBulbPrototype = "LightBulbBroken";
-
-    [DataField]
-    public EntProtoId BrokenLightTubePrototype = "LightTubeBroken";
-
-    [DataField]
-    public EntProtoId AgedLightBulbPrototype = "LightBulbOld";
-
-    [DataField]
-    public EntProtoId AgedLightTubePrototype = "LightTubeOld";
 }

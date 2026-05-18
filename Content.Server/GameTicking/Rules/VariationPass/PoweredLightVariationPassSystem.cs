@@ -1,7 +1,8 @@
-﻿using Content.Server.GameTicking.Rules.VariationPass.Components;
-using Content.Server.Light.Components;
+using Content.Server.GameTicking.Rules.VariationPass.Components;
 using Content.Server.Light.EntitySystems;
 using Content.Shared.Light.Components;
+using Content.Shared.Light.Prototypes;
+using Robust.Shared.Prototypes;
 using Robust.Shared.Random;
 
 namespace Content.Server.GameTicking.Rules.VariationPass;
@@ -10,6 +11,7 @@ namespace Content.Server.GameTicking.Rules.VariationPass;
 public sealed partial class PoweredLightVariationPassSystem : VariationPassSystem<PoweredLightVariationPassComponent>
 {
     [Dependency] private PoweredLightSystem _poweredLight = default!;
+    [Dependency] private IPrototypeManager _prototype = default!;
 
     protected override void ApplyVariation(Entity<PoweredLightVariationPassComponent> ent, ref StationVariationPassEvent args)
     {
@@ -21,31 +23,37 @@ public sealed partial class PoweredLightVariationPassSystem : VariationPassSyste
 
             if (Random.Prob(ent.Comp.LightBreakChance))
             {
-                var proto = comp.BulbType switch
-                {
-                    LightBulbType.Tube => ent.Comp.BrokenLightTubePrototype,
-                    _ => ent.Comp.BrokenLightBulbPrototype,
-                };
+                if (TryGetBulbType(comp, out var bulbType) && bulbType?.BrokenPrototype is { } broken)
+                    _poweredLight.ReplaceSpawnedPrototype((uid, comp), broken);
 
-                _poweredLight.ReplaceSpawnedPrototype((uid, comp), proto);
                 continue;
             }
 
             if (!Random.Prob(ent.Comp.LightAgingChance))
                 continue;
 
-            if (comp.BulbType == LightBulbType.Tube)
-            {
-                // some aging fluorescents (tubes) start to flicker
-                // its also way too annoying right now so we wrap it in another prob lol
-                if (Random.Prob(ent.Comp.AgedLightTubeFlickerChance))
-                    EnsureComp<BlinkingPoweredLightComponent>(uid);
-                _poweredLight.ReplaceSpawnedPrototype((uid, comp), ent.Comp.AgedLightTubePrototype);
-            }
-            else
-            {
-                _poweredLight.ReplaceSpawnedPrototype((uid, comp), ent.Comp.AgedLightBulbPrototype);
-            }
+            if (!TryGetBulbType(comp, out var agedBulbType))
+                continue;
+
+            // some aging light bulbs start to flicker
+            // its also way too annoying right now so we wrap it in another prob lol
+            if (agedBulbType is { FlickersWhenAged: true } && Random.Prob(ent.Comp.AgedLightTubeFlickerChance))
+                EnsureComp<BlinkingPoweredLightComponent>(uid);
+
+            if (agedBulbType?.AgedPrototype is { } aged)
+                _poweredLight.ReplaceSpawnedPrototype((uid, comp), aged);
         }
+    }
+
+    private bool TryGetBulbType(PoweredLightComponent light, out LightBulbTypePrototype? prototype)
+    {
+        if (_prototype.TryIndex(light.BulbType, out var indexed))
+        {
+            prototype = indexed;
+            return true;
+        }
+
+        prototype = default;
+        return false;
     }
 }
