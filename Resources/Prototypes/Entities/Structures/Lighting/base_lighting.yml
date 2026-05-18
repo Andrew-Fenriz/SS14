@@ -146,8 +146,10 @@
     state: base
   - type: PointLight
     enabled: true
-  - type: PoweredLight
-    hasLampOnSpawn: LightTube
+  - type: ContainerFill
+    containers:
+      light_bulb:
+      - LightTube
   - type: AmbientOnPowered
   - type: AmbientSound
     volume: -15
@@ -167,8 +169,10 @@
   suffix: LED
   parent: Poweredlight
   components:
-  - type: PoweredLight
-    hasLampOnSpawn: LedLightTube
+  - type: ContainerFill
+    containers:
+      light_bulb:
+      - LedLightTube
   - type: PointLight
     radius: 15
     energy: 1
@@ -198,8 +202,10 @@
   suffix: Exterior
   parent: Poweredlight
   components:
-  - type: PoweredLight
-    hasLampOnSpawn: ExteriorLightTube
+  - type: ContainerFill
+    containers:
+      light_bulb:
+      - ExteriorLightTube
   - type: DamageOnInteract
     damage:
       types:
@@ -224,8 +230,10 @@
   suffix: Sodium
   parent: Poweredlight
   components:
-  - type: PoweredLight
-    hasLampOnSpawn: SodiumLightTube
+  - type: ContainerFill
+    containers:
+      light_bulb:
+      - SodiumLightTube
   - type: PointLight
     radius: 10
     energy: 2.5
@@ -368,8 +376,10 @@
     energy: 1
     softness: 1
     color: "#EEEEFF"
-  - type: PoweredLight
-    hasLampOnSpawn: LedLightBulb
+  - type: ContainerFill
+    containers:
+      light_bulb:
+      - LedLightBulb
   - type: DamageOnInteract
     damage:
       types:
@@ -389,8 +399,10 @@
     energy: 0.5
     softness: 3
     color: "#ba473f"
-  - type: PoweredLight
-    hasLampOnSpawn: DimLightBulb
+  - type: ContainerFill
+    containers:
+      light_bulb:
+      - DimLightBulb
   - type: DamageOnInteract
     damage:
       types:
@@ -410,8 +422,10 @@
     energy: 1
     softness: 3
     color: "#FF8A0C"
-  - type: PoweredLight
-    hasLampOnSpawn: WarmLightBulb
+  - type: ContainerFill
+    containers:
+      light_bulb:
+      - WarmLightBulb
   - type: DamageOnInteract
     damage:
       types:
@@ -427,8 +441,10 @@
     state: base
   - type: PointLight
     enabled: true
-  - type: PoweredLight
-    hasLampOnSpawn: LightBulb
+  - type: ContainerFill
+    containers:
+      light_bulb:
+      - LightBulb
   - type: DamageOnInteract
     damage:
       types:
@@ -520,8 +536,10 @@
   suffix: Cyan
   parent: Poweredlight
   components:
-  - type: PoweredLight
-    hasLampOnSpawn: LightTubeCrystalCyan
+  - type: ContainerFill
+    containers:
+      light_bulb:
+      - LightTubeCrystalCyan
   - type: PointLight
     radius: 8
     energy: 3
@@ -549,8 +567,10 @@
   suffix: Blue
   parent: Poweredlight
   components:
-  - type: PoweredLight
-    hasLampOnSpawn: LightTubeCrystalBlue
+  - type: ContainerFill
+    containers:
+      light_bulb:
+      - LightTubeCrystalBlue
   - type: PointLight
     radius: 8
     energy: 3
@@ -578,8 +598,10 @@
   suffix: Yellow
   parent: Poweredlight
   components:
-  - type: PoweredLight
-    hasLampOnSpawn: LightTubeCrystalYellow
+  - type: ContainerFill
+    containers:
+      light_bulb:
+      - LightTubeCrystalYellow
   - type: PointLight
     radius: 8
     energy: 3
@@ -607,8 +629,10 @@
   suffix: Pink
   parent: Poweredlight
   components:
-  - type: PoweredLight
-    hasLampOnSpawn: LightTubeCrystalPink
+  - type: ContainerFill
+    containers:
+      light_bulb:
+      - LightTubeCrystalPink
   - type: PointLight
     radius: 8
     energy: 3
@@ -636,8 +660,10 @@
   suffix: Orange
   parent: Poweredlight
   components:
-  - type: PoweredLight
-    hasLampOnSpawn: LightTubeCrystalOrange
+  - type: ContainerFill
+    containers:
+      light_bulb:
+      - LightTubeCrystalOrange
   - type: PointLight
     radius: 8
     energy: 3
@@ -666,8 +692,10 @@
   parent: Poweredlight
   description:
   components:
-  - type: PoweredLight
-    hasLampOnSpawn: LightTubeCrystalBlack
+  - type: ContainerFill
+    containers:
+      light_bulb:
+      - LightTubeCrystalBlack
   - type: PointLight
     radius: 8
     energy: 1
@@ -695,8 +723,10 @@
   suffix: Red
   parent: Poweredlight
   components:
-  - type: PoweredLight
-    hasLampOnSpawn: LightTubeCrystalRed
+  - type: ContainerFill
+    containers:
+      light_bulb:
+      - LightTubeCrystalRed
   - type: PointLight
     radius: 8
     energy: 3
@@ -724,8 +754,10 @@
   suffix: Green
   parent: Poweredlight
   components:
-  - type: PoweredLight
-    hasLampOnSpawn: LightTubeCrystalGreen
+  - type: ContainerFill
+    containers:
+      light_bulb:
+      - LightTubeCrystalGreen
   - type: PointLight
     radius: 8
     energy: 3

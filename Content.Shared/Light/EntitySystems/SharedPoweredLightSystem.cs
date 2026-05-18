@@ -1,5 +1,5 @@
 using Content.Shared.Audio;
-using Content.Shared.Damage;
+using Content.Shared.Containers;
 using Content.Shared.Damage.Components;
 using Content.Shared.Damage.Systems;
 using Content.Shared.DeviceLinking;
@@ -17,6 +17,7 @@ using Content.Shared.Power.EntitySystems;
 using Content.Shared.Storage.EntitySystems;
 using Robust.Shared.Audio.Systems;
 using Robust.Shared.Containers;
+using Robust.Shared.Prototypes;
 using Robust.Shared.Timing;
 
 namespace Content.Shared.Light.EntitySystems;
@@ -28,7 +29,7 @@ public abstract partial class SharedPoweredLightSystem : EntitySystem
     [Dependency] private SharedAmbientSoundSystem _ambientSystem = default!;
     [Dependency] private SharedAppearanceSystem _appearance = default!;
     [Dependency] private SharedAudioSystem _audio = default!;
-    [Dependency] protected SharedContainerSystem ContainerSystem = default!;
+    [Dependency] private SharedContainerSystem ContainerSystem = default!;
     [Dependency] private SharedDoAfterSystem _doAfterSystem = default!;
     [Dependency] private SharedLightBulbSystem _bulbSystem = default!;
     [Dependency] private SharedHandsSystem _handsSystem = default!;
@@ -198,16 +199,14 @@ public abstract partial class SharedPoweredLightSystem : EntitySystem
     /// <summary>
     ///     Replaces the spawned prototype of a pre-mapinit powered light with a different variant.
     /// </summary>
-    public bool ReplaceSpawnedPrototype(Entity<PoweredLightComponent> light, string bulb)
+    public void ReplaceSpawnedPrototype(Entity<PoweredLightComponent> light, EntProtoId bulb)
     {
-        if (light.Comp.LightBulbContainer.ContainedEntity != null)
-            return false;
+        if (light.Comp.LightBulbContainer.ContainedEntity != null) return;
 
-        if (LifeStage(light.Owner) >= EntityLifeStage.MapInitialized)
-            return false;
+        if (LifeStage(light.Owner) >= EntityLifeStage.MapInitialized) return;
 
-        light.Comp.HasLampOnSpawn = bulb;
-        return true;
+        var fill = EnsureComp<ContainerFillComponent>(light.Owner);
+        fill.Containers[LightBulbContainer] = new() { bulb };
     }
 
     /// <summary>

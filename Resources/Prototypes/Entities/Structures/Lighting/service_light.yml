@@ -23,7 +23,10 @@
   - type: PoweredLight
     bulb: Bulb
     on: false
-    hasLampOnSpawn: ServiceLightBulb
+  - type: ContainerFill
+    containers:
+      light_bulb:
+      - ServiceLightBulb
   - type: DamageOnInteract
     damage:
       types:

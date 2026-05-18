@@ -127,8 +127,10 @@
     state: base
   - type: PointLight
     enabled: true
-  - type: PoweredLight
-    hasLampOnSpawn: LightTube
+  - type: ContainerFill
+    containers:
+      light_bulb:
+      - LightTube
   - type: AmbientOnPowered
   - type: AmbientSound
     volume: -15
@@ -156,8 +158,10 @@
     energy: 1
     softness: 0.9
     color: "#EEEEFF"
-  - type: PoweredLight
-    hasLampOnSpawn: LedLightTube
+  - type: ContainerFill
+    containers:
+      light_bulb:
+      - LedLightTube
   - type: AmbientOnPowered
   - type: AmbientSound
     volume: -15
