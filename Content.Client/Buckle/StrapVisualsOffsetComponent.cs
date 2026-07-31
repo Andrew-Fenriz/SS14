@@ -9,6 +9,7 @@ namespace Content.Client.Buckle;
 /// This is client-only runtime state. It is not intended for use in prototypes.
 /// </remarks>
 [RegisterComponent]
+[Access(typeof(BuckleSystem))]
 public sealed partial class StrapVisualsOffsetComponent : Component
 {
     /// <summary>
