@@ -63,7 +63,7 @@
     baseSprintSpeed: 2
   - type: GravityAffected
   - type: StrapVisuals
-    visuals:
+    directions:
       South:
         offset: "0, -0.05"
       East:
@@ -145,7 +145,7 @@
   - type: Strap
     modifyBuckleDrawDepth: false
   - type: StrapVisuals
-    visuals:
+    directions:
       South:
         offset: "0.01, 0.15"
       East:

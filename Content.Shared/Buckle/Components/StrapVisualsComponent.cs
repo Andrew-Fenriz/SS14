@@ -17,7 +17,7 @@ public sealed partial class StrapVisualsComponent : Component
     /// Missing directions apply no visual changes.
     /// </summary>
     [DataField]
-    public Dictionary<Direction, StrapDirectionVisuals> Visuals = new();
+    public Dictionary<Direction, StrapDirectionVisuals> Directions = new();
 }
 
 /// <summary>

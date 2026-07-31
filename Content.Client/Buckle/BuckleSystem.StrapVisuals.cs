@@ -12,23 +12,17 @@ internal sealed partial class BuckleSystem
 
         // Eye rotation has no change event, and rotating a parent grid does not necessarily move the strap itself.
         // Check active trackers every frame, but only touch the sprite when its apparent cardinal direction changes.
-        var query = EntityQueryEnumerator<StrapVisualsOffsetComponent, BuckleComponent, SpriteComponent>();
-        while (query.MoveNext(out var uid, out var tracker, out var buckle, out var sprite))
+        var query = EntityQueryEnumerator<ActiveStrapVisualsComponent, BuckleComponent, SpriteComponent>();
+        while (query.MoveNext(out var uid, out var active, out var buckle, out var sprite))
         {
-            if (buckle.BuckledTo != tracker.Strap ||
-                !TryComp<StrapComponent>(tracker.Strap, out _) ||
-                !TryComp<StrapVisualsComponent>(tracker.Strap, out var visuals))
+            if (buckle.BuckledTo != active.Strap ||
+                !TryComp<StrapComponent>(active.Strap, out _) ||
+                !TryComp<StrapVisualsComponent>(active.Strap, out var visuals))
             {
-                RemCompDeferred(uid, tracker);
+                RemCompDeferred(uid, active);
                 continue;
             }
-
-            var direction = GetStrapScreenDirection(tracker.Strap);
-            if (tracker.Direction == direction)
-                continue;
-
-            var offset = visuals.Visuals.GetValueOrDefault(direction)?.Offset ?? Vector2.Zero;
-            ApplyOffset((uid, sprite), tracker, direction, offset);
+            RefreshStrapVisuals((uid, sprite), active, visuals);
         }
     }
 
@@ -41,15 +35,25 @@ internal sealed partial class BuckleSystem
             return;
         }
 
-        var tracker = EnsureComp<StrapVisualsOffsetComponent>(buckle);
-        if (tracker.Strap != strap.Owner)
-            RemoveAppliedOffset((buckle, sprite), tracker);
+        var active = EnsureComp<ActiveStrapVisualsComponent>(buckle);
+        if (active.Strap != strap.Owner)
+            ResetStrapVisuals((buckle, sprite), active);
 
-        tracker.Strap = strap;
+        active.Strap = strap;
+        RefreshStrapVisuals((buckle, sprite), active, visuals);
+    }
 
-        var direction = GetStrapScreenDirection(strap);
-        var offset = visuals.Visuals.GetValueOrDefault(direction)?.Offset ?? Vector2.Zero;
-        ApplyOffset((buckle, sprite), tracker, direction, offset);
+    private void RefreshStrapVisuals(
+        Entity<SpriteComponent?> buckle,
+        ActiveStrapVisualsComponent active,
+        StrapVisualsComponent visuals)
+    {
+        var direction = GetStrapScreenDirection(active.Strap);
+        if (active.Direction == direction)
+            return;
+
+        var directionVisuals = visuals.Directions.GetValueOrDefault(direction);
+        ApplyDirectionVisuals(buckle, active, direction, directionVisuals);
     }
 
     private Direction GetStrapScreenDirection(EntityUid strap)
@@ -58,43 +62,43 @@ internal sealed partial class BuckleSystem
         return rotation.GetCardinalDir();
     }
 
-    private void ApplyOffset(
+    private void ApplyDirectionVisuals(
         Entity<SpriteComponent?> buckle,
-        StrapVisualsOffsetComponent tracker,
+        ActiveStrapVisualsComponent active,
         Direction direction,
-        Vector2 offset)
+        StrapDirectionVisuals? visuals)
     {
-        var baseOffset = buckle.Comp!.Offset - tracker.AppliedOffset;
+        var offset = visuals?.Offset ?? Vector2.Zero;
+        var baseOffset = buckle.Comp!.Offset - active.AppliedOffset;
         _sprite.SetOffset(buckle, baseOffset + offset);
 
-        tracker.Direction = direction;
-        tracker.AppliedOffset = offset;
+        active.Direction = direction;
+        active.AppliedOffset = offset;
     }
 
     private void RemoveStrapVisuals(EntityUid buckle)
     {
-        if (HasComp<StrapVisualsOffsetComponent>(buckle))
-            RemComp<StrapVisualsOffsetComponent>(buckle);
+        if (HasComp<ActiveStrapVisualsComponent>(buckle))
+            RemComp<ActiveStrapVisualsComponent>(buckle);
     }
 
     [SubscribeLocalEvent]
-    private void OnStrapVisualsTrackerShutdown(
-        Entity<StrapVisualsOffsetComponent> ent,
+    private void OnActiveStrapVisualsShutdown(
+        Entity<ActiveStrapVisualsComponent> ent,
         ref ComponentShutdown args)
     {
         if (TryComp<SpriteComponent>(ent, out var sprite))
-            RemoveAppliedOffset((ent, sprite), ent.Comp);
+            ResetStrapVisuals((ent, sprite), ent.Comp);
     }
 
-    private void RemoveAppliedOffset(
+    private void ResetStrapVisuals(
         Entity<SpriteComponent?> buckle,
-        StrapVisualsOffsetComponent tracker)
+        ActiveStrapVisualsComponent active)
     {
-        if (tracker.AppliedOffset == Vector2.Zero)
-            return;
+        if (active.AppliedOffset != Vector2.Zero)
+            _sprite.SetOffset(buckle, buckle.Comp!.Offset - active.AppliedOffset);
 
-        _sprite.SetOffset(buckle, buckle.Comp!.Offset - tracker.AppliedOffset);
-        tracker.AppliedOffset = Vector2.Zero;
-        tracker.Direction = null;
+        active.AppliedOffset = Vector2.Zero;
+        active.Direction = null;
     }
 }

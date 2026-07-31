@@ -3,14 +3,14 @@ using System.Numerics;
 namespace Content.Client.Buckle;
 
 /// <summary>
-/// Tracks the visual offset applied to an entity by a strap.
+/// Tracks the visuals currently applied to an entity by a strap.
 /// </summary>
 /// <remarks>
 /// This is client-only runtime state. It is not intended for use in prototypes.
 /// </remarks>
 [RegisterComponent]
 [Access(typeof(BuckleSystem))]
-public sealed partial class StrapVisualsOffsetComponent : Component
+public sealed partial class ActiveStrapVisualsComponent : Component
 {
     /// <summary>
     /// The strap supplying the current visuals.
