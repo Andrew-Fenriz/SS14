@@ -62,8 +62,16 @@
     baseWalkSpeed: 2
     baseSprintSpeed: 2
   - type: GravityAffected
-  - type: Strap
-    buckleOffset: "0,-0.05"
+  - type: StrapVisuals
+    visuals:
+      South:
+        offset: "0, -0.05"
+      East:
+        offset: "0.05, 0"
+      North:
+        offset: "0, 0.05"
+      West:
+        offset: "-0.05, 0"
   - type: Fixtures
     fixtures:
       fix1:
@@ -135,8 +143,17 @@
       #      min: 1
       #      max: 1
   - type: Strap
-    buckleOffset: "0.01,0.15"
     modifyBuckleDrawDepth: false
+  - type: StrapVisuals
+    visuals:
+      South:
+        offset: "0.01, 0.15"
+      East:
+        offset: "-0.15, 0.01"
+      North:
+        offset: "-0.01, -0.15"
+      West:
+        offset: "0.15, -0.01"
   - type: ItemSlots
     slots:
       key_slot:
