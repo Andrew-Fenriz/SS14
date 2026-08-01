@@ -14,6 +14,7 @@ internal sealed partial class BuckleSystem : SharedBuckleSystem
     [Dependency] private IEyeManager _eye = default!;
     [Dependency] private SharedTransformSystem _xformSystem = default!;
     [Dependency] private SpriteSystem _sprite = default!;
+
     [Dependency] private EntityQuery<SpriteComponent> _spriteQuery;
 
     #region Event Handlers
