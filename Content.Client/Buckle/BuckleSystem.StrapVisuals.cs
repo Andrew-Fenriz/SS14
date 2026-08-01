@@ -1,6 +1,8 @@
 using System.Numerics;
 using Content.Shared.Buckle.Components;
 using Robust.Client.GameObjects;
+using Robust.Client.Utility;
+using Robust.Shared.Graphics.RSI;
 
 namespace Content.Client.Buckle;
 
@@ -58,8 +60,12 @@ internal sealed partial class BuckleSystem
 
     private Direction GetStrapScreenDirection(EntityUid strap)
     {
-        var rotation = _xformSystem.GetWorldRotation(strap) + _eye.CurrentEye.Rotation;
-        return rotation.GetCardinalDir();
+        // Match SpriteSystem.RenderSprite exactly so the offset and the directional RSI frame change together.
+        // In particular, Layer.GetDirection applies the renderer's bias around diagonal boundaries.
+        var rotation = (_xformSystem.GetWorldRotation(strap) + _eye.CurrentEye.Rotation)
+            .Reduced()
+            .FlipPositive();
+        return SpriteComponent.Layer.GetDirection(RsiDirectionType.Dir4, rotation).Convert();
     }
 
     private void ApplyDirectionVisuals(
