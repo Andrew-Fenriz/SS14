@@ -1,5 +1,3 @@
-using System.Numerics;
-
 namespace Content.Shared.Buckle.Components;
 
 /// <summary>
@@ -10,6 +8,7 @@ namespace Content.Shared.Buckle.Components;
 /// Directions are relative to the apparent direction of the strap on screen.
 /// </remarks>
 [RegisterComponent]
+[Access(typeof(SharedBuckleSystem))]
 public sealed partial class StrapVisualsComponent : Component
 {
     /// <summary>
@@ -27,8 +26,8 @@ public sealed partial class StrapVisualsComponent : Component
 public sealed partial class StrapDirectionVisuals
 {
     /// <summary>
-    /// An offset added to the buckled entity's sprite without changing its transform.
+    /// An offset, in pixels, added to the buckled entity's sprite without changing its transform.
     /// </summary>
     [DataField]
-    public Vector2 Offset;
+    public Vector2i PixelOffset;
 }

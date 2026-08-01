@@ -1,6 +1,7 @@
 using System.Numerics;
 using Content.Shared.Buckle.Components;
 using Robust.Client.GameObjects;
+using Robust.Client.Graphics;
 using Robust.Client.Utility;
 using Robust.Shared.Graphics.RSI;
 
@@ -74,7 +75,8 @@ internal sealed partial class BuckleSystem
         Direction direction,
         StrapDirectionVisuals? visuals)
     {
-        var offset = visuals?.Offset ?? Vector2.Zero;
+        var pixelOffset = visuals?.PixelOffset ?? Vector2i.Zero;
+        var offset = (Vector2) pixelOffset / EyeManager.PixelsPerMeter;
         var baseOffset = buckle.Comp!.Offset - active.AppliedOffset;
         _sprite.SetOffset(buckle, baseOffset + offset);
 

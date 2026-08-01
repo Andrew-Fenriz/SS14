@@ -139,13 +139,13 @@
   - type: StrapVisuals
     directions:
       North:
-        offset: "0, 0.125"
+        pixelOffset: "0, 5"
       South:
-        offset: "0, 0.21875"
+        pixelOffset: "0, 5"
       East:
-        offset: "-0.375, 0.21875"
+        pixelOffset: "-12, 5"
       West:
-        offset: "0.375, 0.21875"
+        pixelOffset: "12, 5"
   - type: ItemSlots
     slots:
       key_slot:
