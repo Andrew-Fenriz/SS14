@@ -143,9 +143,9 @@
       South:
         pixelOffset: "0, 5"
       East:
-        pixelOffset: "-12, 5"
+        pixelOffset: "-10, 5"
       West:
-        pixelOffset: "12, 5"
+        pixelOffset: "10, 5"
   - type: ItemSlots
     slots:
       key_slot:
