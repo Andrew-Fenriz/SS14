@@ -3,13 +3,11 @@ using System.Numerics;
 using System.Threading;
 using Content.Server.Atmos.EntitySystems;
 using Content.Server.Atmos.Piping.EntitySystems;
-using Content.Server.Body.Systems;
 using Content.Server.Electrocution;
 using Content.Server.Explosion.EntitySystems;
 using Content.Server.GhostKick;
 using Content.Server.Nutrition.EntitySystems;
 using Content.Server.Physics.Components;
-using Content.Server.Pointing.Components;
 using Content.Server.Polymorph.Systems;
 using Content.Server.Popups;
 using Content.Server.Roles;
@@ -19,13 +17,13 @@ using Content.Server.Tabletop;
 using Content.Shared.Actions;
 using Content.Shared.Administration;
 using Content.Shared.Administration.Components;
+using Content.Shared.Administration.Prototypes;
 using Content.Shared.Atmos;
 using Content.Shared.Atmos.Components;
 using Content.Shared.Body;
 using Content.Shared.Body.Components;
 using Content.Shared.Body.Systems;
 using Content.Shared.Clothing.Components;
-using Content.Shared.Cluwne;
 using Content.Shared.Damage.Components;
 using Content.Shared.Damage.Systems;
 using Content.Shared.Database;
@@ -52,6 +50,7 @@ using Content.Shared.Storage.Components;
 using Content.Shared.Tabletop.Components;
 using Content.Shared.Tools.Systems;
 using Content.Shared.Verbs;
+using Content.Shared.Whitelist;
 using Robust.Shared.Map.Components;
 using Robust.Shared.Physics;
 using Robust.Shared.Physics.Components;
@@ -102,6 +101,8 @@ public sealed partial class AdminVerbSystem
     [Dependency] private DamageableSystem _damageable = default!;
     [Dependency] private AtmosDeviceSystem _atmosDevice = default!;
     [Dependency] private StatusEffectsSystem _statusEffects = default!;
+    [Dependency] private AdminSmiteSystem _smiteSystem = default!;
+    [Dependency] private EntityWhitelistSystem _whitelistSystem = default!;
 
     private readonly EntProtoId _actionViewLawsProtoId = "ActionViewLaws";
     private readonly ProtoId<SiliconLawsetPrototype> _crewsimovLawset = "Crewsimov";
@@ -123,6 +124,8 @@ public sealed partial class AdminVerbSystem
         // 1984.
         if (HasComp<MapComponent>(args.Target) || HasComp<MapGridComponent>(args.Target))
             return;
+
+        AddPrototypeSmiteVerbs(args);
 
         var explodeName = Loc.GetString("admin-smite-explode-name").ToLowerInvariant();
         Verb explode = new()
@@ -615,23 +618,6 @@ public sealed partial class AdminVerbSystem
             };
             args.Verbs.Add(hiddenKillSign);
 
-            var cluwneName = Loc.GetString("admin-smite-cluwne-name").ToLowerInvariant();
-            Verb cluwne = new()
-            {
-                Text = cluwneName,
-                Category = VerbCategory.Smite,
-
-                Icon = new SpriteSpecifier.Rsi(new("/Textures/Clothing/Mask/cluwne.rsi"), "icon"),
-
-                Act = () =>
-                {
-                    EnsureComp<CluwneComponent>(args.Target);
-                },
-                Impact = LogImpact.Extreme,
-                Message = string.Join(": ", cluwneName, Loc.GetString("admin-smite-cluwne-description"))
-            };
-            args.Verbs.Add(cluwne);
-
             var maidenName = Loc.GetString("admin-smite-maid-name").ToLowerInvariant();
             Verb maiden = new()
             {
@@ -653,21 +639,6 @@ public sealed partial class AdminVerbSystem
             args.Verbs.Add(maiden);
         }
 
-        var angerPointingArrowsName = Loc.GetString("admin-smite-anger-pointing-arrows-name").ToLowerInvariant();
-        Verb angerPointingArrows = new()
-        {
-            Text = angerPointingArrowsName,
-            Category = VerbCategory.Smite,
-            Icon = new SpriteSpecifier.Rsi(new("/Textures/Interface/Misc/pointing.rsi"), "pointing"),
-            Act = () =>
-            {
-                EnsureComp<PointingArrowAngeringComponent>(args.Target);
-            },
-            Impact = LogImpact.Extreme,
-            Message = string.Join(": ", angerPointingArrowsName, Loc.GetString("admin-smite-anger-pointing-arrows-description"))
-        };
-        args.Verbs.Add(angerPointingArrows);
-
         var dustName = Loc.GetString("admin-smite-dust-name").ToLowerInvariant();
         Verb dust = new()
         {
@@ -684,21 +655,6 @@ public sealed partial class AdminVerbSystem
             Message = string.Join(": ", dustName, Loc.GetString("admin-smite-dust-description"))
         };
         args.Verbs.Add(dust);
-
-        var youtubeVideoSimulationName = Loc.GetString("admin-smite-buffering-name").ToLowerInvariant();
-        Verb youtubeVideoSimulation = new()
-        {
-            Text = youtubeVideoSimulationName,
-            Category = VerbCategory.Smite,
-            Icon = new SpriteSpecifier.Texture(new("/Textures/Interface/Misc/buffering_smite_icon.png")),
-            Act = () =>
-            {
-                EnsureComp<BufferingComponent>(args.Target);
-            },
-            Impact = LogImpact.Extreme,
-            Message = string.Join(": ", youtubeVideoSimulationName, Loc.GetString("admin-smite-buffering-description"))
-        };
-        args.Verbs.Add(youtubeVideoSimulation);
 
         var instrumentationName = Loc.GetString("admin-smite-become-instrument-name").ToLowerInvariant();
         Verb instrumentation = new()
@@ -791,21 +747,6 @@ public sealed partial class AdminVerbSystem
         };
         args.Verbs.Add(locker);
 
-        var headstandName = Loc.GetString("admin-smite-headstand-name").ToLowerInvariant();
-        Verb headstand = new()
-        {
-            Text = headstandName,
-            Category = VerbCategory.Smite,
-            Icon = new SpriteSpecifier.Texture(new("/Textures/Interface/VerbIcons/refresh.svg.192dpi.png")),
-            Act = () =>
-            {
-                EnsureComp<HeadstandComponent>(args.Target);
-            },
-            Impact = LogImpact.Extreme,
-            Message = string.Join(": ", headstandName, Loc.GetString("admin-smite-headstand-description"))
-        };
-        args.Verbs.Add(headstand);
-
         var zoomInName = Loc.GetString("admin-smite-zoom-in-name").ToLowerInvariant();
         Verb zoomIn = new()
         {
@@ -858,36 +799,6 @@ public sealed partial class AdminVerbSystem
             Message = string.Join(": ", runWalkSwapName, Loc.GetString("admin-smite-run-walk-swap-description"))
         };
         args.Verbs.Add(runWalkSwap);
-
-        var backwardsAccentName = Loc.GetString("admin-smite-speak-backwards-name").ToLowerInvariant();
-        Verb backwardsAccent = new()
-        {
-            Text = backwardsAccentName,
-            Category = VerbCategory.Smite,
-            Icon = new SpriteSpecifier.Texture(new("/Textures/Interface/AdminActions/help-backwards.png")),
-            Act = () =>
-            {
-                EnsureComp<BackwardsAccentComponent>(args.Target);
-            },
-            Impact = LogImpact.Extreme,
-            Message = string.Join(": ", backwardsAccentName, Loc.GetString("admin-smite-speak-backwards-description"))
-        };
-        args.Verbs.Add(backwardsAccent);
-
-        var disarmProneName = Loc.GetString("admin-smite-disarm-prone-name").ToLowerInvariant();
-        Verb disarmProne = new()
-        {
-            Text = disarmProneName,
-            Category = VerbCategory.Smite,
-            Icon = new SpriteSpecifier.Texture(new("/Textures/Interface/Actions/disarm.png")),
-            Act = () =>
-            {
-                EnsureComp<DisarmProneComponent>(args.Target);
-            },
-            Impact = LogImpact.Extreme,
-            Message = string.Join(": ", disarmProneName, Loc.GetString("admin-smite-disarm-prone-description"))
-        };
-        args.Verbs.Add(disarmProne);
 
         var superSpeedName = Loc.GetString("admin-smite-super-speed-name").ToLowerInvariant();
         Verb superSpeed = new()
@@ -997,21 +908,6 @@ public sealed partial class AdminVerbSystem
         };
         args.Verbs.Add(omniaccent);
 
-        var crawlerName = Loc.GetString("admin-smite-crawler-name").ToLowerInvariant();
-        Verb crawler = new()
-        {
-            Text = crawlerName,
-            Category = VerbCategory.Smite,
-            Icon = new SpriteSpecifier.Rsi(new("Mobs/Animals/snake.rsi"), "icon"),
-            Act = () =>
-            {
-                EnsureComp<WormComponent>(args.Target);
-            },
-            Impact = LogImpact.Extreme,
-            Message = string.Join(": ", crawlerName, Loc.GetString("admin-smite-crawler-description"))
-        };
-        args.Verbs.Add(crawler);
-
         var siliconName = Loc.GetString("admin-smite-silicon-laws-bound-name").ToLowerInvariant();
         Verb silicon = new()
         {
@@ -1103,6 +999,29 @@ public sealed partial class AdminVerbSystem
             Message = string.Join(": ", makeStinkyName, Loc.GetString("admin-smite-make-stinky-description"))
         };
         args.Verbs.Add(makeStinky);
+    }
+
+    private void AddPrototypeSmiteVerbs(GetVerbsEvent<Verb> args)
+    {
+        foreach (var prototype in ProtoMan.EnumeratePrototypes<AdminSmitePrototype>())
+        {
+            if (!_whitelistSystem.CheckBoth(args.Target, whitelist: prototype.Whitelist))
+                continue;
+
+            var name = Loc.GetString(prototype.Name).ToLowerInvariant();
+            var verb = new Verb
+            {
+                Text = name,
+                Category = VerbCategory.Smite,
+                Icon = prototype.Icon,
+                Act = () => _smiteSystem.Apply(args.Target, args.User, prototype),
+                Impact = LogImpact.Extreme,
+                Message = prototype.Description is { } description
+                    ? string.Join(": ", name, Loc.GetString(description))
+                    : null
+            };
+            args.Verbs.Add(verb);
+        }
     }
 
     public void HomingLaunchSequence(EntityUid target, EntProtoId proto, float distance, float speed)

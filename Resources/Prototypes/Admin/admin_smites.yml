@@ -1,0 +1,92 @@
+- type: adminSmite
+  id: AdminSmiteBuffering
+  name: admin-smite-buffering-name
+  description: admin-smite-buffering-description
+  icon: Interface/Misc/buffering_smite_icon.png
+  operations:
+  - !type:ApplyEntityEffects
+    effects:
+    - !type:AddComponents
+      components:
+      - type: Buffering
+
+- type: adminSmite
+  id: AdminSmiteCluwne
+  name: admin-smite-cluwne-name
+  description: admin-smite-cluwne-description
+  icon:
+    sprite: Clothing/Mask/cluwne.rsi
+    state: icon
+  whitelist:
+    components:
+    - Inventory
+  operations:
+  - !type:ApplyEntityEffects
+    effects:
+    - !type:AddComponents
+      components:
+      - type: Cluwne
+
+- type: adminSmite
+  id: AdminSmiteAngerPointingArrows
+  name: admin-smite-anger-pointing-arrows-name
+  description: admin-smite-anger-pointing-arrows-description
+  icon:
+    sprite: Interface/Misc/pointing.rsi
+    state: pointing
+  operations:
+  - !type:ApplyEntityEffects
+    effects:
+    - !type:AddComponents
+      components:
+      - type: PointingArrowAngering
+
+- type: adminSmite
+  id: AdminSmiteHeadstand
+  name: admin-smite-headstand-name
+  description: admin-smite-headstand-description
+  icon: Interface/VerbIcons/refresh.svg.192dpi.png
+  operations:
+  - !type:ApplyEntityEffects
+    effects:
+    - !type:AddComponents
+      components:
+      - type: Headstand
+
+- type: adminSmite
+  id: AdminSmiteSpeakBackwards
+  name: admin-smite-speak-backwards-name
+  description: admin-smite-speak-backwards-description
+  icon: Interface/AdminActions/help-backwards.png
+  operations:
+  - !type:ApplyEntityEffects
+    effects:
+    - !type:AddComponents
+      components:
+      - type: BackwardsAccent
+
+- type: adminSmite
+  id: AdminSmiteDisarmProne
+  name: admin-smite-disarm-prone-name
+  description: admin-smite-disarm-prone-description
+  icon: Interface/Actions/disarm.png
+  operations:
+  - !type:ApplyEntityEffects
+    effects:
+    - !type:AddComponents
+      components:
+      - type: DisarmProne
+
+- type: adminSmite
+  id: AdminSmiteCrawler
+  name: admin-smite-crawler-name
+  description: admin-smite-crawler-description
+  icon:
+    sprite: Mobs/Animals/snake.rsi
+    state: icon
+  operations:
+  - !type:ApplyEntityEffects
+    effects:
+    - !type:AddComponents
+      components:
+      - type: Worm
