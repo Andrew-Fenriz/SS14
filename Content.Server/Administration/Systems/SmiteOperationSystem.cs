@@ -20,7 +20,7 @@ public sealed partial class SmiteOperationSystem : EntitySystem
     private void OnAddComponents(Entity<MetaDataComponent> entity,
         ref SmiteOperationEvent<AddComponentsSmite> args)
     {
-        EntityManager.AddComponents(entity, args.Operation.Components, removeExisting: false);
+        EntityManager.AddComponents(entity, args.Operation.Components, removeExisting: args.Operation.ReplaceExisting);
     }
 
     [SubscribeLocalEvent]
