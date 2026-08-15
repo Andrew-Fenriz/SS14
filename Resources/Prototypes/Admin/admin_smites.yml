@@ -1,4 +1,30 @@
 - type: adminSmite
+  id: AdminSmiteSuperBonkLite
+  name: admin-smite-super-bonk-lite-name
+  description: admin-smite-super-bonk-lite-description
+  icon:
+    sprite: Structures/Furniture/Tables/glass.rsi
+    state: full
+  operations:
+  - !type:AddComponentsSmite
+    components:
+    - type: SuperBonk
+      stopWhenDead: true
+
+- type: adminSmite
+  id: AdminSmiteSuperBonk
+  name: admin-smite-super-bonk-name
+  description: admin-smite-super-bonk-description
+  icon:
+    sprite: Structures/Furniture/Tables/generic.rsi
+    state: full
+  operations:
+  - !type:AddComponentsSmite
+    components:
+    - type: SuperBonk
+      stopWhenDead: false
+
+- type: adminSmite
   id: AdminSmiteNyanify
   name: admin-smite-nyanify-name
   description: admin-smite-nyanify-description
