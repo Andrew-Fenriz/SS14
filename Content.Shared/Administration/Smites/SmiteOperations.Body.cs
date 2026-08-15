@@ -1,7 +1,7 @@
 using Content.Shared.Body;
 using Robust.Shared.Prototypes;
 
-namespace Content.Shared.Administration.Smites.Operations;
+namespace Content.Shared.Administration.Smites;
 
 /// <summary>
 /// Applies the effects of a cream pie hit to the smite target.

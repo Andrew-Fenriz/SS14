@@ -1,5 +1,14 @@
+using Content.Server.GhostKick;
+using Content.Server.Polymorph.Systems;
+using Content.Server.Popups;
 using Content.Shared.Administration.Prototypes;
 using Content.Shared.Administration.Smites;
+using Content.Shared.Body;
+using Content.Shared.Body.Systems;
+using Content.Shared.EntityEffects;
+using Content.Shared.Inventory;
+using Content.Shared.Nutrition.EntitySystems;
+using Content.Shared.Stunnable;
 
 namespace Content.Server.Administration.Systems;
 
@@ -8,6 +17,17 @@ namespace Content.Server.Administration.Systems;
 /// </summary>
 public sealed partial class AdminSmiteSystem : EntitySystem, ISmiteOperationRaiser
 {
+    [Dependency] private BodySystem _body = default!;
+    [Dependency] private BloodstreamSystem _bloodstream = default!;
+    [Dependency] private SharedCreamPieSystem _creamPie = default!;
+    [Dependency] private SharedEntityEffectsSystem _entityEffects = default!;
+    [Dependency] private GhostKickManager _ghostKick = default!;
+    [Dependency] private InventorySystem _inventory = default!;
+    [Dependency] private PolymorphSystem _polymorph = default!;
+    [Dependency] private PopupSystem _popup = default!;
+    [Dependency] private SharedStunSystem _stun = default!;
+    [Dependency] private SharedTransformSystem _transform = default!;
+
     public void Apply(EntityUid target, EntityUid user, AdminSmitePrototype prototype)
     {
         Apply(target, user, prototype.Operations);

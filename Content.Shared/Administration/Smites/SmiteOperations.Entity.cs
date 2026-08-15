@@ -1,9 +1,8 @@
 using Content.Shared.EntityEffects;
 using Content.Shared.Polymorph;
-using Content.Shared.Popups;
 using Robust.Shared.Prototypes;
 
-namespace Content.Shared.Administration.Smites.Operations;
+namespace Content.Shared.Administration.Smites;
 
 /// <summary>
 /// Adds configured components to the smite target, optionally replacing existing components.
@@ -55,54 +54,3 @@ public sealed partial class PolymorphSmite : SmiteOperationBase<PolymorphSmite>
     [DataField(required: true)]
     public ProtoId<PolymorphPrototype> Prototype { get; private set; }
 }
-
-/// <summary>
-/// Displays one localized popup for a smite target.
-/// </summary>
-public sealed partial class PopupSmite : SmiteOperationBase<PopupSmite>
-{
-    [DataField(required: true)]
-    public LocId Message { get; private set; }
-
-    [DataField]
-    public SmitePopupRecipients Recipients { get; private set; } = SmitePopupRecipients.Target;
-
-    [DataField]
-    public SmitePopupLocation Location { get; private set; } = SmitePopupLocation.Entity;
-
-    [DataField]
-    public PopupType Type { get; private set; } = PopupType.Small;
-}
-
-public enum SmitePopupRecipients : byte
-{
-    Target,
-    Pvs,
-    PvsExceptTarget
-}
-
-public enum SmitePopupLocation : byte
-{
-    Entity,
-    Coordinates
-}
-
-/// <summary>
-/// Force-equips configured entity prototypes into inventory slots.
-/// </summary>
-public sealed partial class SetEquipmentSmite : SmiteOperationBase<SetEquipmentSmite>
-{
-    [DataField(required: true)]
-    public Dictionary<string, EntProtoId> Equipment { get; private set; } = new();
-
-    [DataField]
-    public bool ClearOtherSlots { get; private set; }
-
-    [DataField]
-    public bool Unremoveable { get; private set; }
-}
-
-/// <summary>
-/// Swaps the smite target's base walking and sprinting speeds.
-/// </summary>
-public sealed partial class SwapMovementSpeedsSmite : SmiteOperationBase<SwapMovementSpeedsSmite>;

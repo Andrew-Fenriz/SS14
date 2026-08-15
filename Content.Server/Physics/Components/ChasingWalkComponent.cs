@@ -9,7 +9,7 @@ namespace Content.Server.Physics.Components;
 /// <summary>
 /// A component which makes its entity chasing entity with selected component.
 /// </summary>
-[RegisterComponent, Access(typeof(ChasingWalkSystem), typeof(SmiteOperationSystem)), AutoGenerateComponentPause]
+[RegisterComponent, Access(typeof(ChasingWalkSystem), typeof(AdminSmiteSystem)), AutoGenerateComponentPause]
 public sealed partial class ChasingWalkComponent : Component
 {
     /// <summary>
