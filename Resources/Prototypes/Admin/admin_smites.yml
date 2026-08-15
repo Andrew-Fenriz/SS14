@@ -267,6 +267,74 @@
       weightless: true
 
 - type: adminSmite
+  id: AdminSmiteDust
+  name: admin-smite-dust-name
+  description: admin-smite-dust-description
+  icon:
+    sprite: Objects/Materials/materials.rsi
+    state: ash
+  operations:
+  - !type:PopupSmite
+    message: admin-smite-turned-ash-other
+    recipients: Pvs
+    location: Entity
+    type: LargeCaution
+  - !type:AddComponentsSmite
+    replaceExisting: true
+    components:
+    - type: SpawnOnDespawn
+      prototype: Ash
+    - type: TimedDespawn
+      lifetime: 0
+
+- type: adminSmite
+  id: AdminSmiteGhostKick
+  name: admin-smite-ghostkick-name
+  description: admin-smite-ghostkick-description
+  icon: Interface/gavel.svg.192dpi.png
+  whitelist:
+    components:
+    - Actor
+  operations:
+  - !type:GhostKickSmite
+
+- type: adminSmite
+  id: AdminSmiteRunWalkSwap
+  name: admin-smite-run-walk-swap-name
+  description: admin-smite-run-walk-swap-description
+  icon: Interface/AdminActions/run-walk-swap.png
+  operations:
+  - !type:SwapMovementSpeedsSmite
+  - !type:PopupSmite
+    message: admin-smite-run-walk-swap-prompt
+    recipients: Target
+    location: Entity
+    type: LargeCaution
+
+- type: adminSmite
+  id: AdminSmiteRemoveBlood
+  name: admin-smite-remove-blood-name
+  description: admin-smite-remove-blood-description
+  icon:
+    sprite: Fluids/tomato_splat.rsi
+    state: puddle-1
+  whitelist:
+    components:
+    - Bloodstream
+  operations:
+  - !type:SpillBloodstreamSmite
+  - !type:PopupSmite
+    message: admin-smite-remove-blood-self
+    recipients: Target
+    location: Entity
+    type: LargeCaution
+  - !type:PopupSmite
+    message: admin-smite-remove-blood-others
+    recipients: PvsExceptTarget
+    location: Coordinates
+    type: MediumCaution
+
+- type: adminSmite
   id: AdminSmiteBuffering
   name: admin-smite-buffering-name
   description: admin-smite-buffering-description

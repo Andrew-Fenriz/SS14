@@ -1,5 +1,4 @@
 using System.Numerics;
-using Content.Server.GhostKick;
 using Content.Server.Nutrition.EntitySystems;
 using Content.Server.Physics.Components;
 using Content.Server.Popups;
@@ -9,8 +8,6 @@ using Content.Server.Tabletop;
 using Content.Shared.Actions;
 using Content.Shared.Administration;
 using Content.Shared.Administration.Prototypes;
-using Content.Shared.Body.Components;
-using Content.Shared.Body.Systems;
 using Content.Shared.Damage.Systems;
 using Content.Shared.Database;
 using Content.Shared.Inventory;
@@ -41,11 +38,9 @@ public sealed partial class AdminVerbSystem
 {
     [Dependency] private SharedActionsSystem _actions = default!;
     [Dependency] private IRobustRandom _random = default!;
-    [Dependency] private BloodstreamSystem _bloodstreamSystem = default!;
     [Dependency] private CreamPieSystem _creamPieSystem = default!;
     [Dependency] private EntityStorageSystem _entityStorageSystem = default!;
     [Dependency] private FixtureSystem _fixtures = default!;
-    [Dependency] private GhostKickManager _ghostKickManager = default!;
     [Dependency] private SharedGodmodeSystem _sharedGodmodeSystem = default!;
     [Dependency] private InventorySystem _inventorySystem = default!;
     [Dependency] private PopupSystem _popupSystem = default!;
@@ -125,29 +120,6 @@ public sealed partial class AdminVerbSystem
             args.Verbs.Add(creamPie);
         }
 
-        if (TryComp<BloodstreamComponent>(args.Target, out var bloodstream))
-        {
-            var bloodRemovalName = Loc.GetString("admin-smite-remove-blood-name").ToLowerInvariant();
-            Verb bloodRemoval = new()
-            {
-                Text = bloodRemovalName,
-                Category = VerbCategory.Smite,
-                Icon = new SpriteSpecifier.Rsi(new("/Textures/Fluids/tomato_splat.rsi"), "puddle-1"),
-                Act = () =>
-                {
-                    _bloodstreamSystem.SpillAllSolutions((args.Target, bloodstream));
-                    var xform = Transform(args.Target);
-                    _popupSystem.PopupEntity(Loc.GetString("admin-smite-remove-blood-self"), args.Target,
-                        args.Target, PopupType.LargeCaution);
-                    _popupSystem.PopupCoordinates(Loc.GetString("admin-smite-remove-blood-others", ("name", args.Target)), xform.Coordinates,
-                        Filter.PvsExcept(args.Target), true, PopupType.MediumCaution);
-                },
-                Impact = LogImpact.Extreme,
-                Message = string.Join(": ", bloodRemovalName, Loc.GetString("admin-smite-remove-blood-description"))
-            };
-            args.Verbs.Add(bloodRemoval);
-        }
-
         if (TryComp<PhysicsComponent>(args.Target, out var physics))
         {
             var pinballName = Loc.GetString("admin-smite-pinball-name").ToLowerInvariant();
@@ -217,42 +189,6 @@ public sealed partial class AdminVerbSystem
             args.Verbs.Add(yeet);
         }
 
-        if (TryComp<ActorComponent>(args.Target, out var actorComponent))
-        {
-            var ghostKickName = Loc.GetString("admin-smite-ghostkick-name").ToLowerInvariant();
-            Verb ghostKick = new()
-            {
-                Text = ghostKickName,
-                Category = VerbCategory.Smite,
-                Icon = new SpriteSpecifier.Texture(new("/Textures/Interface/gavel.svg.192dpi.png")),
-                Act = () =>
-                {
-                    _ghostKickManager.DoDisconnect(actorComponent.PlayerSession.Channel, "Smitten.");
-                },
-                Impact = LogImpact.Extreme,
-                Message = string.Join(": ", ghostKickName, Loc.GetString("admin-smite-ghostkick-description"))
-
-            };
-            args.Verbs.Add(ghostKick);
-        }
-
-        var dustName = Loc.GetString("admin-smite-dust-name").ToLowerInvariant();
-        Verb dust = new()
-        {
-            Text = dustName,
-            Category = VerbCategory.Smite,
-            Icon = new SpriteSpecifier.Rsi(new("/Textures/Objects/Materials/materials.rsi"), "ash"),
-            Act = () =>
-            {
-                QueueDel(args.Target);
-                Spawn("Ash", Transform(args.Target).Coordinates);
-                _popupSystem.PopupEntity(Loc.GetString("admin-smite-turned-ash-other", ("name", args.Target)), args.Target, PopupType.LargeCaution);
-            },
-            Impact = LogImpact.Extreme,
-            Message = string.Join(": ", dustName, Loc.GetString("admin-smite-dust-description"))
-        };
-        args.Verbs.Add(dust);
-
         var lockerName = Loc.GetString("admin-smite-locker-stuff-name").ToLowerInvariant();
         Verb locker = new()
         {
@@ -275,27 +211,6 @@ public sealed partial class AdminVerbSystem
             Message = string.Join(": ", lockerName, Loc.GetString("admin-smite-locker-stuff-description"))
         };
         args.Verbs.Add(locker);
-
-        var runWalkSwapName = Loc.GetString("admin-smite-run-walk-swap-name").ToLowerInvariant();
-        Verb runWalkSwap = new()
-        {
-            Text = runWalkSwapName,
-            Category = VerbCategory.Smite,
-            Icon = new SpriteSpecifier.Texture(new("/Textures/Interface/AdminActions/run-walk-swap.png")),
-            Act = () =>
-            {
-                var movementSpeed = EnsureComp<MovementSpeedModifierComponent>(args.Target);
-                (movementSpeed.BaseSprintSpeed, movementSpeed.BaseWalkSpeed) = (movementSpeed.BaseWalkSpeed, movementSpeed.BaseSprintSpeed);
-
-                Dirty(args.Target, movementSpeed);
-
-                _popupSystem.PopupEntity(Loc.GetString("admin-smite-run-walk-swap-prompt"), args.Target,
-                    args.Target, PopupType.LargeCaution);
-            },
-            Impact = LogImpact.Extreme,
-            Message = string.Join(": ", runWalkSwapName, Loc.GetString("admin-smite-run-walk-swap-description"))
-        };
-        args.Verbs.Add(runWalkSwap);
 
         var superslipName = Loc.GetString("admin-smite-super-slip-name").ToLowerInvariant();
         Verb superslip = new()

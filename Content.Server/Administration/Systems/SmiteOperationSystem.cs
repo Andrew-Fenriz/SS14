@@ -1,12 +1,16 @@
+using Content.Server.GhostKick;
 using Content.Server.Polymorph.Systems;
 using Content.Server.Popups;
 using Content.Shared.Administration.Smites;
 using Content.Shared.Administration.Smites.Operations;
 using Content.Shared.Body;
+using Content.Shared.Body.Components;
+using Content.Shared.Body.Systems;
 using Content.Shared.Clothing.Components;
 using Content.Shared.EntityEffects;
 using Content.Shared.Interaction.Components;
 using Content.Shared.Inventory;
+using Content.Shared.Movement.Components;
 using Robust.Shared.Player;
 
 namespace Content.Server.Administration.Systems;
@@ -17,7 +21,9 @@ namespace Content.Server.Administration.Systems;
 public sealed partial class SmiteOperationSystem : EntitySystem
 {
     [Dependency] private BodySystem _body = default!;
+    [Dependency] private BloodstreamSystem _bloodstream = default!;
     [Dependency] private SharedEntityEffectsSystem _entityEffects = default!;
+    [Dependency] private GhostKickManager _ghostKick = default!;
     [Dependency] private InventorySystem _inventory = default!;
     [Dependency] private PolymorphSystem _polymorph = default!;
     [Dependency] private PopupSystem _popup = default!;
@@ -35,6 +41,12 @@ public sealed partial class SmiteOperationSystem : EntitySystem
         ref SmiteOperationEvent<EntityEffectsSmite> args)
     {
         _entityEffects.ApplyEffects(entity, args.Operation.Effects, user: args.User);
+    }
+
+    [SubscribeLocalEvent]
+    private void OnGhostKick(Entity<ActorComponent> entity, ref SmiteOperationEvent<GhostKickSmite> args)
+    {
+        _ghostKick.DoDisconnect(entity.Comp.PlayerSession.Channel, "Smitten.");
     }
 
     [SubscribeLocalEvent]
@@ -107,6 +119,24 @@ public sealed partial class SmiteOperationSystem : EntitySystem
         {
             _transform.AttachToGridOrMap(organ);
         }
+    }
+
+    [SubscribeLocalEvent]
+    private void OnSpillBloodstream(Entity<BloodstreamComponent> entity,
+        ref SmiteOperationEvent<SpillBloodstreamSmite> args)
+    {
+        _bloodstream.SpillAllSolutions(entity.AsNullable());
+    }
+
+    [SubscribeLocalEvent]
+    private void OnSwapMovementSpeeds(Entity<MetaDataComponent> entity,
+        ref SmiteOperationEvent<SwapMovementSpeedsSmite> args)
+    {
+        var movementSpeed = EnsureComp<MovementSpeedModifierComponent>(entity);
+        (movementSpeed.BaseSprintSpeed, movementSpeed.BaseWalkSpeed) =
+            (movementSpeed.BaseWalkSpeed, movementSpeed.BaseSprintSpeed);
+
+        Dirty(entity, movementSpeed);
     }
 
     [SubscribeLocalEvent]
