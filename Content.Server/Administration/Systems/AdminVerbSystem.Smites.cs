@@ -1,6 +1,4 @@
-using System.Numerics;
 using Content.Server.Nutrition.EntitySystems;
-using Content.Server.Physics.Components;
 using Content.Server.Popups;
 using Content.Server.Roles;
 using Content.Server.Storage.EntitySystems;
@@ -11,7 +9,6 @@ using Content.Shared.Administration.Prototypes;
 using Content.Shared.Damage.Systems;
 using Content.Shared.Database;
 using Content.Shared.Inventory;
-using Content.Shared.Movement.Components;
 using Content.Shared.Nutrition.Components;
 using Content.Shared.Popups;
 using Content.Shared.Silicons.Laws;
@@ -29,7 +26,6 @@ using Robust.Shared.Physics.Systems;
 using Robust.Shared.Player;
 using Robust.Shared.Prototypes;
 using Robust.Shared.Random;
-using Robust.Shared.Spawners;
 using Robust.Shared.Utility;
 
 namespace Content.Server.Administration.Systems;
@@ -269,43 +265,6 @@ public sealed partial class AdminVerbSystem
             Message = string.Join(": ", siliconName, Loc.GetString("admin-smite-silicon-laws-bound-description"))
         };
         args.Verbs.Add(silicon);
-
-        var homingRodName = Loc.GetString("admin-smite-homing-rod-name").ToLowerInvariant();
-        Verb homingRod = new()
-        {
-            Text = homingRodName,
-            Category = VerbCategory.Smite,
-            Icon = new SpriteSpecifier.Rsi(new("Objects/Specific/Security/target.rsi"), "target_s"),
-            Act = () =>
-            {
-                var speed = 25f; // It don't miss brother.
-                var distance = 350f;
-                HomingLaunchSequence(args.Target, "ImmovableRodKeepTiles", distance, speed); // todo: swap the proto for an EntityTable GetSpawns once rod rule rework
-            },
-            Impact = LogImpact.Extreme,
-            Message = string.Join(": ", homingRodName, Loc.GetString("admin-smite-homing-rod-description"))
-        };
-        args.Verbs.Add(homingRod);
-
-        var homingRodSlowName = Loc.GetString("admin-smite-homing-rod-slow-name").ToLowerInvariant();
-        Verb homingRodSlow = new()
-        {
-            Text = homingRodSlowName,
-            Category = VerbCategory.Smite,
-            Icon = new SpriteSpecifier.Rsi(new("Objects/Specific/Security/target.rsi"), "target_c"),
-            Act = () =>
-            {
-                var speed = 5f; // slightly faster than default sprint speed 4.5
-                if (TryComp<MovementSpeedModifierComponent>(args.Target, out var movement))
-                    speed = movement.CurrentSprintSpeed + 0.001f;// run
-                var distance = 200f; // its kinda slow so were just gonna cheat a bit.
-                HomingLaunchSequence(args.Target, "ImmovableRodKeepTiles", distance, speed);
-            },
-            Impact = LogImpact.Extreme,
-            Message = string.Join(": ", homingRodSlowName, Loc.GetString("admin-smite-homing-rod-slow-description"))
-        };
-        args.Verbs.Add(homingRodSlow);
-
     }
 
     private void AddPrototypeSmiteVerbs(GetVerbsEvent<Verb> args)
@@ -329,29 +288,5 @@ public sealed partial class AdminVerbSystem
             };
             args.Verbs.Add(verb);
         }
-    }
-
-    public void HomingLaunchSequence(EntityUid target, EntProtoId proto, float distance, float speed)
-    {
-        // ToDo: Reuse some spawning code from whereever the rod rule ends up.
-        // I would do it now but theres a massive rod rewrite, and I don't wanna poke it for this.
-        // find reasonable spawn location (use gamerule and find rod?) but respect map not on grid etc etc
-
-        var random = new RobustRandom() as IRobustRandom;
-        random.SetSeed(target.Id);
-        var offset = random.NextAngle().RotateVec(new Vector2(distance, 0));
-        var spawnCoords = _transformSystem.GetMapCoordinates(target).Offset(offset);
-        var rod = Spawn(proto, spawnCoords);
-        // Here we abuse the ChasingWalkComp by making it skip targetting logic and dialling its frequency up
-        EnsureComp<ChasingWalkComponent>(rod, out var chasingComp);
-        chasingComp.NextChangeVectorTime = TimeSpan.MaxValue; // we just want it to never change
-        chasingComp.ChasingEntity = target;
-        chasingComp.ImpulseInterval = .1f; // skrrt skrrrrrrt skrrrt
-        chasingComp.RotateWithImpulse = true;
-        chasingComp.MaxSpeed = speed;
-        chasingComp.Speed = speed; // tell me lies, tell me sweet little lies.
-
-        if (TryComp<TimedDespawnComponent>(rod, out var despawn))
-            despawn.Lifetime = offset.Length() / speed * 3; // exists thrice as long as it takes to get to you.
     }
 }

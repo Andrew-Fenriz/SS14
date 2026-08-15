@@ -267,6 +267,33 @@
       weightless: true
 
 - type: adminSmite
+  id: AdminSmiteHomingRod
+  name: admin-smite-homing-rod-name
+  description: admin-smite-homing-rod-description
+  icon:
+    sprite: Objects/Specific/Security/target.rsi
+    state: target_s
+  operations:
+  - !type:HomingRodSmite
+    prototype: ImmovableRodKeepTilesStill
+    distance: 350
+    speed: 25
+
+- type: adminSmite
+  id: AdminSmiteSlowHomingRod
+  name: admin-smite-homing-rod-slow-name
+  description: admin-smite-homing-rod-slow-description
+  icon:
+    sprite: Objects/Specific/Security/target.rsi
+    state: target_c
+  operations:
+  - !type:HomingRodSmite
+    prototype: ImmovableRodKeepTilesStill
+    distance: 200
+    speed: 5
+    matchTargetSprintSpeed: true
+
+- type: adminSmite
   id: AdminSmiteDust
   name: admin-smite-dust-name
   description: admin-smite-dust-description
