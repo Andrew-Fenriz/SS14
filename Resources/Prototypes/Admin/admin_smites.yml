@@ -4,7 +4,7 @@
   description: admin-smite-buffering-description
   icon: Interface/Misc/buffering_smite_icon.png
   operations:
-  - !type:ApplyEntityEffects
+  - !type:ApplyEntityEffectsSmite
     effects:
     - !type:AddComponents
       components:
@@ -21,7 +21,7 @@
     components:
     - Inventory
   operations:
-  - !type:ApplyEntityEffects
+  - !type:ApplyEntityEffectsSmite
     effects:
     - !type:AddComponents
       components:
@@ -35,7 +35,7 @@
     sprite: Interface/Misc/pointing.rsi
     state: pointing
   operations:
-  - !type:ApplyEntityEffects
+  - !type:ApplyEntityEffectsSmite
     effects:
     - !type:AddComponents
       components:
@@ -47,7 +47,7 @@
   description: admin-smite-headstand-description
   icon: Interface/VerbIcons/refresh.svg.192dpi.png
   operations:
-  - !type:ApplyEntityEffects
+  - !type:ApplyEntityEffectsSmite
     effects:
     - !type:AddComponents
       components:
@@ -59,7 +59,7 @@
   description: admin-smite-speak-backwards-description
   icon: Interface/AdminActions/help-backwards.png
   operations:
-  - !type:ApplyEntityEffects
+  - !type:ApplyEntityEffectsSmite
     effects:
     - !type:AddComponents
       components:
@@ -71,7 +71,7 @@
   description: admin-smite-disarm-prone-description
   icon: Interface/Actions/disarm.png
   operations:
-  - !type:ApplyEntityEffects
+  - !type:ApplyEntityEffectsSmite
     effects:
     - !type:AddComponents
       components:
@@ -85,8 +85,85 @@
     sprite: Mobs/Animals/snake.rsi
     state: icon
   operations:
-  - !type:ApplyEntityEffects
+  - !type:ApplyEntityEffectsSmite
     effects:
     - !type:AddComponents
       components:
       - type: Worm
+
+- type: adminSmite
+  id: AdminSmiteMonkey
+  name: admin-smite-monkeyify-name
+  description: admin-smite-monkeyify-description
+  icon:
+    sprite: Mobs/Animals/monkey.rsi
+    state: monkey
+  operations:
+  - !type:PolymorphSmite
+    prototype: AdminMonkeySmite
+
+- type: adminSmite
+  id: AdminSmiteGarbageCan
+  name: admin-smite-garbage-can-name
+  description: admin-smite-garbage-can-description
+  icon:
+    sprite: Structures/Piping/disposal.rsi
+    state: disposal
+  operations:
+  - !type:PolymorphSmite
+    prototype: AdminDisposalsSmite
+
+- type: adminSmite
+  id: AdminSmiteBread
+  name: admin-smite-become-bread-name
+  description: admin-smite-become-bread-description
+  icon:
+    sprite: Objects/Consumable/Food/Baked/bread.rsi
+    state: plain
+  operations:
+  - !type:PolymorphSmite
+    prototype: AdminBreadSmite
+
+- type: adminSmite
+  id: AdminSmiteMouse
+  name: admin-smite-become-mouse-name
+  description: admin-smite-become-mouse-description
+  icon:
+    sprite: Mobs/Animals/mouse.rsi
+    state: icon-0
+  operations:
+  - !type:PolymorphSmite
+    prototype: AdminMouseSmite
+
+- type: adminSmite
+  id: AdminSmiteInstrument
+  name: admin-smite-become-instrument-name
+  description: admin-smite-become-instrument-description
+  icon:
+    sprite: Objects/Fun/Instruments/h_synthesizer.rsi
+    state: supersynth
+  operations:
+  - !type:PolymorphSmite
+    prototype: AdminInstrumentSmite
+
+- type: adminSmite
+  id: AdminSmiteReptilian
+  name: admin-smite-reptilian-species-swap-name
+  description: admin-smite-reptilian-species-swap-description
+  icon:
+    sprite: Objects/Fun/Plushies/lizard.rsi
+    state: icon
+  operations:
+  - !type:PolymorphSmite
+    prototype: AdminLizardSmite
+
+- type: adminSmite
+  id: AdminSmiteVulpkanin
+  name: admin-smite-vulpkanin-species-swap-name
+  description: admin-smite-vulpkanin-species-swap-description
+  icon:
+    sprite: Objects/Fun/Balls/tennisball.rsi
+    state: icon
+  operations:
+  - !type:PolymorphSmite
+    prototype: AdminVulpSmite

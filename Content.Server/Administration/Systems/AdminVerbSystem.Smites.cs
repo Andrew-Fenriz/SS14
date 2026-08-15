@@ -8,7 +8,6 @@ using Content.Server.Explosion.EntitySystems;
 using Content.Server.GhostKick;
 using Content.Server.Nutrition.EntitySystems;
 using Content.Server.Physics.Components;
-using Content.Server.Polymorph.Systems;
 using Content.Server.Popups;
 using Content.Server.Roles;
 using Content.Shared.Speech.Components;
@@ -39,7 +38,6 @@ using Content.Shared.Mobs.Systems;
 using Content.Shared.Movement.Components;
 using Content.Shared.Movement.Systems;
 using Content.Shared.Nutrition.Components;
-using Content.Shared.Polymorph;
 using Content.Shared.Popups;
 using Content.Shared.Silicons.Laws;
 using Content.Shared.Silicons.Laws.Components;
@@ -68,9 +66,6 @@ public sealed partial class AdminVerbSystem
 {
     private static readonly EntProtoId<StatusEffectComponent> MaidStatus = "StatusEffectClumsyMaid";
 
-    private readonly ProtoId<PolymorphPrototype> LizardSmite = "AdminLizardSmite";
-    private readonly ProtoId<PolymorphPrototype> VulpkaninSmite = "AdminVulpSmite";
-
     [Dependency] private SharedActionsSystem _actions = default!;
     [Dependency] private IRobustRandom _random = default!;
     [Dependency] private BloodstreamSystem _bloodstreamSystem = default!;
@@ -85,7 +80,6 @@ public sealed partial class AdminVerbSystem
     [Dependency] private SharedGodmodeSystem _sharedGodmodeSystem = default!;
     [Dependency] private InventorySystem _inventorySystem = default!;
     [Dependency] private MovementSpeedModifierSystem _movementSpeedModifierSystem = default!;
-    [Dependency] private PolymorphSystem _polymorphSystem = default!;
     [Dependency] private MobThresholdSystem _mobThresholdSystem = default!;
     [Dependency] private PopupSystem _popupSystem = default!;
     [Dependency] private SharedPhysicsSystem _physics = default!;
@@ -198,36 +192,6 @@ public sealed partial class AdminVerbSystem
             };
             args.Verbs.Add(flames);
         }
-
-        var monkeyName = Loc.GetString("admin-smite-monkeyify-name").ToLowerInvariant();
-        Verb monkey = new()
-        {
-            Text = monkeyName,
-            Category = VerbCategory.Smite,
-            Icon = new SpriteSpecifier.Rsi(new("/Textures/Mobs/Animals/monkey.rsi"), "monkey"),
-            Act = () =>
-            {
-                _polymorphSystem.PolymorphEntity(args.Target, "AdminMonkeySmite");
-            },
-            Impact = LogImpact.Extreme,
-            Message = string.Join(": ", monkeyName, Loc.GetString("admin-smite-monkeyify-description"))
-        };
-        args.Verbs.Add(monkey);
-
-        var disposalBinName = Loc.GetString("admin-smite-garbage-can-name").ToLowerInvariant();
-        Verb disposalBin = new()
-        {
-            Text = disposalBinName,
-            Category = VerbCategory.Smite,
-            Icon = new SpriteSpecifier.Rsi(new("/Textures/Structures/Piping/disposal.rsi"), "disposal"),
-            Act = () =>
-            {
-                _polymorphSystem.PolymorphEntity(args.Target, "AdminDisposalsSmite");
-            },
-            Impact = LogImpact.Extreme,
-            Message = string.Join(": ", disposalBinName, Loc.GetString("admin-smite-garbage-can-description"))
-        };
-        args.Verbs.Add(disposalBin);
 
         if (TryComp<DamageableComponent>(args.Target, out var damageable) &&
             HasComp<MobStateComponent>(args.Target))
@@ -515,36 +479,6 @@ public sealed partial class AdminVerbSystem
             args.Verbs.Add(yeet);
         }
 
-        var breadName = Loc.GetString("admin-smite-become-bread-name").ToLowerInvariant(); // Will I get cancelled for breadName-ing you?
-        Verb bread = new()
-        {
-            Text = breadName,
-            Category = VerbCategory.Smite,
-            Icon = new SpriteSpecifier.Rsi(new("/Textures/Objects/Consumable/Food/Baked/bread.rsi"), "plain"),
-            Act = () =>
-            {
-                _polymorphSystem.PolymorphEntity(args.Target, "AdminBreadSmite");
-            },
-            Impact = LogImpact.Extreme,
-            Message = string.Join(": ", breadName, Loc.GetString("admin-smite-become-bread-description"))
-        };
-        args.Verbs.Add(bread);
-
-        var mouseName = Loc.GetString("admin-smite-become-mouse-name").ToLowerInvariant();
-        Verb mouse = new()
-        {
-            Text = mouseName,
-            Category = VerbCategory.Smite,
-            Icon = new SpriteSpecifier.Rsi(new("/Textures/Mobs/Animals/mouse.rsi"), "icon-0"),
-            Act = () =>
-            {
-                _polymorphSystem.PolymorphEntity(args.Target, "AdminMouseSmite");
-            },
-            Impact = LogImpact.Extreme,
-            Message = string.Join(": ", mouseName, Loc.GetString("admin-smite-become-mouse-description"))
-        };
-        args.Verbs.Add(mouse);
-
         if (TryComp<ActorComponent>(args.Target, out var actorComponent))
         {
             var ghostKickName = Loc.GetString("admin-smite-ghostkick-name").ToLowerInvariant();
@@ -656,21 +590,6 @@ public sealed partial class AdminVerbSystem
         };
         args.Verbs.Add(dust);
 
-        var instrumentationName = Loc.GetString("admin-smite-become-instrument-name").ToLowerInvariant();
-        Verb instrumentation = new()
-        {
-            Text = instrumentationName,
-            Category = VerbCategory.Smite,
-            Icon = new SpriteSpecifier.Rsi(new("/Textures/Objects/Fun/Instruments/h_synthesizer.rsi"), "supersynth"),
-            Act = () =>
-            {
-                _polymorphSystem.PolymorphEntity(args.Target, "AdminInstrumentSmite");
-            },
-            Impact = LogImpact.Extreme,
-            Message = string.Join(": ", instrumentationName, Loc.GetString("admin-smite-become-instrument-description"))
-        };
-        args.Verbs.Add(instrumentation);
-
         var noGravityName = Loc.GetString("admin-smite-remove-gravity-name").ToLowerInvariant();
         Verb noGravity = new()
         {
@@ -693,36 +612,6 @@ public sealed partial class AdminVerbSystem
             Message = string.Join(": ", noGravityName, Loc.GetString("admin-smite-remove-gravity-description"))
         };
         args.Verbs.Add(noGravity);
-
-        var reptilianName = Loc.GetString("admin-smite-reptilian-species-swap-name").ToLowerInvariant();
-        Verb reptilian = new()
-        {
-            Text = reptilianName,
-            Category = VerbCategory.Smite,
-            Icon = new SpriteSpecifier.Rsi(new("/Textures/Objects/Fun/Plushies/lizard.rsi"), "icon"),
-            Act = () =>
-            {
-                _polymorphSystem.PolymorphEntity(args.Target, LizardSmite);
-            },
-            Impact = LogImpact.Extreme,
-            Message = string.Join(": ", reptilianName, Loc.GetString("admin-smite-reptilian-species-swap-description"))
-        };
-        args.Verbs.Add(reptilian);
-
-        var vulpName = Loc.GetString("admin-smite-vulpkanin-species-swap-name").ToLowerInvariant();
-        Verb vulp = new()
-        {
-            Text = vulpName,
-            Category = VerbCategory.Smite,
-            Icon = new SpriteSpecifier.Rsi(new ("/Textures/Objects/Fun/Balls/tennisball.rsi"), "icon"),
-            Act = () =>
-            {
-                _polymorphSystem.PolymorphEntity(args.Target, VulpkaninSmite);
-            },
-            Impact = LogImpact.Extreme,
-            Message = string.Join(": ", vulpName, Loc.GetString("admin-smite-vulpkanin-species-swap-description"))
-        };
-        args.Verbs.Add(vulp);
 
         var lockerName = Loc.GetString("admin-smite-locker-stuff-name").ToLowerInvariant();
         Verb locker = new()
