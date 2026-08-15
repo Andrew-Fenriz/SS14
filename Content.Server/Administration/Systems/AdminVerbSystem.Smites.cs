@@ -1,7 +1,5 @@
 using System.Numerics;
 using System.Threading;
-using Content.Server.Atmos.EntitySystems;
-using Content.Server.Atmos.Piping.EntitySystems;
 using Content.Server.Electrocution;
 using Content.Server.Explosion.EntitySystems;
 using Content.Server.GhostKick;
@@ -9,15 +7,12 @@ using Content.Server.Nutrition.EntitySystems;
 using Content.Server.Physics.Components;
 using Content.Server.Popups;
 using Content.Server.Roles;
-using Content.Shared.Speech.Components;
 using Content.Server.Storage.EntitySystems;
 using Content.Server.Tabletop;
 using Content.Shared.Actions;
 using Content.Shared.Administration;
 using Content.Shared.Administration.Components;
 using Content.Shared.Administration.Prototypes;
-using Content.Shared.Atmos;
-using Content.Shared.Atmos.Components;
 using Content.Shared.Body.Components;
 using Content.Shared.Body.Systems;
 using Content.Shared.Clothing.Components;
@@ -71,7 +66,6 @@ public sealed partial class AdminVerbSystem
     [Dependency] private EntityStorageSystem _entityStorageSystem = default!;
     [Dependency] private ExplosionSystem _explosionSystem = default!;
     [Dependency] private FixtureSystem _fixtures = default!;
-    [Dependency] private FlammableSystem _flammableSystem = default!;
     [Dependency] private GhostKickManager _ghostKickManager = default!;
     [Dependency] private SharedGodmodeSystem _sharedGodmodeSystem = default!;
     [Dependency] private InventorySystem _inventorySystem = default!;
@@ -88,7 +82,6 @@ public sealed partial class AdminVerbSystem
     [Dependency] private SlipperySystem _slipperySystem = default!;
     [Dependency] private GibbingSystem _gibbing = default!;
     [Dependency] private DamageableSystem _damageable = default!;
-    [Dependency] private AtmosDeviceSystem _atmosDevice = default!;
     [Dependency] private StatusEffectsSystem _statusEffects = default!;
     [Dependency] private AdminSmiteSystem _smiteSystem = default!;
     [Dependency] private EntityWhitelistSystem _whitelistSystem = default!;
@@ -162,31 +155,6 @@ public sealed partial class AdminVerbSystem
             Message = string.Join(": ", chessName, Loc.GetString("admin-smite-chess-dimension-description"))
         };
         args.Verbs.Add(chess);
-
-        if (TryComp<FlammableComponent>(args.Target, out var flammable))
-        {
-            var flamesName = Loc.GetString("admin-smite-set-alight-name").ToLowerInvariant();
-            Verb flames = new()
-            {
-                Text = flamesName,
-                Category = VerbCategory.Smite,
-                Icon = new SpriteSpecifier.Texture(new("/Textures/Interface/Alerts/Fire/fire.png")),
-                Act = () =>
-                {
-                    // Fuck you. Burn Forever.
-                    flammable.FireStacks = flammable.MaximumFireStacks;
-                    _flammableSystem.Ignite(args.Target, args.User);
-                    var xform = Transform(args.Target);
-                    _popupSystem.PopupEntity(Loc.GetString("admin-smite-set-alight-self"), args.Target,
-                        args.Target, PopupType.LargeCaution);
-                    _popupSystem.PopupCoordinates(Loc.GetString("admin-smite-set-alight-others", ("name", args.Target)), xform.Coordinates,
-                        Filter.PvsExcept(args.Target), true, PopupType.MediumCaution);
-                },
-                Impact = LogImpact.Extreme,
-                Message = string.Join(": ", flamesName, Loc.GetString("admin-smite-set-alight-description"))
-            };
-            args.Verbs.Add(flames);
-        }
 
         if (TryComp<DamageableComponent>(args.Target, out var damageable) &&
             HasComp<MobStateComponent>(args.Target))
@@ -634,37 +602,6 @@ public sealed partial class AdminVerbSystem
         };
         args.Verbs.Add(superslip);
 
-        var omniaccentName = Loc.GetString("admin-smite-omni-accent-name").ToLowerInvariant();
-        Verb omniaccent = new()
-        {
-            Text = omniaccentName,
-            Category = VerbCategory.Smite,
-            Icon = new SpriteSpecifier.Rsi(new("Interface/Actions/voice-mask.rsi"), "icon"),
-            Act = () =>
-            {
-                EnsureComp<BarkAccentComponent>(args.Target);
-                EnsureComp<BleatingAccentComponent>(args.Target);
-                EnsureComp<FrenchAccentComponent>(args.Target);
-                EnsureComp<GermanAccentComponent>(args.Target);
-                EnsureComp<LizardAccentComponent>(args.Target);
-                EnsureComp<MobsterAccentComponent>(args.Target);
-                EnsureComp<MothAccentComponent>(args.Target);
-                EnsureComp<OwOAccentComponent>(args.Target);
-                EnsureComp<SkeletonAccentComponent>(args.Target);
-                EnsureComp<SouthernAccentComponent>(args.Target);
-                EnsureComp<SpanishAccentComponent>(args.Target);
-                EnsureComp<StutteringAccentComponent>(args.Target);
-
-                if (_random.Next(0, 8) == 0)
-                {
-                    EnsureComp<BackwardsAccentComponent>(args.Target); // was asked to make this at a low chance idk
-                }
-            },
-            Impact = LogImpact.Extreme,
-            Message = string.Join(": ", omniaccentName, Loc.GetString("admin-smite-omni-accent-description"))
-        };
-        args.Verbs.Add(omniaccent);
-
         var siliconName = Loc.GetString("admin-smite-silicon-laws-bound-name").ToLowerInvariant();
         Verb silicon = new()
         {
@@ -732,30 +669,6 @@ public sealed partial class AdminVerbSystem
         };
         args.Verbs.Add(homingRodSlow);
 
-        var makeStinkyName = Loc.GetString("admin-smite-make-stinky-name").ToLowerInvariant();
-        Verb makeStinky = new()
-        {
-            Text = makeStinkyName,
-            Category = VerbCategory.Smite,
-            Icon = new SpriteSpecifier.Rsi(new("Clothing/Mask/gas.rsi"), "icon"),
-            Act = () =>
-            {
-                var gasMiner = EnsureComp<GasMinerComponent>(args.Target);
-                gasMiner.SpawnGas = Gas.Ammonia;
-                gasMiner.SpawnAmount = 20;
-                gasMiner.ShowExamineText = false;
-
-                // Atmos device is not networked, no dirty.
-                var atmosDevice = EnsureComp<AtmosDeviceComponent>(args.Target);
-                atmosDevice.RequireAnchored = false;
-
-                _atmosDevice.JoinAtmosphere((args.Target, atmosDevice));
-                Dirty(args.Target, gasMiner);
-            },
-            Impact = LogImpact.Extreme,
-            Message = string.Join(": ", makeStinkyName, Loc.GetString("admin-smite-make-stinky-description"))
-        };
-        args.Verbs.Add(makeStinky);
     }
 
     private void AddPrototypeSmiteVerbs(GetVerbsEvent<Verb> args)

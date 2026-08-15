@@ -1,4 +1,59 @@
 - type: adminSmite
+  id: AdminSmiteSetAlight
+  name: admin-smite-set-alight-name
+  description: admin-smite-set-alight-description
+  icon: Interface/Alerts/Fire/fire.png
+  whitelist:
+    components:
+    - Flammable
+  operations:
+  - !type:EntityEffectsSmite
+    effects:
+    - !type:Flammable
+      multiplier: 1000
+    - !type:Ignite
+
+- type: adminSmite
+  id: AdminSmiteOmniAccent
+  name: admin-smite-omni-accent-name
+  description: admin-smite-omni-accent-description
+  icon:
+    sprite: Interface/Actions/voice-mask.rsi
+    state: icon
+  operations:
+  - !type:AddComponentsSmite
+    components:
+    - type: BarkAccent
+    - type: BleatingAccent
+    - type: FrenchAccent
+    - type: GermanAccent
+    - type: LizardAccent
+    - type: MobsterAccent
+    - type: MothAccent
+    - type: OwOAccent
+    - type: SkeletonAccent
+    - type: SouthernAccent
+    - type: SpanishAccent
+    - type: StutteringAccent
+
+- type: adminSmite
+  id: AdminSmiteMakeStinky
+  name: admin-smite-make-stinky-name
+  description: admin-smite-make-stinky-description
+  icon:
+    sprite: Clothing/Mask/gas.rsi
+    state: icon
+  operations:
+  - !type:AddComponentsSmite
+    components:
+    - type: GasMiner
+      spawnGas: Ammonia
+      spawnAmount: 20
+      showExamineText: false
+    - type: AtmosDevice
+      requireAnchored: false
+
+- type: adminSmite
   id: AdminSmiteBuffering
   name: admin-smite-buffering-name
   description: admin-smite-buffering-description
