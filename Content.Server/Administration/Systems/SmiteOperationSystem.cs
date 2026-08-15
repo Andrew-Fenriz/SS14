@@ -1,4 +1,6 @@
+using System.Numerics;
 using Content.Server.GhostKick;
+using Content.Server.Physics.Components;
 using Content.Server.Polymorph.Systems;
 using Content.Server.Popups;
 using Content.Shared.Administration.Smites;
@@ -12,6 +14,8 @@ using Content.Shared.Interaction.Components;
 using Content.Shared.Inventory;
 using Content.Shared.Movement.Components;
 using Robust.Shared.Player;
+using Robust.Shared.Random;
+using Robust.Shared.Spawners;
 
 namespace Content.Server.Administration.Systems;
 
@@ -47,6 +51,34 @@ public sealed partial class SmiteOperationSystem : EntitySystem
     private void OnGhostKick(Entity<ActorComponent> entity, ref SmiteOperationEvent<GhostKickSmite> args)
     {
         _ghostKick.DoDisconnect(entity.Comp.PlayerSession.Channel, "Smitten.");
+    }
+
+    [SubscribeLocalEvent]
+    private void OnHomingRod(Entity<MetaDataComponent> entity, ref SmiteOperationEvent<HomingRodSmite> args)
+    {
+        var speed = args.Operation.Speed;
+        if (args.Operation.MatchTargetSprintSpeed &&
+            TryComp<MovementSpeedModifierComponent>(entity, out var movement))
+        {
+            speed = movement.CurrentSprintSpeed + 0.001f;
+        }
+
+        IRobustRandom random = new RobustRandom();
+        random.SetSeed(entity.Owner.Id);
+        var offset = random.NextAngle().RotateVec(new Vector2(args.Operation.Distance, 0));
+        var spawnCoords = _transform.GetMapCoordinates(entity).Offset(offset);
+        var rod = Spawn(args.Operation.Prototype, spawnCoords);
+
+        EnsureComp<ChasingWalkComponent>(rod, out var chasing);
+        chasing.NextChangeVectorTime = TimeSpan.MaxValue;
+        chasing.ChasingEntity = entity.Owner;
+        chasing.ImpulseInterval = 0.1f;
+        chasing.RotateWithImpulse = true;
+        chasing.MaxSpeed = speed;
+        chasing.Speed = speed;
+
+        if (TryComp<TimedDespawnComponent>(rod, out var despawn))
+            despawn.Lifetime = offset.Length() / speed * 3;
     }
 
     [SubscribeLocalEvent]

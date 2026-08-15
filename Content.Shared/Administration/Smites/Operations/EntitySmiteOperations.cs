@@ -30,6 +30,24 @@ public sealed partial class EntityEffectsSmite : SmiteOperationBase<EntityEffect
 }
 
 /// <summary>
+/// Launches an immovable rod that chases the smite target.
+/// </summary>
+public sealed partial class HomingRodSmite : SmiteOperationBase<HomingRodSmite>
+{
+    [DataField(required: true)]
+    public EntProtoId Prototype { get; private set; }
+
+    [DataField(required: true)]
+    public float Distance { get; private set; }
+
+    [DataField(required: true)]
+    public float Speed { get; private set; }
+
+    [DataField]
+    public bool MatchTargetSprintSpeed { get; private set; }
+}
+
+/// <summary>
 /// Polymorphs the smite target using an existing polymorph prototype.
 /// </summary>
 public sealed partial class PolymorphSmite : SmiteOperationBase<PolymorphSmite>
