@@ -1,4 +1,3 @@
-using Content.Server.Nutrition.EntitySystems;
 using Content.Server.Popups;
 using Content.Server.Roles;
 using Content.Server.Storage.EntitySystems;
@@ -9,7 +8,6 @@ using Content.Shared.Administration.Prototypes;
 using Content.Shared.Damage.Systems;
 using Content.Shared.Database;
 using Content.Shared.Inventory;
-using Content.Shared.Nutrition.Components;
 using Content.Shared.Popups;
 using Content.Shared.Silicons.Laws;
 using Content.Shared.Silicons.Laws.Components;
@@ -34,7 +32,6 @@ public sealed partial class AdminVerbSystem
 {
     [Dependency] private SharedActionsSystem _actions = default!;
     [Dependency] private IRobustRandom _random = default!;
-    [Dependency] private CreamPieSystem _creamPieSystem = default!;
     [Dependency] private EntityStorageSystem _entityStorageSystem = default!;
     [Dependency] private FixtureSystem _fixtures = default!;
     [Dependency] private SharedGodmodeSystem _sharedGodmodeSystem = default!;
@@ -97,24 +94,6 @@ public sealed partial class AdminVerbSystem
             Message = string.Join(": ", chessName, Loc.GetString("admin-smite-chess-dimension-description"))
         };
         args.Verbs.Add(chess);
-
-        if (TryComp<CreamPiedComponent>(args.Target, out var creamPied))
-        {
-            var creamPieName = Loc.GetString("admin-smite-creampie-name").ToLowerInvariant();
-            Verb creamPie = new()
-            {
-                Text = creamPieName,
-                Category = VerbCategory.Smite,
-                Icon = new SpriteSpecifier.Rsi(new("/Textures/Objects/Consumable/Food/Baked/pie.rsi"), "plain-slice"),
-                Act = () =>
-                {
-                    _creamPieSystem.SetCreamPied((args.Target, creamPied), true);
-                },
-                Impact = LogImpact.Extreme,
-                Message = string.Join(": ", creamPieName, Loc.GetString("admin-smite-creampie-description"))
-            };
-            args.Verbs.Add(creamPie);
-        }
 
         if (TryComp<PhysicsComponent>(args.Target, out var physics))
         {

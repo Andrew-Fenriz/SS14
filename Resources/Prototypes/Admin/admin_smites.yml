@@ -294,6 +294,19 @@
     matchTargetSprintSpeed: true
 
 - type: adminSmite
+  id: AdminSmiteCreamPie
+  name: admin-smite-creampie-name
+  description: admin-smite-creampie-description
+  icon:
+    sprite: Objects/Consumable/Food/Baked/pie.rsi
+    state: plain-slice
+  whitelist:
+    components:
+    - CreamPied
+  operations:
+  - !type:CreamPieSmite
+
+- type: adminSmite
   id: AdminSmiteDust
   name: admin-smite-dust-name
   description: admin-smite-dust-description
