@@ -167,3 +167,83 @@
   operations:
   - !type:PolymorphSmite
     prototype: AdminVulpSmite
+
+- type: adminSmite
+  id: AdminSmiteRemoveHands
+  name: admin-smite-remove-hands-name
+  description: admin-smite-remove-hands-description
+  icon: Interface/AdminActions/remove-hands.png
+  whitelist:
+    components:
+    - Body
+  operations:
+  - !type:RemoveOrgansSmite
+    categories:
+    - HandLeft
+    - HandRight
+
+- type: adminSmite
+  id: AdminSmiteRemoveHand
+  name: admin-smite-remove-hand-name
+  description: admin-smite-remove-hand-description
+  icon: Interface/AdminActions/remove-hand.png
+  whitelist:
+    components:
+    - Body
+  operations:
+  - !type:RemoveOrgansSmite
+    categories:
+    - HandLeft
+    - HandRight
+    maxCount: 1
+
+- type: adminSmite
+  id: AdminSmiteStomachRemoval
+  name: admin-smite-stomach-removal-name
+  description: admin-smite-stomach-removal-description
+  icon:
+    sprite: Mobs/Species/Human/organs.rsi
+    state: stomach
+  whitelist:
+    components:
+    - Body
+  operations:
+  - !type:RemoveOrgansSmite
+    categories:
+    - Stomach
+
+- type: adminSmite
+  id: AdminSmiteLungRemoval
+  name: admin-smite-lung-removal-name
+  description: admin-smite-lung-removal-description
+  icon:
+    sprite: Mobs/Species/Human/organs.rsi
+    state: lung-r
+  whitelist:
+    components:
+    - Body
+  operations:
+  - !type:RemoveOrgansSmite
+    categories:
+    - Lungs
+
+- type: adminSmite
+  id: AdminSmiteVomitOrgans
+  name: admin-smite-vomit-organs-name
+  description: admin-smite-vomit-organs-description
+  icon:
+    sprite: Fluids/vomit_toxin.rsi
+    state: vomit_toxin-1
+  whitelist:
+    components:
+    - Body
+  operations:
+  - !type:ApplyEntityEffectsSmite
+    effects:
+    - !type:Vomit
+      thirstAmount: -1000
+      hungerAmount: -1000
+  - !type:RemoveOrgansSmite
+    excludedCategories:
+    - Brain
+    - Eyes
