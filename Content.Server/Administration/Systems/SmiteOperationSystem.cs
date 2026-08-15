@@ -1,8 +1,10 @@
 using Content.Server.Polymorph.Systems;
+using Content.Server.Popups;
 using Content.Shared.Administration.Smites;
 using Content.Shared.Administration.Smites.Operations;
 using Content.Shared.Body;
 using Content.Shared.EntityEffects;
+using Robust.Shared.Player;
 
 namespace Content.Server.Administration.Systems;
 
@@ -14,6 +16,7 @@ public sealed partial class SmiteOperationSystem : EntitySystem
     [Dependency] private BodySystem _body = default!;
     [Dependency] private SharedEntityEffectsSystem _entityEffects = default!;
     [Dependency] private PolymorphSystem _polymorph = default!;
+    [Dependency] private PopupSystem _popup = default!;
     [Dependency] private SharedTransformSystem _transform = default!;
 
     [SubscribeLocalEvent]
@@ -34,6 +37,41 @@ public sealed partial class SmiteOperationSystem : EntitySystem
     private void OnPolymorph(Entity<MetaDataComponent> entity, ref SmiteOperationEvent<PolymorphSmite> args)
     {
         _polymorph.PolymorphEntity(entity, args.Operation.Prototype);
+    }
+
+    [SubscribeLocalEvent]
+    private void OnPopup(Entity<MetaDataComponent> entity, ref SmiteOperationEvent<PopupSmite> args)
+    {
+        var message = Loc.GetString(args.Operation.Message,
+            ("name", entity.Owner),
+            ("entity", entity.Owner));
+
+        switch ((args.Operation.Recipients, args.Operation.Location))
+        {
+            case (SmitePopupRecipients.Target, SmitePopupLocation.Entity):
+                _popup.PopupEntity(message, entity, entity, args.Operation.Type);
+                break;
+            case (SmitePopupRecipients.Target, SmitePopupLocation.Coordinates):
+                _popup.PopupCoordinates(message, Transform(entity).Coordinates, entity, args.Operation.Type);
+                break;
+            case (SmitePopupRecipients.Pvs, SmitePopupLocation.Entity):
+                _popup.PopupEntity(message, entity, args.Operation.Type);
+                break;
+            case (SmitePopupRecipients.Pvs, SmitePopupLocation.Coordinates):
+                _popup.PopupCoordinates(message, Transform(entity).Coordinates, args.Operation.Type);
+                break;
+            case (SmitePopupRecipients.PvsExceptTarget, SmitePopupLocation.Entity):
+                _popup.PopupEntity(message, entity, Filter.PvsExcept(entity), true, args.Operation.Type);
+                break;
+            case (SmitePopupRecipients.PvsExceptTarget, SmitePopupLocation.Coordinates):
+                _popup.PopupCoordinates(
+                    message,
+                    Transform(entity).Coordinates,
+                    Filter.PvsExcept(entity),
+                    true,
+                    args.Operation.Type);
+                break;
+        }
     }
 
     [SubscribeLocalEvent]

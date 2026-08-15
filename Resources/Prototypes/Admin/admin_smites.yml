@@ -12,6 +12,16 @@
     - !type:Flammable
       multiplier: 1000
     - !type:Ignite
+  - !type:PopupSmite
+    message: admin-smite-set-alight-self
+    recipients: Target
+    location: Entity
+    type: LargeCaution
+  - !type:PopupSmite
+    message: admin-smite-set-alight-others
+    recipients: PvsExceptTarget
+    location: Coordinates
+    type: MediumCaution
 
 - type: adminSmite
   id: AdminSmiteOmniAccent
