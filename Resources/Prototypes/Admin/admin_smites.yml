@@ -1,4 +1,88 @@
 - type: adminSmite
+  id: AdminSmiteExplode
+  name: admin-smite-explode-name
+  description: admin-smite-explode-description
+  icon: Interface/VerbIcons/smite.svg.192dpi.png
+  operations:
+  - !type:AddComponentsSmite
+    replaceExisting: true
+    components:
+    - type: Explosive
+      explosionType: Default
+      totalIntensity: 800
+      intensitySlope: 800
+      maxIntensity: 800
+      maxTileBreak: 0
+      canCreateVacuum: false
+  - !type:EntityEffectsSmite
+    effects:
+    - !type:Explode
+      delete: false
+
+- type: adminSmite
+  id: AdminSmiteElectrocute
+  name: admin-smite-electrocute-name
+  description: admin-smite-electrocute-description
+  icon:
+    sprite: Clothing/Hands/Gloves/Color/yellow.rsi
+    state: icon
+  whitelist:
+    components:
+    - Damageable
+    - MobState
+  operations:
+  - !type:EntityEffectsSmite
+    effects:
+    - !type:Electrocute
+      shockDamage: 100
+      electrocuteTime: 30
+      refresh: true
+      bypassInsulation: true
+
+- type: adminSmite
+  id: AdminSmiteZoomIn
+  name: admin-smite-zoom-in-name
+  description: admin-smite-zoom-in-description
+  icon: Interface/AdminActions/zoom.png
+  operations:
+  - !type:AddComponentsSmite
+    replaceExisting: true
+    components:
+    - type: ContentEye
+      targetZoom: 0.2, 0.2
+
+- type: adminSmite
+  id: AdminSmiteFlipEye
+  name: admin-smite-flip-eye-name
+  description: admin-smite-flip-eye-description
+  icon: Interface/AdminActions/flip.png
+  operations:
+  - !type:AddComponentsSmite
+    replaceExisting: true
+    components:
+    - type: ContentEye
+      targetZoom: -1, -1
+
+- type: adminSmite
+  id: AdminSmiteSuperSpeed
+  name: admin-smite-super-speed-name
+  description: admin-smite-super-speed-description
+  icon: Interface/AdminActions/super_speed.png
+  operations:
+  - !type:AddComponentsSmite
+    replaceExisting: true
+    components:
+    - type: MovementSpeedModifier
+      baseWalkSpeed: 400
+      baseSprintSpeed: 8000
+      baseAcceleration: 40
+  - !type:PopupSmite
+    message: admin-smite-super-speed-prompt
+    recipients: Target
+    location: Entity
+    type: LargeCaution
+
+- type: adminSmite
   id: AdminSmiteSetAlight
   name: admin-smite-set-alight-name
   description: admin-smite-set-alight-description

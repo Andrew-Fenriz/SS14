@@ -1,7 +1,4 @@
 using System.Numerics;
-using System.Threading;
-using Content.Server.Electrocution;
-using Content.Server.Explosion.EntitySystems;
 using Content.Server.GhostKick;
 using Content.Server.Nutrition.EntitySystems;
 using Content.Server.Physics.Components;
@@ -15,18 +12,11 @@ using Content.Shared.Administration.Prototypes;
 using Content.Shared.Body.Components;
 using Content.Shared.Body.Systems;
 using Content.Shared.Clothing.Components;
-using Content.Shared.Damage.Components;
 using Content.Shared.Damage.Systems;
 using Content.Shared.Database;
-using Content.Shared.Electrocution;
-using Content.Shared.Gibbing;
 using Content.Shared.Interaction.Components;
 using Content.Shared.Inventory;
-using Content.Shared.Mobs;
-using Content.Shared.Mobs.Components;
-using Content.Shared.Mobs.Systems;
 using Content.Shared.Movement.Components;
-using Content.Shared.Movement.Systems;
 using Content.Shared.Nutrition.Components;
 using Content.Shared.Popups;
 using Content.Shared.Silicons.Laws;
@@ -48,7 +38,6 @@ using Robust.Shared.Prototypes;
 using Robust.Shared.Random;
 using Robust.Shared.Spawners;
 using Robust.Shared.Utility;
-using Timer = Robust.Shared.Timing.Timer;
 
 namespace Content.Server.Administration.Systems;
 
@@ -60,26 +49,19 @@ public sealed partial class AdminVerbSystem
     [Dependency] private IRobustRandom _random = default!;
     [Dependency] private BloodstreamSystem _bloodstreamSystem = default!;
     [Dependency] private CreamPieSystem _creamPieSystem = default!;
-    [Dependency] private ElectrocutionSystem _electrocutionSystem = default!;
     [Dependency] private EntityStorageSystem _entityStorageSystem = default!;
-    [Dependency] private ExplosionSystem _explosionSystem = default!;
     [Dependency] private FixtureSystem _fixtures = default!;
     [Dependency] private GhostKickManager _ghostKickManager = default!;
     [Dependency] private SharedGodmodeSystem _sharedGodmodeSystem = default!;
     [Dependency] private InventorySystem _inventorySystem = default!;
-    [Dependency] private MovementSpeedModifierSystem _movementSpeedModifierSystem = default!;
-    [Dependency] private MobThresholdSystem _mobThresholdSystem = default!;
     [Dependency] private PopupSystem _popupSystem = default!;
     [Dependency] private SharedPhysicsSystem _physics = default!;
     [Dependency] private RoleSystem _role = default!;
     [Dependency] private TabletopSystem _tabletopSystem = default!;
     [Dependency] private WeldableSystem _weldableSystem = default!;
-    [Dependency] private SharedContentEyeSystem _eyeSystem = default!;
     [Dependency] private SharedTransformSystem _transformSystem = default!;
     [Dependency] private SuperBonkSystem _superBonkSystem = default!;
     [Dependency] private SlipperySystem _slipperySystem = default!;
-    [Dependency] private GibbingSystem _gibbing = default!;
-    [Dependency] private DamageableSystem _damageable = default!;
     [Dependency] private StatusEffectsSystem _statusEffects = default!;
     [Dependency] private AdminSmiteSystem _smiteSystem = default!;
     [Dependency] private EntityWhitelistSystem _whitelistSystem = default!;
@@ -107,27 +89,6 @@ public sealed partial class AdminVerbSystem
 
         AddPrototypeSmiteVerbs(args);
 
-        var explodeName = Loc.GetString("admin-smite-explode-name").ToLowerInvariant();
-        Verb explode = new()
-        {
-            Text = explodeName,
-            Category = VerbCategory.Smite,
-            Icon = new SpriteSpecifier.Texture(new("/Textures/Interface/VerbIcons/smite.svg.192dpi.png")),
-            Act = () =>
-            {
-                var coords = _transformSystem.GetMapCoordinates(args.Target);
-                Timer.Spawn(_gameTiming.TickPeriod,
-                    () => _explosionSystem.QueueExplosion(coords, ExplosionSystem.DefaultExplosionPrototypeId,
-                        4, 1, 2, args.Target, maxTileBreak: 0), // it gibs, damage doesn't need to be high.
-                    CancellationToken.None);
-
-                _gibbing.Gib(args.Target);
-            },
-            Impact = LogImpact.Extreme,
-            Message = string.Join(": ", explodeName, Loc.GetString("admin-smite-explode-description")) // we do this so the description tells admins the Text to run it via console.
-        };
-        args.Verbs.Add(explode);
-
         var chessName = Loc.GetString("admin-smite-chess-dimension-name").ToLowerInvariant();
         Verb chess = new()
         {
@@ -153,55 +114,6 @@ public sealed partial class AdminVerbSystem
             Message = string.Join(": ", chessName, Loc.GetString("admin-smite-chess-dimension-description"))
         };
         args.Verbs.Add(chess);
-
-        if (TryComp<DamageableComponent>(args.Target, out var damageable) &&
-            HasComp<MobStateComponent>(args.Target))
-        {
-            var hardElectrocuteName = Loc.GetString("admin-smite-electrocute-name").ToLowerInvariant();
-            Verb hardElectrocute = new()
-            {
-                Text = hardElectrocuteName,
-                Category = VerbCategory.Smite,
-                Icon = new SpriteSpecifier.Rsi(new("/Textures/Clothing/Hands/Gloves/Color/yellow.rsi"), "icon"),
-                Act = () =>
-                {
-                    var totalDamage = _damageable.GetTotalDamage((args.Target, damageable));
-                    int damageToDeal;
-                    if (!_mobThresholdSystem.TryGetThresholdForState(args.Target, MobState.Critical, out var criticalThreshold))
-                    {
-                        // We can't crit them so try killing them.
-                        if (!_mobThresholdSystem.TryGetThresholdForState(args.Target, MobState.Dead,
-                                out var deadThreshold))
-                            return;// whelp.
-                        damageToDeal = deadThreshold.Value.Int() - (int)totalDamage;
-                    }
-                    else
-                    {
-                        damageToDeal = criticalThreshold.Value.Int() - (int)totalDamage;
-                    }
-
-                    if (damageToDeal <= 0)
-                        damageToDeal = 100; // murder time.
-
-                    if (_inventorySystem.TryGetSlots(args.Target, out var slotDefinitions))
-                    {
-                        foreach (var slot in slotDefinitions)
-                        {
-                            if (!_inventorySystem.TryGetSlotEntity(args.Target, slot.Name, out var slotEnt))
-                                continue;
-
-                            RemComp<InsulatedComponent>(slotEnt.Value); // Fry the gloves.
-                        }
-                    }
-
-                    _electrocutionSystem.TryDoElectrocution(args.Target, null, damageToDeal,
-                        TimeSpan.FromSeconds(30), refresh: true, ignoreInsulation: true);
-                },
-                Impact = LogImpact.Extreme,
-                Message = string.Join(": ", hardElectrocuteName, Loc.GetString("admin-smite-electrocute-description"))
-            };
-            args.Verbs.Add(hardElectrocute);
-        }
 
         if (TryComp<CreamPiedComponent>(args.Target, out var creamPied))
         {
@@ -413,38 +325,6 @@ public sealed partial class AdminVerbSystem
         };
         args.Verbs.Add(locker);
 
-        var zoomInName = Loc.GetString("admin-smite-zoom-in-name").ToLowerInvariant();
-        Verb zoomIn = new()
-        {
-            Text = zoomInName,
-            Category = VerbCategory.Smite,
-            Icon = new SpriteSpecifier.Texture(new("/Textures/Interface/AdminActions/zoom.png")),
-            Act = () =>
-            {
-                var eye = EnsureComp<ContentEyeComponent>(args.Target);
-                _eyeSystem.SetZoom(args.Target, eye.TargetZoom * 0.2f, ignoreLimits: true);
-            },
-            Impact = LogImpact.Extreme,
-            Message = string.Join(": ", zoomInName, Loc.GetString("admin-smite-zoom-in-description"))
-        };
-        args.Verbs.Add(zoomIn);
-
-        var flipEyeName = Loc.GetString("admin-smite-flip-eye-name").ToLowerInvariant();
-        Verb flipEye = new()
-        {
-            Text = flipEyeName,
-            Category = VerbCategory.Smite,
-            Icon = new SpriteSpecifier.Texture(new("/Textures/Interface/AdminActions/flip.png")),
-            Act = () =>
-            {
-                var eye = EnsureComp<ContentEyeComponent>(args.Target);
-                _eyeSystem.SetZoom(args.Target, eye.TargetZoom * -1, ignoreLimits: true);
-            },
-            Impact = LogImpact.Extreme,
-            Message = string.Join(": ", flipEyeName, Loc.GetString("admin-smite-flip-eye-description"))
-        };
-        args.Verbs.Add(flipEye);
-
         var runWalkSwapName = Loc.GetString("admin-smite-run-walk-swap-name").ToLowerInvariant();
         Verb runWalkSwap = new()
         {
@@ -465,25 +345,6 @@ public sealed partial class AdminVerbSystem
             Message = string.Join(": ", runWalkSwapName, Loc.GetString("admin-smite-run-walk-swap-description"))
         };
         args.Verbs.Add(runWalkSwap);
-
-        var superSpeedName = Loc.GetString("admin-smite-super-speed-name").ToLowerInvariant();
-        Verb superSpeed = new()
-        {
-            Text = superSpeedName,
-            Category = VerbCategory.Smite,
-            Icon = new SpriteSpecifier.Texture(new("/Textures/Interface/AdminActions/super_speed.png")),
-            Act = () =>
-            {
-                var movementSpeed = EnsureComp<MovementSpeedModifierComponent>(args.Target);
-                _movementSpeedModifierSystem?.ChangeBaseSpeed(args.Target, 400, 8000, 40, movementSpeed);
-
-                _popupSystem.PopupEntity(Loc.GetString("admin-smite-super-speed-prompt"), args.Target,
-                    args.Target, PopupType.LargeCaution);
-            },
-            Impact = LogImpact.Extreme,
-            Message = string.Join(": ", superSpeedName, Loc.GetString("admin-smite-super-speed-description"))
-        };
-        args.Verbs.Add(superSpeed);
 
         //Bonk
         var superBonkLiteName = Loc.GetString("admin-smite-super-bonk-lite-name").ToLowerInvariant();
