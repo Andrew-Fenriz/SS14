@@ -11,7 +11,6 @@ using Content.Server.Storage.EntitySystems;
 using Content.Server.Tabletop;
 using Content.Shared.Actions;
 using Content.Shared.Administration;
-using Content.Shared.Administration.Components;
 using Content.Shared.Administration.Prototypes;
 using Content.Shared.Body.Components;
 using Content.Shared.Body.Systems;
@@ -21,7 +20,6 @@ using Content.Shared.Damage.Systems;
 using Content.Shared.Database;
 using Content.Shared.Electrocution;
 using Content.Shared.Gibbing;
-using Content.Shared.Gravity;
 using Content.Shared.Interaction.Components;
 using Content.Shared.Inventory;
 using Content.Shared.Mobs;
@@ -354,40 +352,6 @@ public sealed partial class AdminVerbSystem
             };
             args.Verbs.Add(nyanify);
 
-            var killSignName = Loc.GetString("admin-smite-kill-sign-name").ToLowerInvariant();
-            Verb killSign = new()
-            {
-                Text = killSignName,
-                Category = VerbCategory.Smite,
-                Icon = new SpriteSpecifier.Rsi(new("/Textures/Objects/Misc/killsign.rsi"), "icon"),
-                Act = () =>
-                {
-                    EnsureComp<KillSignComponent>(args.Target, out var comp);
-                    comp.HideFromOwner = false; // We set it to false anyway, in case the hidden smite was used beforehand.
-                    Dirty(args.Target, comp);
-                },
-                Impact = LogImpact.Extreme,
-                Message = string.Join(": ", killSignName, Loc.GetString("admin-smite-kill-sign-description"))
-            };
-            args.Verbs.Add(killSign);
-
-            var hiddenKillSignName = Loc.GetString("admin-smite-kill-sign-hidden-name").ToLowerInvariant();
-            Verb hiddenKillSign = new()
-            {
-                Text = hiddenKillSignName,
-                Category = VerbCategory.Smite,
-                Icon = new SpriteSpecifier.Rsi(new("/Textures/Objects/Misc/killsign.rsi"), "icon-hidden"),
-                Act = () =>
-                {
-                    EnsureComp<KillSignComponent>(args.Target, out var comp);
-                    comp.HideFromOwner = true;
-                    Dirty(args.Target, comp);
-                },
-                Impact = LogImpact.Extreme,
-                Message = string.Join(": ", hiddenKillSignName, Loc.GetString("admin-smite-kill-sign-hidden-description"))
-            };
-            args.Verbs.Add(hiddenKillSign);
-
             var maidenName = Loc.GetString("admin-smite-maid-name").ToLowerInvariant();
             Verb maiden = new()
             {
@@ -425,29 +389,6 @@ public sealed partial class AdminVerbSystem
             Message = string.Join(": ", dustName, Loc.GetString("admin-smite-dust-description"))
         };
         args.Verbs.Add(dust);
-
-        var noGravityName = Loc.GetString("admin-smite-remove-gravity-name").ToLowerInvariant();
-        Verb noGravity = new()
-        {
-            Text = noGravityName,
-            Category = VerbCategory.Smite,
-            Icon = new SpriteSpecifier.Rsi(new("/Textures/Structures/Machines/gravity_generator.rsi"), "off"),
-            Act = () =>
-            {
-                var grav = EnsureComp<MovementIgnoreGravityComponent>(args.Target);
-                grav.Weightless = true;
-
-                Dirty(args.Target, grav);
-
-                EnsureComp<GravityAffectedComponent>(args.Target, out var weightless);
-                weightless.Weightless = true;
-
-                Dirty(args.Target, weightless);
-            },
-            Impact = LogImpact.Extreme,
-            Message = string.Join(": ", noGravityName, Loc.GetString("admin-smite-remove-gravity-description"))
-        };
-        args.Verbs.Add(noGravity);
 
         var lockerName = Loc.GetString("admin-smite-locker-stuff-name").ToLowerInvariant();
         Verb locker = new()

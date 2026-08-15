@@ -45,6 +45,7 @@
     state: icon
   operations:
   - !type:AddComponentsSmite
+    replaceExisting: true
     components:
     - type: GasMiner
       spawnGas: Ammonia
@@ -52,6 +53,54 @@
       showExamineText: false
     - type: AtmosDevice
       requireAnchored: false
+
+- type: adminSmite
+  id: AdminSmiteKillSign
+  name: admin-smite-kill-sign-name
+  description: admin-smite-kill-sign-description
+  icon:
+    sprite: Objects/Misc/killsign.rsi
+    state: icon
+  whitelist:
+    components:
+    - Inventory
+  operations:
+  - !type:AddComponentsSmite
+    replaceExisting: true
+    components:
+    - type: KillSign
+      hideFromOwner: false
+
+- type: adminSmite
+  id: AdminSmiteHiddenKillSign
+  name: admin-smite-kill-sign-hidden-name
+  description: admin-smite-kill-sign-hidden-description
+  icon:
+    sprite: Objects/Misc/killsign.rsi
+    state: icon-hidden
+  whitelist:
+    components:
+    - Inventory
+  operations:
+  - !type:AddComponentsSmite
+    replaceExisting: true
+    components:
+    - type: KillSign
+      hideFromOwner: true
+
+- type: adminSmite
+  id: AdminSmiteRemoveGravity
+  name: admin-smite-remove-gravity-name
+  description: admin-smite-remove-gravity-description
+  icon:
+    sprite: Structures/Machines/gravity_generator.rsi
+    state: off
+  operations:
+  - !type:AddComponentsSmite
+    replaceExisting: true
+    components:
+    - type: MovementIgnoreGravity
+      weightless: true
 
 - type: adminSmite
   id: AdminSmiteBuffering
