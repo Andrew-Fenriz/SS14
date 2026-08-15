@@ -13,6 +13,9 @@ using Content.Shared.EntityEffects;
 using Content.Shared.Interaction.Components;
 using Content.Shared.Inventory;
 using Content.Shared.Movement.Components;
+using Content.Shared.Nutrition.Components;
+using Content.Shared.Nutrition.EntitySystems;
+using Content.Shared.Stunnable;
 using Robust.Shared.Player;
 using Robust.Shared.Random;
 using Robust.Shared.Spawners;
@@ -26,11 +29,13 @@ public sealed partial class SmiteOperationSystem : EntitySystem
 {
     [Dependency] private BodySystem _body = default!;
     [Dependency] private BloodstreamSystem _bloodstream = default!;
+    [Dependency] private SharedCreamPieSystem _creamPie = default!;
     [Dependency] private SharedEntityEffectsSystem _entityEffects = default!;
     [Dependency] private GhostKickManager _ghostKick = default!;
     [Dependency] private InventorySystem _inventory = default!;
     [Dependency] private PolymorphSystem _polymorph = default!;
     [Dependency] private PopupSystem _popup = default!;
+    [Dependency] private SharedStunSystem _stun = default!;
     [Dependency] private SharedTransformSystem _transform = default!;
 
     [SubscribeLocalEvent]
@@ -38,6 +43,13 @@ public sealed partial class SmiteOperationSystem : EntitySystem
         ref SmiteOperationEvent<AddComponentsSmite> args)
     {
         EntityManager.AddComponents(entity, args.Operation.Components, removeExisting: args.Operation.ReplaceExisting);
+    }
+
+    [SubscribeLocalEvent]
+    private void OnCreamPie(Entity<CreamPiedComponent> entity, ref SmiteOperationEvent<CreamPieSmite> args)
+    {
+        _stun.TryUpdateParalyzeDuration(entity.Owner, TimeSpan.FromSeconds(1));
+        _creamPie.SetCreamPied(entity.AsNullable(), true);
     }
 
     [SubscribeLocalEvent]

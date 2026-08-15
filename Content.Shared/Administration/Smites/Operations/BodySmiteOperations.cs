@@ -4,6 +4,11 @@ using Robust.Shared.Prototypes;
 namespace Content.Shared.Administration.Smites.Operations;
 
 /// <summary>
+/// Applies the effects of a cream pie hit to the smite target.
+/// </summary>
+public sealed partial class CreamPieSmite : SmiteOperationBase<CreamPieSmite>;
+
+/// <summary>
 /// Removes matching organs from a body and leaves them in the world.
 /// </summary>
 public sealed partial class RemoveOrgansSmite : SmiteOperationBase<RemoveOrgansSmite>
