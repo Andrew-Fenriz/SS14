@@ -3,7 +3,10 @@ using Content.Server.Popups;
 using Content.Shared.Administration.Smites;
 using Content.Shared.Administration.Smites.Operations;
 using Content.Shared.Body;
+using Content.Shared.Clothing.Components;
 using Content.Shared.EntityEffects;
+using Content.Shared.Interaction.Components;
+using Content.Shared.Inventory;
 using Robust.Shared.Player;
 
 namespace Content.Server.Administration.Systems;
@@ -15,6 +18,7 @@ public sealed partial class SmiteOperationSystem : EntitySystem
 {
     [Dependency] private BodySystem _body = default!;
     [Dependency] private SharedEntityEffectsSystem _entityEffects = default!;
+    [Dependency] private InventorySystem _inventory = default!;
     [Dependency] private PolymorphSystem _polymorph = default!;
     [Dependency] private PopupSystem _popup = default!;
     [Dependency] private SharedTransformSystem _transform = default!;
@@ -102,6 +106,35 @@ public sealed partial class SmiteOperationSystem : EntitySystem
         foreach (var organ in selected)
         {
             _transform.AttachToGridOrMap(organ);
+        }
+    }
+
+    [SubscribeLocalEvent]
+    private void OnSetEquipment(Entity<InventoryComponent> entity,
+        ref SmiteOperationEvent<SetEquipmentSmite> args)
+    {
+        if (args.Operation.ClearOtherSlots && _inventory.TryGetSlots(entity, out var slots))
+        {
+            foreach (var slot in slots)
+            {
+                _inventory.TryUnequip(entity, slot.Name, silent: true, force: true, inventory: entity.Comp);
+            }
+        }
+
+        foreach (var (slot, prototype) in args.Operation.Equipment)
+        {
+            if (!args.Operation.ClearOtherSlots)
+                _inventory.TryUnequip(entity, slot, silent: true, force: true, inventory: entity.Comp);
+
+            var equipment = Spawn(prototype, Transform(entity).Coordinates);
+            if (!_inventory.TryEquip(entity, equipment, slot, silent: true, force: true, inventory: entity.Comp))
+            {
+                QueueDel(equipment);
+                continue;
+            }
+
+            if (args.Operation.Unremoveable && HasComp<ClothingComponent>(equipment))
+                EnsureComp<UnremoveableComponent>(equipment);
         }
     }
 }
