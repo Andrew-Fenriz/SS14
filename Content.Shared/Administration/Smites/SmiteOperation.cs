@@ -31,3 +31,9 @@ public interface ISmiteOperationRaiser
 {
     void RaiseOperationEvent<T>(EntityUid target, EntityUid user, T operation) where T : SmiteOperationBase<T>;
 }
+
+/// <summary>
+/// Carries a typed smite operation and the admin responsible for it.
+/// </summary>
+[ByRefEvent]
+public readonly record struct SmiteOperationEvent<T>(T Operation, EntityUid User) where T : SmiteOperationBase<T>;

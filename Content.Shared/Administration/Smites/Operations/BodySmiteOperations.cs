@@ -26,3 +26,8 @@ public sealed partial class RemoveOrgansSmite : SmiteOperationBase<RemoveOrgansS
     [DataField]
     public int? MaxCount { get; private set; }
 }
+
+/// <summary>
+/// Spills every solution in the smite target's bloodstream.
+/// </summary>
+public sealed partial class SpillBloodstreamSmite : SmiteOperationBase<SpillBloodstreamSmite>;
