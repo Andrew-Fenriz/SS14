@@ -17,6 +17,13 @@ public sealed partial class SmiteOperationSystem : EntitySystem
     [Dependency] private SharedTransformSystem _transform = default!;
 
     [SubscribeLocalEvent]
+    private void OnAddComponents(Entity<MetaDataComponent> entity,
+        ref SmiteOperationEvent<AddComponentsSmite> args)
+    {
+        EntityManager.AddComponents(entity, args.Operation.Components, removeExisting: false);
+    }
+
+    [SubscribeLocalEvent]
     private void OnEntityEffects(Entity<MetaDataComponent> entity,
         ref SmiteOperationEvent<EntityEffectsSmite> args)
     {

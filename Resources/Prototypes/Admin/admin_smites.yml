@@ -4,11 +4,9 @@
   description: admin-smite-buffering-description
   icon: Interface/Misc/buffering_smite_icon.png
   operations:
-  - !type:EntityEffectsSmite
-    effects:
-    - !type:AddComponents
-      components:
-      - type: Buffering
+  - !type:AddComponentsSmite
+    components:
+    - type: Buffering
 
 - type: adminSmite
   id: AdminSmiteCluwne
@@ -21,11 +19,9 @@
     components:
     - Inventory
   operations:
-  - !type:EntityEffectsSmite
-    effects:
-    - !type:AddComponents
-      components:
-      - type: Cluwne
+  - !type:AddComponentsSmite
+    components:
+    - type: Cluwne
 
 - type: adminSmite
   id: AdminSmiteAngerPointingArrows
@@ -35,11 +31,9 @@
     sprite: Interface/Misc/pointing.rsi
     state: pointing
   operations:
-  - !type:EntityEffectsSmite
-    effects:
-    - !type:AddComponents
-      components:
-      - type: PointingArrowAngering
+  - !type:AddComponentsSmite
+    components:
+    - type: PointingArrowAngering
 
 - type: adminSmite
   id: AdminSmiteHeadstand
@@ -47,11 +41,9 @@
   description: admin-smite-headstand-description
   icon: Interface/VerbIcons/refresh.svg.192dpi.png
   operations:
-  - !type:EntityEffectsSmite
-    effects:
-    - !type:AddComponents
-      components:
-      - type: Headstand
+  - !type:AddComponentsSmite
+    components:
+    - type: Headstand
 
 - type: adminSmite
   id: AdminSmiteSpeakBackwards
@@ -59,11 +51,9 @@
   description: admin-smite-speak-backwards-description
   icon: Interface/AdminActions/help-backwards.png
   operations:
-  - !type:EntityEffectsSmite
-    effects:
-    - !type:AddComponents
-      components:
-      - type: BackwardsAccent
+  - !type:AddComponentsSmite
+    components:
+    - type: BackwardsAccent
 
 - type: adminSmite
   id: AdminSmiteDisarmProne
@@ -71,11 +61,9 @@
   description: admin-smite-disarm-prone-description
   icon: Interface/Actions/disarm.png
   operations:
-  - !type:EntityEffectsSmite
-    effects:
-    - !type:AddComponents
-      components:
-      - type: DisarmProne
+  - !type:AddComponentsSmite
+    components:
+    - type: DisarmProne
 
 - type: adminSmite
   id: AdminSmiteCrawler
@@ -85,11 +73,9 @@
     sprite: Mobs/Animals/snake.rsi
     state: icon
   operations:
-  - !type:EntityEffectsSmite
-    effects:
-    - !type:AddComponents
-      components:
-      - type: Worm
+  - !type:AddComponentsSmite
+    components:
+    - type: Worm
 
 - type: adminSmite
   id: AdminSmiteMonkey
