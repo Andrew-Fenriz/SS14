@@ -26,16 +26,6 @@
     #back:
     #- Stuff
 
-- type: startingGear
-  id: JanitorMaidGear
-  equipment:
-    jumpsuit: ClothingUniformJumpskirtJanimaid
-    id: JanitorPDA
-    gloves: ClothingHandsGlovesJanitor
-    head: ClothingHeadHatCatEars
-    ears: ClothingHeadsetService
-    belt: ClothingBeltJanitorFilled
-
 - type: chameleonOutfit
   id: JanitorChameleonOutfit
   job: Janitor

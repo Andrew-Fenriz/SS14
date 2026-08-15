@@ -1,4 +1,48 @@
 - type: adminSmite
+  id: AdminSmiteNyanify
+  name: admin-smite-nyanify-name
+  description: admin-smite-nyanify-description
+  icon:
+    sprite: Clothing/Head/Hats/catears.rsi
+    state: icon
+  whitelist:
+    components:
+    - Inventory
+  operations:
+  - !type:SetEquipmentSmite
+    unremoveable: true
+    equipment:
+      head: ClothingHeadHatCatEars
+
+- type: adminSmite
+  id: AdminSmiteMaid
+  name: admin-smite-maid-name
+  description: admin-smite-maid-description
+  icon:
+    sprite: Clothing/Uniforms/Jumpskirts/Service/janimaid.rsi
+    state: icon
+  whitelist:
+    components:
+    - Inventory
+  operations:
+  - !type:SetEquipmentSmite
+    clearOtherSlots: true
+    unremoveable: true
+    equipment:
+      jumpsuit: ClothingUniformJumpskirtJanimaid
+      id: JanitorPDA
+      gloves: ClothingHandsGlovesJanitor
+      head: ClothingHeadHatCatEars
+      ears: ClothingHeadsetService
+      belt: ClothingBeltJanitorFilled
+  - !type:EntityEffectsSmite
+    effects:
+    - !type:ModifyStatusEffect
+      effectProto: StatusEffectClumsyMaid
+      time: null
+      type: Set
+
+- type: adminSmite
   id: AdminSmiteExplode
   name: admin-smite-explode-name
   description: admin-smite-explode-description

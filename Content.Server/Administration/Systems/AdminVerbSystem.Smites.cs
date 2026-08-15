@@ -11,10 +11,8 @@ using Content.Shared.Administration;
 using Content.Shared.Administration.Prototypes;
 using Content.Shared.Body.Components;
 using Content.Shared.Body.Systems;
-using Content.Shared.Clothing.Components;
 using Content.Shared.Damage.Systems;
 using Content.Shared.Database;
-using Content.Shared.Interaction.Components;
 using Content.Shared.Inventory;
 using Content.Shared.Movement.Components;
 using Content.Shared.Nutrition.Components;
@@ -22,8 +20,6 @@ using Content.Shared.Popups;
 using Content.Shared.Silicons.Laws;
 using Content.Shared.Silicons.Laws.Components;
 using Content.Shared.Slippery;
-using Content.Shared.StatusEffectNew;
-using Content.Shared.StatusEffectNew.Components;
 using Content.Shared.Storage.Components;
 using Content.Shared.Tabletop.Components;
 using Content.Shared.Tools.Systems;
@@ -43,8 +39,6 @@ namespace Content.Server.Administration.Systems;
 
 public sealed partial class AdminVerbSystem
 {
-    private static readonly EntProtoId<StatusEffectComponent> MaidStatus = "StatusEffectClumsyMaid";
-
     [Dependency] private SharedActionsSystem _actions = default!;
     [Dependency] private IRobustRandom _random = default!;
     [Dependency] private BloodstreamSystem _bloodstreamSystem = default!;
@@ -62,7 +56,6 @@ public sealed partial class AdminVerbSystem
     [Dependency] private SharedTransformSystem _transformSystem = default!;
     [Dependency] private SuperBonkSystem _superBonkSystem = default!;
     [Dependency] private SlipperySystem _slipperySystem = default!;
-    [Dependency] private StatusEffectsSystem _statusEffects = default!;
     [Dependency] private AdminSmiteSystem _smiteSystem = default!;
     [Dependency] private EntityWhitelistSystem _whitelistSystem = default!;
 
@@ -242,47 +235,6 @@ public sealed partial class AdminVerbSystem
 
             };
             args.Verbs.Add(ghostKick);
-        }
-
-        if (TryComp<InventoryComponent>(args.Target, out var inventory))
-        {
-            var nyanifyName = Loc.GetString("admin-smite-nyanify-name").ToLowerInvariant();
-            Verb nyanify = new()
-            {
-                Text = nyanifyName,
-                Category = VerbCategory.Smite,
-                Icon = new SpriteSpecifier.Rsi(new("/Textures/Clothing/Head/Hats/catears.rsi"), "icon"),
-                Act = () =>
-                {
-                    var ears = Spawn("ClothingHeadHatCatEars", Transform(args.Target).Coordinates);
-                    EnsureComp<UnremoveableComponent>(ears);
-                    _inventorySystem.TryUnequip(args.Target, "head", true, true, false, inventory);
-                    _inventorySystem.TryEquip(args.Target, ears, "head", true, true, false, inventory);
-                },
-                Impact = LogImpact.Extreme,
-                Message = string.Join(": ", nyanifyName, Loc.GetString("admin-smite-nyanify-description"))
-            };
-            args.Verbs.Add(nyanify);
-
-            var maidenName = Loc.GetString("admin-smite-maid-name").ToLowerInvariant();
-            Verb maiden = new()
-            {
-                Text = maidenName,
-                Category = VerbCategory.Smite,
-                Icon = new SpriteSpecifier.Rsi(new("/Textures/Clothing/Uniforms/Jumpskirts/Service/janimaid.rsi"), "icon"),
-                Act = () =>
-                {
-                    _outfit.SetOutfit(args.Target, "JanitorMaidGear", (_, clothing) =>
-                    {
-                        if (HasComp<ClothingComponent>(clothing))
-                            EnsureComp<UnremoveableComponent>(clothing);
-                        _statusEffects.TrySetStatusEffectDuration(args.Target, MaidStatus);
-                    });
-                },
-                Impact = LogImpact.Extreme,
-                Message = string.Join(": ", maidenName, Loc.GetString("admin-smite-maid-description"))
-            };
-            args.Verbs.Add(maiden);
         }
 
         var dustName = Loc.GetString("admin-smite-dust-name").ToLowerInvariant();
