@@ -17,8 +17,8 @@ public sealed partial class SmiteOperationSystem : EntitySystem
     [Dependency] private SharedTransformSystem _transform = default!;
 
     [SubscribeLocalEvent]
-    private void OnApplyEntityEffects(Entity<MetaDataComponent> entity,
-        ref SmiteOperationEvent<ApplyEntityEffectsSmite> args)
+    private void OnEntityEffects(Entity<MetaDataComponent> entity,
+        ref SmiteOperationEvent<EntityEffectsSmite> args)
     {
         _entityEffects.ApplyEffects(entity, args.Operation.Effects, user: args.User);
     }

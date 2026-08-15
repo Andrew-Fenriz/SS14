@@ -4,7 +4,7 @@
   description: admin-smite-buffering-description
   icon: Interface/Misc/buffering_smite_icon.png
   operations:
-  - !type:ApplyEntityEffectsSmite
+  - !type:EntityEffectsSmite
     effects:
     - !type:AddComponents
       components:
@@ -21,7 +21,7 @@
     components:
     - Inventory
   operations:
-  - !type:ApplyEntityEffectsSmite
+  - !type:EntityEffectsSmite
     effects:
     - !type:AddComponents
       components:
@@ -35,7 +35,7 @@
     sprite: Interface/Misc/pointing.rsi
     state: pointing
   operations:
-  - !type:ApplyEntityEffectsSmite
+  - !type:EntityEffectsSmite
     effects:
     - !type:AddComponents
       components:
@@ -47,7 +47,7 @@
   description: admin-smite-headstand-description
   icon: Interface/VerbIcons/refresh.svg.192dpi.png
   operations:
-  - !type:ApplyEntityEffectsSmite
+  - !type:EntityEffectsSmite
     effects:
     - !type:AddComponents
       components:
@@ -59,7 +59,7 @@
   description: admin-smite-speak-backwards-description
   icon: Interface/AdminActions/help-backwards.png
   operations:
-  - !type:ApplyEntityEffectsSmite
+  - !type:EntityEffectsSmite
     effects:
     - !type:AddComponents
       components:
@@ -71,7 +71,7 @@
   description: admin-smite-disarm-prone-description
   icon: Interface/Actions/disarm.png
   operations:
-  - !type:ApplyEntityEffectsSmite
+  - !type:EntityEffectsSmite
     effects:
     - !type:AddComponents
       components:
@@ -85,7 +85,7 @@
     sprite: Mobs/Animals/snake.rsi
     state: icon
   operations:
-  - !type:ApplyEntityEffectsSmite
+  - !type:EntityEffectsSmite
     effects:
     - !type:AddComponents
       components:
@@ -238,7 +238,7 @@
     components:
     - Body
   operations:
-  - !type:ApplyEntityEffectsSmite
+  - !type:EntityEffectsSmite
     effects:
     - !type:Vomit
       thirstAmount: -1000
