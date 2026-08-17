@@ -273,10 +273,12 @@
       - ReagentId: Blood
         Quantity: 100
   - type: ProductionAction
-  - type: EntityProducerAction
+  - type: ProductionFeedback
     insufficientSatiationPopup: action-popup-lay-egg-too-hungry
     userPopup: action-popup-lay-egg-user
     othersPopup: action-popup-lay-egg-others
+    productionSound:
+      path: /Audio/Effects/pop.ogg
   - type: SatiationProduction
     delay: 60
     delayMax: 120
@@ -742,10 +744,12 @@
       - ReagentId: Blood
         Quantity: 100
   - type: ProductionAction
-  - type: EntityProducerAction
+  - type: ProductionFeedback
     insufficientSatiationPopup: action-popup-lay-egg-too-hungry
     userPopup: action-popup-lay-egg-user
     othersPopup: action-popup-lay-egg-others
+    productionSound:
+      path: /Audio/Effects/pop.ogg
   - type: SatiationProduction
     delay: 60
     delayMax: 120
