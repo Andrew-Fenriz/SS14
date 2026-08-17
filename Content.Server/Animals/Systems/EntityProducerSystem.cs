@@ -17,7 +17,7 @@ public sealed partial class EntityProducerSystem : EntitySystem
 
         foreach (var spawn in _entityTable.GetSpawns(ent.Comp.Table))
         {
-            produced.Add(SpawnNextToOrDrop(spawn, args.Owner));
+            produced.Add(SpawnNextToOrDrop(spawn, args.Producer));
         }
 
         if (produced.Count == 0)
@@ -25,7 +25,7 @@ public sealed partial class EntityProducerSystem : EntitySystem
 
         args.Produced = true;
 
-        var ev = new EntitiesProducedEvent(args.Owner, produced);
+        var ev = new EntitiesProducedEvent(args.Producer, produced);
         RaiseLocalEvent(ent.Owner, ref ev);
     }
 }
