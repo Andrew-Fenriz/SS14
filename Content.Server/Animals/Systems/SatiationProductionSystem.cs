@@ -53,6 +53,9 @@ public sealed partial class SatiationProductionSystem : EntitySystem
         Entity<SatiationProductionComponent> ent,
         ref BeforeProductionEvent args)
     {
+        if (args.Cancelled)
+            return;
+
         var failure = GetFailure(ent.Comp, args.Producer);
         if (failure == SatiationProductionFailure.None)
             return;

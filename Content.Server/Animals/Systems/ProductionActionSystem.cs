@@ -15,6 +15,9 @@ public sealed partial class ProductionActionSystem : EntitySystem
         Entity<ProductionActionComponent> ent,
         ref ProductionActionEvent args)
     {
+        if (args.Handled)
+            return;
+
         var source = args.Source switch
         {
             ProductionActionSource.Action => args.Action.Owner,
