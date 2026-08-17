@@ -1,7 +1,7 @@
 ﻿namespace Content.Server.Animals.Systems;
 
 /// <summary>
-/// Handles dispatching production attempts.
+/// Handles dispatching production attempts and their lifecycle.
 /// </summary>
 public sealed partial class ProductionSystem : EntitySystem
 {
@@ -12,10 +12,34 @@ public sealed partial class ProductionSystem : EntitySystem
     /// <param name="producer">Entity performing the production.</param>
     public bool TryProduce(EntityUid source, EntityUid producer)
     {
-        var ev = new ProductionAttemptEvent(producer);
-        RaiseLocalEvent(source, ref ev);
-        return ev.Produced;
+        var before = new BeforeProductionEvent(producer);
+        RaiseLocalEvent(source, ref before);
+        if (before.Cancelled)
+            return false;
+
+        var attempt = new ProductionAttemptEvent(producer);
+        RaiseLocalEvent(source, ref attempt);
+        if (!attempt.Produced)
+            return false;
+
+        var completed = new ProductionCompletedEvent(producer);
+        RaiseLocalEvent(source, ref completed);
+
+        return true;
     }
+}
+
+/// <summary>
+/// Raised before production is attempted, allowing production requirements to cancel it.
+/// </summary>
+/// <param name="Producer">Entity performing the production.</param>
+[ByRefEvent]
+public record struct BeforeProductionEvent(EntityUid Producer)
+{
+    /// <summary>
+    /// Whether production should be cancelled.
+    /// </summary>
+    public bool Cancelled;
 }
 
 /// <summary>
@@ -31,3 +55,10 @@ public record struct ProductionAttemptEvent(EntityUid Producer)
     /// </summary>
     public bool Produced;
 }
+
+/// <summary>
+/// Raised after something was successfully produced.
+/// </summary>
+/// <param name="Producer">Entity performing the production.</param>
+[ByRefEvent]
+public readonly record struct ProductionCompletedEvent(EntityUid Producer);

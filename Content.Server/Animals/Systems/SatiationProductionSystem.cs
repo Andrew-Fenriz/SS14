@@ -39,7 +39,7 @@ public sealed partial class SatiationProductionSystem : EntitySystem
                 continue;
 
             producer.NextProductionTime += GetDelay(producer);
-            TryProduce((uid, producer), out _);
+            _production.TryProduce(uid, producerUid);
         }
     }
 
@@ -47,6 +47,30 @@ public sealed partial class SatiationProductionSystem : EntitySystem
     private void OnMapInit(Entity<SatiationProductionComponent> ent, ref MapInitEvent args)
     {
         ent.Comp.NextProductionTime = _timing.CurTime + GetDelay(ent.Comp);
+    }
+
+    [SubscribeLocalEvent]
+    private void OnBeforeProduction(
+        Entity<SatiationProductionComponent> ent,
+        ref BeforeProductionEvent args)
+    {
+        if (GetFailure(ent.Comp, args.Producer) != SatiationProductionFailure.None)
+            args.Cancelled = true;
+    }
+
+    [SubscribeLocalEvent]
+    private void OnProductionCompleted(
+        Entity<SatiationProductionComponent> ent,
+        ref ProductionCompletedEvent args)
+    {
+        if (!_satiationQuery.TryComp(args.Producer, out var satiation) ||
+            !satiation.Has(ent.Comp.SatiationType))
+            return;
+
+        _satiation.ModifyValue(
+            (args.Producer, satiation),
+            ent.Comp.SatiationType,
+            -ent.Comp.SatiationUsage);
     }
 
     /// <summary>
@@ -60,29 +84,35 @@ public sealed partial class SatiationProductionSystem : EntitySystem
         if (!_productionQuery.Resolve(ent, ref ent.Comp))
             return false;
 
-        var owner = GetProducer((ent.Owner, ent.Comp));
-        if (_mobState.IsDead(owner))
+        var producer = GetProducer((ent.Owner, ent.Comp));
+        if (_production.TryProduce(ent.Owner, producer))
         {
-            failure = SatiationProductionFailure.Dead;
-            return false;
+            failure = SatiationProductionFailure.None;
+            return true;
         }
 
-        if (_satiationQuery.TryComp(owner, out var satiation) &&
-            satiation.Has(ent.Comp.SatiationType) &&
-            !HasEnoughSatiation(ent.Comp, (owner, satiation)))
+        var satiationFailure = GetFailure(ent.Comp, producer);
+        if (satiationFailure != SatiationProductionFailure.None)
+            failure = satiationFailure;
+
+        return false;
+    }
+
+    private SatiationProductionFailure GetFailure(
+        SatiationProductionComponent component,
+        EntityUid producer)
+    {
+        if (_mobState.IsDead(producer))
+            return SatiationProductionFailure.Dead;
+
+        if (_satiationQuery.TryComp(producer, out var satiation) &&
+            satiation.Has(component.SatiationType) &&
+            !HasEnoughSatiation(component, (producer, satiation)))
         {
-            failure = SatiationProductionFailure.InsufficientSatiation;
-            return false;
+            return SatiationProductionFailure.InsufficientSatiation;
         }
 
-        if (!_production.TryProduce(ent.Owner, owner))
-            return false;
-
-        if (satiation != null)
-            _satiation.ModifyValue((owner, satiation), ent.Comp.SatiationType, -ent.Comp.SatiationUsage);
-
-        failure = SatiationProductionFailure.None;
-        return true;
+        return SatiationProductionFailure.None;
     }
 
     private bool HasEnoughSatiation(
