@@ -54,8 +54,18 @@ public sealed partial class SatiationProductionSystem : EntitySystem
         Entity<SatiationProductionComponent> ent,
         ref BeforeProductionEvent args)
     {
-        if (GetFailure(ent.Comp, args.Producer) != SatiationProductionFailure.None)
-            args.Cancelled = true;
+        var failure = GetFailure(ent.Comp, args.Producer);
+        if (failure == SatiationProductionFailure.None)
+            return;
+
+        args.Cancelled = true;
+
+        var ev = new SatiationProductionFailedEvent(
+            args.Producer,
+            args.Requester,
+            failure);
+
+        RaiseLocalEvent(ent.Owner, ref ev);
     }
 
     [SubscribeLocalEvent]
@@ -65,7 +75,9 @@ public sealed partial class SatiationProductionSystem : EntitySystem
     {
         if (!_satiationQuery.TryComp(args.Producer, out var satiation) ||
             !satiation.Has(ent.Comp.SatiationType))
+        {
             return;
+        }
 
         _satiation.ModifyValue(
             (args.Producer, satiation),
@@ -78,24 +90,13 @@ public sealed partial class SatiationProductionSystem : EntitySystem
     /// </summary>
     public bool TryProduce(
         Entity<SatiationProductionComponent?> ent,
-        out SatiationProductionFailure failure)
+        EntityUid? requester = null)
     {
-        failure = SatiationProductionFailure.ProductUnavailable;
         if (!_productionQuery.Resolve(ent, ref ent.Comp))
             return false;
 
         var producer = GetProducer((ent.Owner, ent.Comp));
-        if (_production.TryProduce(ent.Owner, producer))
-        {
-            failure = SatiationProductionFailure.None;
-            return true;
-        }
-
-        var satiationFailure = GetFailure(ent.Comp, producer);
-        if (satiationFailure != SatiationProductionFailure.None)
-            failure = satiationFailure;
-
-        return false;
+        return _production.TryProduce(ent.Owner, producer, requester);
     }
 
     private SatiationProductionFailure GetFailure(

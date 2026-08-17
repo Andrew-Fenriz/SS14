@@ -8,7 +8,6 @@ namespace Content.Server.Animals.Components;
 
 /// <summary>
 /// Periodically attempts to produce something, consuming satiation on success.
-/// The actual product is supplied by a handler for <see cref="ProductionAttemptEvent"/>.
 /// </summary>
 [RegisterComponent, AutoGenerateComponentPause]
 [Access(typeof(SatiationProductionSystem))]
@@ -86,7 +85,7 @@ public enum SatiationProductionOwner : byte
 }
 
 /// <summary>
-/// Reason a production attempt failed.
+/// Reason a satiation production requirement failed.
 /// </summary>
 public enum SatiationProductionFailure : byte
 {
@@ -96,10 +95,17 @@ public enum SatiationProductionFailure : byte
     /// <summary>
     /// The selected producer does not meet the configured satiation requirement.
     /// </summary>
-    InsufficientSatiation,
-
-    /// <summary>
-    /// The production attempt completed without producing a product.
-    /// </summary>
-    ProductUnavailable
+    InsufficientSatiation
 }
+
+/// <summary>
+/// Raised when production is cancelled by a satiation production requirement.
+/// </summary>
+/// <param name="Producer">Entity whose satiation was checked.</param>
+/// <param name="Requester">Entity that explicitly requested the production, if any.</param>
+/// <param name="Failure">Reason the satiation production requirement failed.</param>
+[ByRefEvent]
+public readonly record struct SatiationProductionFailedEvent(
+    EntityUid Producer,
+    EntityUid? Requester,
+    SatiationProductionFailure Failure);

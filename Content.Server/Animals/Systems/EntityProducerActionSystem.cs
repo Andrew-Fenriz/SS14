@@ -16,20 +16,41 @@ public sealed partial class EntityProducerActionSystem : EntitySystem
     [Dependency] private PopupSystem _popup = default!;
 
     [SubscribeLocalEvent]
-    private void OnProductionAction(Entity<EntityProducerActionComponent> ent, ref EntityProductionActionEvent args)
+    private void OnProductionAction(
+        Entity<EntityProducerActionComponent> ent,
+        ref EntityProductionActionEvent args)
     {
-        args.Handled = _satiationProduction.TryProduce(ent.Owner, out var failure);
-        if (failure == SatiationProductionFailure.InsufficientSatiation)
-            _popup.PopupEntity(Loc.GetString(ent.Comp.InsufficientSatiationPopup), ent.Owner, ent.Owner);
+        args.Handled = _satiationProduction.TryProduce(ent.Owner, args.Performer);
     }
 
     [SubscribeLocalEvent]
-    private void OnEntitiesProduced(Entity<EntityProducerActionComponent> ent, ref EntitiesProducedEvent args)
+    private void OnSatiationProductionFailed(
+        Entity<EntityProducerActionComponent> ent,
+        ref SatiationProductionFailedEvent args)
+    {
+        if (args.Requester is not { } requester ||
+            args.Failure != SatiationProductionFailure.InsufficientSatiation)
+        {
+            return;
+        }
+
+        _popup.PopupEntity(
+            Loc.GetString(ent.Comp.InsufficientSatiationPopup),
+            requester,
+            requester);
+    }
+
+    [SubscribeLocalEvent]
+    private void OnEntitiesProduced(
+        Entity<EntityProducerActionComponent> ent,
+        ref EntitiesProducedEvent args)
     {
         _audio.PlayPvs(ent.Comp.ProductionSound, args.Owner);
         _popup.PopupEntity(
             Loc.GetString(ent.Comp.UserPopup),
-            Loc.GetString(ent.Comp.OthersPopup, ("entity", Identity.Entity(args.Owner, EntityManager))),
+            Loc.GetString(
+                ent.Comp.OthersPopup,
+                ("entity", Identity.Entity(args.Owner, EntityManager))),
             args.Owner,
             args.Owner);
     }
