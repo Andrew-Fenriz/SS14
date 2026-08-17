@@ -7,20 +7,29 @@ using Robust.Server.Audio;
 namespace Content.Server.Animals.Systems;
 
 /// <summary>
-/// Handles entity production actions and their feedback.
+/// Handles production actions and their feedback.
 /// </summary>
-public sealed partial class EntityProducerActionSystem : EntitySystem
+public sealed partial class ProductionActionSystem : EntitySystem
 {
     [Dependency] private AudioSystem _audio = default!;
-    [Dependency] private SatiationProductionSystem _satiationProduction = default!;
     [Dependency] private PopupSystem _popup = default!;
+    [Dependency] private ProductionSystem _production = default!;
 
     [SubscribeLocalEvent]
     private void OnProductionAction(
-        Entity<EntityProducerActionComponent> ent,
-        ref EntityProductionActionEvent args)
+        Entity<ProductionActionComponent> ent,
+        ref ProductionActionEvent args)
     {
-        args.Handled = _satiationProduction.TryProduce(ent.Owner, args.Performer);
+        var source = args.Source switch
+        {
+            ProductionActionSource.Action => args.Action.Owner,
+            _ => args.Performer
+        };
+
+        args.Handled = _production.TryProduce(
+            source,
+            args.Performer,
+            args.Performer);
     }
 
     [SubscribeLocalEvent]

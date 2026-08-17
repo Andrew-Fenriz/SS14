@@ -6,7 +6,7 @@ namespace Content.Server.Animals.Components;
 /// <summary>
 /// Defines action feedback for an entity producer.
 /// </summary>
-[RegisterComponent, Access(typeof(EntityProducerActionSystem))]
+[RegisterComponent, Access(typeof(ProductionActionSystem))]
 public sealed partial class EntityProducerActionComponent : Component
 {
     /// <summary>

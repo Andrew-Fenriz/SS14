@@ -376,7 +376,7 @@
     layers:
     - state: icon
   - type: InstantAction
-    event: !type:EntityProductionActionEvent
+    event: !type:ProductionActionEvent
 
 - type: entity
   parent: BaseMentalAction

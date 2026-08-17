@@ -19,7 +19,6 @@ public sealed partial class SatiationProductionSystem : EntitySystem
 
     [Dependency] private EntityQuery<ActorComponent> _actorQuery;
     [Dependency] private EntityQuery<SatiationComponent> _satiationQuery;
-    [Dependency] private EntityQuery<SatiationProductionComponent> _productionQuery;
 
     public override void Update(float frameTime)
     {
@@ -83,20 +82,6 @@ public sealed partial class SatiationProductionSystem : EntitySystem
             (args.Producer, satiation),
             ent.Comp.SatiationType,
             -ent.Comp.SatiationUsage);
-    }
-
-    /// <summary>
-    /// Attempts production immediately, independently of the automatic timer.
-    /// </summary>
-    public bool TryProduce(
-        Entity<SatiationProductionComponent?> ent,
-        EntityUid? requester = null)
-    {
-        if (!_productionQuery.Resolve(ent, ref ent.Comp))
-            return false;
-
-        var producer = GetProducer((ent.Owner, ent.Comp));
-        return _production.TryProduce(ent.Owner, producer, requester);
     }
 
     private SatiationProductionFailure GetFailure(
