@@ -11,6 +11,7 @@ namespace Content.Server.Animals.Systems;
 /// <inheritdoc cref="SatiationProductionComponent"/>
 public sealed partial class SatiationProductionSystem : EntitySystem
 {
+    [Dependency] private ProductionSystem _production = default!;
     [Dependency] private SatiationSystem _satiation = default!;
     [Dependency] private IGameTiming _timing = default!;
     [Dependency] private MobStateSystem _mobState = default!;
@@ -74,9 +75,7 @@ public sealed partial class SatiationProductionSystem : EntitySystem
             return false;
         }
 
-        var ev = new ProductionAttemptEvent(owner);
-        RaiseLocalEvent(ent.Owner, ref ev);
-        if (!ev.Produced)
+        if (!_production.TryProduce(ent.Owner, owner))
             return false;
 
         if (satiation != null)

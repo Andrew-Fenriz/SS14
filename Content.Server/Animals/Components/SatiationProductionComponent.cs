@@ -103,17 +103,3 @@ public enum SatiationProductionFailure : byte
     /// </summary>
     ProductUnavailable
 }
-
-/// <summary>
-/// Raised when production is attempted.
-/// Handlers set <see cref="Produced"/> when something was successfully produced.
-/// </summary>
-/// <param name="Owner">Entity selected as the producer for this attempt.</param>
-[ByRefEvent]
-public record struct ProductionAttemptEvent(EntityUid Owner)
-{
-    /// <summary>
-    /// Set by handlers when production succeeds.
-    /// </summary>
-    public bool Produced;
-}
