@@ -6,9 +6,12 @@ using Content.Shared.Administration.Smites;
 using Content.Shared.Body;
 using Content.Shared.Body.Systems;
 using Content.Shared.EntityEffects;
+using Content.Shared.Friction;
 using Content.Shared.Inventory;
 using Content.Shared.Nutrition.EntitySystems;
 using Content.Shared.Stunnable;
+using Robust.Shared.Physics.Systems;
+using Robust.Shared.Random;
 
 namespace Content.Server.Administration.Systems;
 
@@ -21,12 +24,16 @@ public sealed partial class AdminSmiteSystem : EntitySystem, ISmiteOperationRais
     [Dependency] private BloodstreamSystem _bloodstream = default!;
     [Dependency] private SharedCreamPieSystem _creamPie = default!;
     [Dependency] private SharedEntityEffectsSystem _entityEffects = default!;
+    [Dependency] private FixtureSystem _fixtures = default!;
     [Dependency] private GhostKickManager _ghostKick = default!;
     [Dependency] private InventorySystem _inventory = default!;
     [Dependency] private PolymorphSystem _polymorph = default!;
     [Dependency] private PopupSystem _popup = default!;
+    [Dependency] private SharedPhysicsSystem _physics = default!;
+    [Dependency] private IRobustRandom _random = default!;
     [Dependency] private SharedStunSystem _stun = default!;
     [Dependency] private SharedTransformSystem _transform = default!;
+    [Dependency] private TileFrictionController _tileFriction = default!;
 
     public void Apply(EntityUid target, EntityUid user, AdminSmitePrototype prototype)
     {
