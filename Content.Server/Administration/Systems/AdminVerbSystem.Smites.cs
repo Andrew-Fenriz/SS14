@@ -28,11 +28,6 @@ public sealed partial class AdminVerbSystem
         if (HasComp<MapComponent>(args.Target) || HasComp<MapGridComponent>(args.Target))
             return;
 
-        AddPrototypeSmiteVerbs(args);
-    }
-
-    private void AddPrototypeSmiteVerbs(GetVerbsEvent<Verb> args)
-    {
         foreach (var prototype in ProtoMan.EnumeratePrototypes<AdminSmitePrototype>())
         {
             if (!_whitelistSystem.CheckBoth(args.Target, whitelist: prototype.Whitelist))
