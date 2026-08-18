@@ -16,6 +16,7 @@ using Content.Shared.Atmos;
 using Content.Shared.Atmos.Components;
 using Content.Shared.Construction.Components;
 using Content.Shared.Damage.Components;
+using Content.Shared.Damage.Systems;
 using Content.Shared.Database;
 using Content.Shared.Doors.Components;
 using Content.Shared.Hands.Components;
@@ -43,9 +44,11 @@ public sealed partial class AdminVerbSystem
 {
     [Dependency] private DoorSystem _door = default!;
     [Dependency] private AirlockSystem _airlockSystem = default!;
+    [Dependency] private SharedGodmodeSystem _sharedGodmodeSystem = default!;
     [Dependency] private StackSystem _stackSystem = default!;
     [Dependency] private SharedAccessSystem _accessSystem = default!;
     [Dependency] private HandsSystem _handsSystem = default!;
+    [Dependency] private InventorySystem _inventorySystem = default!;
     [Dependency] private SharedPhysicsSystem _physics = default!;
     [Dependency] private QuickDialogSystem _quickDialog = default!;
     [Dependency] private AdminTestArenaSystem _adminTestArenaSystem = default!;
