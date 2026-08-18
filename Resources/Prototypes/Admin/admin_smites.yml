@@ -305,6 +305,34 @@
   - !type:SuperSlipSmite
 
 - type: adminSmite
+  id: AdminSmiteSiliconLawBound
+  name: admin-smite-silicon-laws-bound-name
+  description: admin-smite-silicon-laws-bound-description
+  icon:
+    sprite: Interface/Actions/actions_borg.rsi
+    state: state-laws
+  operations:
+  - !type:AddComponentsSmite
+    replaceExisting: true
+    components:
+    - type: SiliconLawProvider
+      laws: Crewsimov
+  - !type:AddUserInterfacesSmite
+    interfaces:
+      enum.SiliconLawsUiKey.Key:
+        type: SiliconLawBoundUserInterface
+  - !type:SiliconLawBoundSmite
+  - !type:AddActionSmite
+    action: ActionViewLaws
+  - !type:AddMindRoleSmite
+    role: MindRoleSiliconBrain
+  - !type:PopupSmite
+    message: admin-smite-silicon-laws-bound-self
+    recipients: Target
+    location: Entity
+    type: LargeCaution
+
+- type: adminSmite
   id: AdminSmiteLockerStuff
   name: admin-smite-locker-stuff-name
   description: admin-smite-locker-stuff-description
