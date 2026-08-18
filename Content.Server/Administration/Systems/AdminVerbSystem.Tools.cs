@@ -32,6 +32,7 @@ using Robust.Shared.Map;
 using Robust.Shared.Map.Components;
 using Robust.Shared.Physics;
 using Robust.Shared.Physics.Components;
+using Robust.Shared.Physics.Systems;
 using Robust.Shared.Player;
 using Robust.Shared.Prototypes;
 using Robust.Shared.Utility;
@@ -45,6 +46,7 @@ public sealed partial class AdminVerbSystem
     [Dependency] private StackSystem _stackSystem = default!;
     [Dependency] private SharedAccessSystem _accessSystem = default!;
     [Dependency] private HandsSystem _handsSystem = default!;
+    [Dependency] private SharedPhysicsSystem _physics = default!;
     [Dependency] private QuickDialogSystem _quickDialog = default!;
     [Dependency] private AdminTestArenaSystem _adminTestArenaSystem = default!;
     [Dependency] private StationJobsSystem _stationJobsSystem = default!;
