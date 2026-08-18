@@ -267,6 +267,34 @@
       weightless: true
 
 - type: adminSmite
+  id: AdminSmitePinball
+  name: admin-smite-pinball-name
+  description: admin-smite-pinball-description
+  icon:
+    sprite: Objects/Fun/Balls/basketball.rsi
+    state: icon
+  whitelist:
+    requireAll: true
+    components:
+    - Physics
+    - Fixtures
+  operations:
+  - !type:PinballSmite
+
+- type: adminSmite
+  id: AdminSmiteYeet
+  name: admin-smite-yeet-name
+  description: admin-smite-yeet-description
+  icon: Interface/VerbIcons/eject.svg.192dpi.png
+  whitelist:
+    requireAll: true
+    components:
+    - Physics
+    - Fixtures
+  operations:
+  - !type:YeetSmite
+
+- type: adminSmite
   id: AdminSmiteHomingRod
   name: admin-smite-homing-rod-name
   description: admin-smite-homing-rod-description
