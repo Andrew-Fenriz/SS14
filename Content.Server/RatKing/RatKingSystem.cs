@@ -14,111 +14,110 @@ using Content.Shared.RatKing;
 using Robust.Shared.Map;
 using Content.Shared.Chat;
 
-namespace Content.Server.RatKing
+namespace Content.Server.RatKing;
+
+/// <inheritdoc/>
+public sealed partial class RatKingSystem : SharedRatKingSystem
 {
-    /// <inheritdoc/>
-    public sealed partial class RatKingSystem : SharedRatKingSystem
+    [Dependency] private AtmosphereSystem _atmos = default!;
+    [Dependency] private ChatSystem _chat = default!;
+    [Dependency] private HTNSystem _htn = default!;
+    [Dependency] private SatiationSystem _satiation = default!;
+    [Dependency] private NPCSystem _npc = default!;
+    [Dependency] private PopupSystem _popup = default!;
+
+    /// <summary>
+    /// Summons an allied rat servant at the King, costing a small amount of hunger
+    /// </summary>
+    [SubscribeLocalEvent]
+    private void OnRaiseArmy(EntityUid uid, RatKingComponent component, RatKingRaiseArmyActionEvent args)
     {
-        [Dependency] private AtmosphereSystem _atmos = default!;
-        [Dependency] private ChatSystem _chat = default!;
-        [Dependency] private HTNSystem _htn = default!;
-        [Dependency] private SatiationSystem _satiation = default!;
-        [Dependency] private NPCSystem _npc = default!;
-        [Dependency] private PopupSystem _popup = default!;
+        if (args.Handled)
+            return;
 
-        /// <summary>
-        /// Summons an allied rat servant at the King, costing a small amount of hunger
-        /// </summary>
-        [SubscribeLocalEvent]
-        private void OnRaiseArmy(EntityUid uid, RatKingComponent component, RatKingRaiseArmyActionEvent args)
+        if (!TryComp<SatiationComponent>(uid, out var satiation))
+            return;
+
+        //make sure the hunger doesn't go into the negatives
+        if (_satiation.GetValueOrNull((uid, satiation), SatiationSystem.Hunger) < component.HungerPerArmyUse)
         {
-            if (args.Handled)
-                return;
-
-            if (!TryComp<SatiationComponent>(uid, out var satiation))
-                return;
-
-            //make sure the hunger doesn't go into the negatives
-            if (_satiation.GetValueOrNull((uid, satiation), SatiationSystem.Hunger) < component.HungerPerArmyUse)
-            {
-                _popup.PopupEntity(Loc.GetString("rat-king-too-hungry"), uid, uid);
-                return;
-            }
-            args.Handled = true;
-            _satiation.ModifyValue((uid, satiation), SatiationSystem.Hunger, -component.HungerPerArmyUse);
-            var servant = Spawn(component.ArmyMobSpawnId, Transform(uid).Coordinates);
-            var comp = EnsureComp<RatKingServantComponent>(servant);
-            comp.King = uid;
-            Dirty(servant, comp);
-
-            component.Servants.Add(servant);
-            _npc.SetBlackboard(servant, NPCBlackboard.FollowTarget, new EntityCoordinates(uid, Vector2.Zero));
-            UpdateServantNpc(servant, component.CurrentOrder);
+            _popup.PopupEntity(Loc.GetString("rat-king-too-hungry"), uid, uid);
+            return;
         }
+        args.Handled = true;
+        _satiation.ModifyValue((uid, satiation), SatiationSystem.Hunger, -component.HungerPerArmyUse);
+        var servant = Spawn(component.ArmyMobSpawnId, Transform(uid).Coordinates);
+        var comp = EnsureComp<RatKingServantComponent>(servant);
+        comp.King = uid;
+        Dirty(servant, comp);
 
-        /// <summary>
-        /// uses hunger to release a specific amount of ammonia into the air. This heals the rat king
-        /// and his servants through a specific metabolism.
-        /// </summary>
-        [SubscribeLocalEvent]
-        private void OnDomain(EntityUid uid, RatKingComponent component, RatKingDomainActionEvent args)
+        component.Servants.Add(servant);
+        _npc.SetBlackboard(servant, NPCBlackboard.FollowTarget, new EntityCoordinates(uid, Vector2.Zero));
+        UpdateServantNpc(servant, component.CurrentOrder);
+    }
+
+    /// <summary>
+    /// uses hunger to release a specific amount of ammonia into the air. This heals the rat king
+    /// and his servants through a specific metabolism.
+    /// </summary>
+    [SubscribeLocalEvent]
+    private void OnDomain(EntityUid uid, RatKingComponent component, RatKingDomainActionEvent args)
+    {
+        if (args.Handled)
+            return;
+
+        if (!TryComp<SatiationComponent>(uid, out var satiation))
+            return;
+
+        //make sure the hunger doesn't go into the negatives
+        if (_satiation.GetValueOrNull((uid, satiation), SatiationSystem.Hunger) < component.HungerPerDomainUse)
         {
-            if (args.Handled)
-                return;
-
-            if (!TryComp<SatiationComponent>(uid, out var satiation))
-                return;
-
-            //make sure the hunger doesn't go into the negatives
-            if (_satiation.GetValueOrNull((uid, satiation), SatiationSystem.Hunger) < component.HungerPerDomainUse)
-            {
-                _popup.PopupEntity(Loc.GetString("rat-king-too-hungry"), uid, uid);
-                return;
-            }
-            args.Handled = true;
-            _satiation.ModifyValue((uid, satiation), SatiationSystem.Hunger, -component.HungerPerDomainUse);
-
-            _popup.PopupEntity(Loc.GetString("rat-king-domain-popup"), uid);
-            var tileMix = _atmos.GetTileMixture(uid, excite: true);
-            tileMix?.AdjustMoles(Gas.Ammonia, component.MolesAmmoniaPerDomain);
+            _popup.PopupEntity(Loc.GetString("rat-king-too-hungry"), uid, uid);
+            return;
         }
+        args.Handled = true;
+        _satiation.ModifyValue((uid, satiation), SatiationSystem.Hunger, -component.HungerPerDomainUse);
 
-        [SubscribeLocalEvent]
-        private void OnPointedAt(EntityUid uid, RatKingComponent component, ref AfterPointedAtEvent args)
+        _popup.PopupEntity(Loc.GetString("rat-king-domain-popup"), uid);
+        var tileMix = _atmos.GetTileMixture(uid, excite: true);
+        tileMix?.AdjustMoles(Gas.Ammonia, component.MolesAmmoniaPerDomain);
+    }
+
+    [SubscribeLocalEvent]
+    private void OnPointedAt(EntityUid uid, RatKingComponent component, ref AfterPointedAtEvent args)
+    {
+        if (component.CurrentOrder != RatKingOrderType.CheeseEm)
+            return;
+
+        foreach (var servant in component.Servants)
         {
-            if (component.CurrentOrder != RatKingOrderType.CheeseEm)
-                return;
-
-            foreach (var servant in component.Servants)
-            {
-                _npc.SetBlackboard(servant, NPCBlackboard.CurrentOrderedTarget, args.Pointed);
-            }
+            _npc.SetBlackboard(servant, NPCBlackboard.CurrentOrderedTarget, args.Pointed);
         }
+    }
 
-        public override void UpdateServantNpc(EntityUid uid, RatKingOrderType orderType)
-        {
-            base.UpdateServantNpc(uid, orderType);
+    public override void UpdateServantNpc(EntityUid uid, RatKingOrderType orderType)
+    {
+        base.UpdateServantNpc(uid, orderType);
 
-            if (!TryComp<HTNComponent>(uid, out var htn))
-                return;
+        if (!TryComp<HTNComponent>(uid, out var htn))
+            return;
 
-            if (htn.Plan != null)
-                _htn.ShutdownPlan(htn);
+        if (htn.Plan != null)
+            _htn.ShutdownPlan(htn);
 
-            _npc.SetBlackboard(uid, NPCBlackboard.CurrentOrders, orderType);
-            _htn.Replan(htn);
-        }
+        _npc.SetBlackboard(uid, NPCBlackboard.CurrentOrders, orderType);
+        _htn.Replan(htn);
+    }
 
-        public override void DoCommandCallout(EntityUid uid, RatKingComponent component)
-        {
-            base.DoCommandCallout(uid, component);
+    public override void DoCommandCallout(EntityUid uid, RatKingComponent component)
+    {
+        base.DoCommandCallout(uid, component);
 
-            if (!component.OrderCallouts.TryGetValue(component.CurrentOrder, out var datasetId) ||
-                !ProtoMan.TryIndex(datasetId, out var datasetPrototype))
-                return;
+        if (!component.OrderCallouts.TryGetValue(component.CurrentOrder, out var datasetId) ||
+            !ProtoMan.TryIndex(datasetId, out var datasetPrototype))
+            return;
 
-            var msg = Random.Pick(datasetPrototype);
-            _chat.TrySendInGameICMessage(uid, msg, InGameICChatType.Speak, true);
-        }
+        var msg = Random.Pick(datasetPrototype);
+        _chat.TrySendInGameICMessage(uid, msg, InGameICChatType.Speak, true);
     }
 }
