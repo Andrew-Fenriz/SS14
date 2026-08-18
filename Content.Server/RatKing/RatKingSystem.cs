@@ -6,15 +6,12 @@ using Content.Server.NPC.HTN;
 using Content.Server.NPC.Systems;
 using Content.Server.Popups;
 using Content.Shared.Atmos;
-using Content.Shared.Dataset;
 using Content.Shared.Nutrition.Components;
 using Content.Shared.Nutrition.EntitySystems;
-using Content.Shared.Nutrition.Prototypes;
 using Content.Shared.Pointing;
 using Content.Shared.Random.Helpers;
 using Content.Shared.RatKing;
 using Robust.Shared.Map;
-using Robust.Shared.Prototypes;
 using Content.Shared.Chat;
 
 namespace Content.Server.RatKing
@@ -29,18 +26,10 @@ namespace Content.Server.RatKing
         [Dependency] private NPCSystem _npc = default!;
         [Dependency] private PopupSystem _popup = default!;
 
-        public override void Initialize()
-        {
-            base.Initialize();
-
-            SubscribeLocalEvent<RatKingComponent, RatKingRaiseArmyActionEvent>(OnRaiseArmy);
-            SubscribeLocalEvent<RatKingComponent, RatKingDomainActionEvent>(OnDomain);
-            SubscribeLocalEvent<RatKingComponent, AfterPointedAtEvent>(OnPointedAt);
-        }
-
         /// <summary>
         /// Summons an allied rat servant at the King, costing a small amount of hunger
         /// </summary>
+        [SubscribeLocalEvent]
         private void OnRaiseArmy(EntityUid uid, RatKingComponent component, RatKingRaiseArmyActionEvent args)
         {
             if (args.Handled)
@@ -71,6 +60,7 @@ namespace Content.Server.RatKing
         /// uses hunger to release a specific amount of ammonia into the air. This heals the rat king
         /// and his servants through a specific metabolism.
         /// </summary>
+        [SubscribeLocalEvent]
         private void OnDomain(EntityUid uid, RatKingComponent component, RatKingDomainActionEvent args)
         {
             if (args.Handled)
@@ -93,6 +83,7 @@ namespace Content.Server.RatKing
             tileMix?.AdjustMoles(Gas.Ammonia, component.MolesAmmoniaPerDomain);
         }
 
+        [SubscribeLocalEvent]
         private void OnPointedAt(EntityUid uid, RatKingComponent component, ref AfterPointedAtEvent args)
         {
             if (component.CurrentOrder != RatKingOrderType.CheeseEm)
@@ -123,7 +114,7 @@ namespace Content.Server.RatKing
             base.DoCommandCallout(uid, component);
 
             if (!component.OrderCallouts.TryGetValue(component.CurrentOrder, out var datasetId) ||
-                !ProtoMan.TryIndex<LocalizedDatasetPrototype>(datasetId, out var datasetPrototype))
+                !ProtoMan.TryIndex(datasetId, out var datasetPrototype))
                 return;
 
             var msg = Random.Pick(datasetPrototype);
