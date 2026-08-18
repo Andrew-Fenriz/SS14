@@ -26,6 +26,6 @@ public sealed partial class EntityProducerSystem : EntitySystem
         args.Produced = true;
 
         var ev = new EntitiesProducedEvent(args.Producer, produced);
-        RaiseLocalEvent(ent.Owner, ref ev);
+        RaiseLocalEvent(args.Producer, ref ev);
     }
 }

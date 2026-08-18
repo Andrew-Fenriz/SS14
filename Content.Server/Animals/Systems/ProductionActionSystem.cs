@@ -11,9 +11,7 @@ public sealed partial class ProductionActionSystem : EntitySystem
     [Dependency] private ProductionSystem _production = default!;
 
     [SubscribeLocalEvent]
-    private void OnProductionAction(
-        Entity<ProductionActionComponent> ent,
-        ref ProductionActionEvent args)
+    private void OnProductionAction(Entity<ProductionActionComponent> ent, ref ProductionActionEvent args)
     {
         if (args.Handled)
             return;

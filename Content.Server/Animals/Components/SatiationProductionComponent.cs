@@ -14,7 +14,7 @@ namespace Content.Server.Animals.Components;
 public sealed partial class SatiationProductionComponent : Component
 {
     /// <summary>
-    /// Selects the entity whose mob state and satiation are used for production checks and consumption.
+    /// Selects the producer used for automatic production attempts.
     /// </summary>
     [DataField]
     public SatiationProductionOwner Producer = SatiationProductionOwner.Self;
@@ -76,7 +76,7 @@ public sealed partial class SatiationProductionComponent : Component
 }
 
 /// <summary>
-/// Selects the entity against which production conditions are evaluated.
+/// Selects the producer used for automatic production attempts.
 /// </summary>
 public enum SatiationProductionOwner : byte
 {

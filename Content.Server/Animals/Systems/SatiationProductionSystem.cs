@@ -49,9 +49,7 @@ public sealed partial class SatiationProductionSystem : EntitySystem
     }
 
     [SubscribeLocalEvent]
-    private void OnBeforeProduction(
-        Entity<SatiationProductionComponent> ent,
-        ref BeforeProductionEvent args)
+    private void OnBeforeProduction(Entity<SatiationProductionComponent> ent, ref BeforeProductionEvent args)
     {
         if (args.Cancelled)
             return;
@@ -71,15 +69,11 @@ public sealed partial class SatiationProductionSystem : EntitySystem
     }
 
     [SubscribeLocalEvent]
-    private void OnProductionCompleted(
-        Entity<SatiationProductionComponent> ent,
-        ref ProductionCompletedEvent args)
+    private void OnProductionCompleted(Entity<SatiationProductionComponent> ent, ref ProductionCompletedEvent args)
     {
         if (!_satiationQuery.TryComp(args.Producer, out var satiation) ||
             !satiation.Has(ent.Comp.SatiationType))
-        {
             return;
-        }
 
         _satiation.ModifyValue(
             (args.Producer, satiation),
@@ -104,9 +98,7 @@ public sealed partial class SatiationProductionSystem : EntitySystem
         return SatiationProductionFailure.None;
     }
 
-    private bool HasEnoughSatiation(
-        SatiationProductionComponent component,
-        Entity<SatiationComponent> satiation)
+    private bool HasEnoughSatiation(SatiationProductionComponent component, Entity<SatiationComponent> satiation)
     {
         if (component.MinimumSatiationThreshold is { } threshold &&
             !_satiation.IsValueInRange(
