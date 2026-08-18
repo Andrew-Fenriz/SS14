@@ -1,8 +1,10 @@
 using System.Numerics;
 using Content.Server.Physics.Components;
 using Content.Shared.Administration.Smites;
+using Content.Shared.Damage.Components;
 using Content.Shared.Movement.Components;
 using Content.Shared.Storage.Components;
+using Content.Shared.Tabletop.Components;
 using Robust.Shared.Random;
 using Robust.Shared.Spawners;
 
@@ -59,6 +61,18 @@ public sealed partial class AdminSmiteSystem
     }
 
     [SubscribeLocalEvent]
+    private void OnSetGodmode(Entity<MetaDataComponent> entity, ref SmiteOperationEvent<SetGodmodeSmite> args)
+    {
+        if (args.Operation.Enabled == HasComp<GodmodeComponent>(entity))
+            return;
+
+        if (args.Operation.Enabled)
+            _godmode.EnableGodmode(entity);
+        else
+            _godmode.DisableGodmode(entity);
+    }
+
+    [SubscribeLocalEvent]
     private void OnStuffIntoLocker(Entity<MetaDataComponent> entity,
         ref SmiteOperationEvent<StuffIntoLockerSmite> args)
     {
@@ -72,5 +86,17 @@ public sealed partial class AdminSmiteSystem
         }
 
         _weldable.SetWeldedState(locker, true);
+    }
+
+    [SubscribeLocalEvent]
+    private void OnTabletopDimension(Entity<MetaDataComponent> entity,
+        ref SmiteOperationEvent<TabletopDimensionSmite> args)
+    {
+        var xform = Transform(entity);
+        var board = Spawn(args.Operation.Prototype, xform.Coordinates);
+        var session = _tabletop.EnsureSession(Comp<TabletopGameComponent>(board));
+
+        _transform.SetMapCoordinates(entity, session.Position);
+        _transform.SetWorldRotationNoLerp((entity.Owner, xform), Angle.Zero);
     }
 }

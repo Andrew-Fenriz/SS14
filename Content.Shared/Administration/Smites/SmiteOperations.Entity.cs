@@ -1,5 +1,6 @@
 using Content.Shared.EntityEffects;
 using Content.Shared.Polymorph;
+using Content.Shared.Tabletop.Components;
 using Robust.Shared.Prototypes;
 
 namespace Content.Shared.Administration.Smites;
@@ -56,10 +57,28 @@ public sealed partial class PolymorphSmite : SmiteOperationBase<PolymorphSmite>
 }
 
 /// <summary>
+/// Sets whether godmode is enabled on the target.
+/// </summary>
+public sealed partial class SetGodmodeSmite : SmiteOperationBase<SetGodmodeSmite>
+{
+    [DataField(required: true)]
+    public bool Enabled { get; private set; }
+}
+
+/// <summary>
 /// Spawns a storage entity, stuffs the smite target into it, and welds it shut.
 /// </summary>
 public sealed partial class StuffIntoLockerSmite : SmiteOperationBase<StuffIntoLockerSmite>
 {
     [DataField(required: true)]
     public EntProtoId Prototype { get; private set; }
+}
+
+/// <summary>
+/// Sends the target into a tabletop game session created from the configured prototype.
+/// </summary>
+public sealed partial class TabletopDimensionSmite : SmiteOperationBase<TabletopDimensionSmite>
+{
+    [DataField(required: true)]
+    public EntProtoId<TabletopGameComponent> Prototype { get; private set; }
 }
