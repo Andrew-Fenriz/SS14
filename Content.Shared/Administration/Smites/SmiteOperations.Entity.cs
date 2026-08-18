@@ -54,3 +54,12 @@ public sealed partial class PolymorphSmite : SmiteOperationBase<PolymorphSmite>
     [DataField(required: true)]
     public ProtoId<PolymorphPrototype> Prototype { get; private set; }
 }
+
+/// <summary>
+/// Spawns a storage entity, stuffs the smite target into it, and welds it shut.
+/// </summary>
+public sealed partial class StuffIntoLockerSmite : SmiteOperationBase<StuffIntoLockerSmite>
+{
+    [DataField(required: true)]
+    public EntProtoId Prototype { get; private set; }
+}

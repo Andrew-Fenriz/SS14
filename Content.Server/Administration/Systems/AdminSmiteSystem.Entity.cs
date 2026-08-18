@@ -2,6 +2,7 @@ using System.Numerics;
 using Content.Server.Physics.Components;
 using Content.Shared.Administration.Smites;
 using Content.Shared.Movement.Components;
+using Content.Shared.Storage.Components;
 using Robust.Shared.Random;
 using Robust.Shared.Spawners;
 
@@ -55,5 +56,21 @@ public sealed partial class AdminSmiteSystem
     private void OnPolymorph(Entity<MetaDataComponent> entity, ref SmiteOperationEvent<PolymorphSmite> args)
     {
         _polymorph.PolymorphEntity(entity, args.Operation.Prototype);
+    }
+
+    [SubscribeLocalEvent]
+    private void OnStuffIntoLocker(Entity<MetaDataComponent> entity,
+        ref SmiteOperationEvent<StuffIntoLockerSmite> args)
+    {
+        var locker = Spawn(args.Operation.Prototype, Transform(entity).Coordinates);
+
+        if (TryComp<EntityStorageComponent>(locker, out var storage))
+        {
+            _entityStorage.ToggleOpen(entity.Owner, locker, storage);
+            _entityStorage.Insert(entity.Owner, locker, storage);
+            _entityStorage.ToggleOpen(entity.Owner, locker, storage);
+        }
+
+        _weldable.SetWeldedState(locker, true);
     }
 }
