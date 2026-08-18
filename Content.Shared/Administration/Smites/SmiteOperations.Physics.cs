@@ -6,6 +6,11 @@ namespace Content.Shared.Administration.Smites;
 public sealed partial class PinballSmite : SmiteOperationBase<PinballSmite>;
 
 /// <summary>
+/// Makes the smite target perform a super slip.
+/// </summary>
+public sealed partial class SuperSlipSmite : SmiteOperationBase<SuperSlipSmite>;
+
+/// <summary>
 /// Swaps the smite target's base walking and sprinting speeds.
 /// </summary>
 public sealed partial class SwapMovementSpeedsSmite : SmiteOperationBase<SwapMovementSpeedsSmite>;

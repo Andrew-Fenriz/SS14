@@ -1,6 +1,7 @@
 using Content.Shared.Administration.Smites;
 using Content.Shared.Friction;
 using Content.Shared.Movement.Components;
+using Content.Shared.Slippery;
 using Robust.Shared.Physics;
 using Robust.Shared.Physics.Components;
 
@@ -38,6 +39,22 @@ public sealed partial class AdminSmiteSystem
             (movementSpeed.BaseWalkSpeed, movementSpeed.BaseSprintSpeed);
 
         Dirty(entity, movementSpeed);
+    }
+
+    [SubscribeLocalEvent]
+    private void OnSuperSlip(Entity<MetaDataComponent> entity, ref SmiteOperationEvent<SuperSlipSmite> args)
+    {
+        var hadSlipComponent = EnsureComp(entity, out SlipperyComponent slipComponent);
+        if (!hadSlipComponent)
+        {
+            slipComponent.SlipData.SuperSlippery = true;
+            slipComponent.SlipData.StunTime = TimeSpan.FromSeconds(5);
+            slipComponent.SlipData.LaunchForwardsMultiplier = 20;
+        }
+
+        _slippery.TrySlip(entity, slipComponent, entity, requiresContact: false);
+        if (!hadSlipComponent)
+            RemComp(entity, slipComponent);
     }
 
     [SubscribeLocalEvent]

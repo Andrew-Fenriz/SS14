@@ -10,6 +10,7 @@ using Content.Shared.EntityEffects;
 using Content.Shared.Friction;
 using Content.Shared.Inventory;
 using Content.Shared.Nutrition.EntitySystems;
+using Content.Shared.Slippery;
 using Content.Shared.Stunnable;
 using Content.Shared.Tools.Systems;
 using Robust.Shared.Physics.Systems;
@@ -34,6 +35,7 @@ public sealed partial class AdminSmiteSystem : EntitySystem, ISmiteOperationRais
     [Dependency] private PopupSystem _popup = default!;
     [Dependency] private SharedPhysicsSystem _physics = default!;
     [Dependency] private IRobustRandom _random = default!;
+    [Dependency] private SlipperySystem _slippery = default!;
     [Dependency] private SharedStunSystem _stun = default!;
     [Dependency] private SharedTransformSystem _transform = default!;
     [Dependency] private TileFrictionController _tileFriction = default!;
