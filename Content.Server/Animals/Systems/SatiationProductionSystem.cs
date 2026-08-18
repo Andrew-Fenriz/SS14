@@ -81,9 +81,7 @@ public sealed partial class SatiationProductionSystem : EntitySystem
             -ent.Comp.SatiationUsage);
     }
 
-    private SatiationProductionFailure GetFailure(
-        SatiationProductionComponent component,
-        EntityUid producer)
+    private SatiationProductionFailure GetFailure(SatiationProductionComponent component, EntityUid producer)
     {
         if (_mobState.IsDead(producer))
             return SatiationProductionFailure.Dead;
