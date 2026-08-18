@@ -1,6 +1,5 @@
 using Content.Server.Popups;
 using Content.Server.Roles;
-using Content.Server.Storage.EntitySystems;
 using Content.Server.Tabletop;
 using Content.Shared.Actions;
 using Content.Shared.Administration;
@@ -12,9 +11,7 @@ using Content.Shared.Popups;
 using Content.Shared.Silicons.Laws;
 using Content.Shared.Silicons.Laws.Components;
 using Content.Shared.Slippery;
-using Content.Shared.Storage.Components;
 using Content.Shared.Tabletop.Components;
-using Content.Shared.Tools.Systems;
 using Content.Shared.Verbs;
 using Content.Shared.Whitelist;
 using Robust.Shared.Map.Components;
@@ -27,13 +24,11 @@ namespace Content.Server.Administration.Systems;
 public sealed partial class AdminVerbSystem
 {
     [Dependency] private SharedActionsSystem _actions = default!;
-    [Dependency] private EntityStorageSystem _entityStorageSystem = default!;
     [Dependency] private SharedGodmodeSystem _sharedGodmodeSystem = default!;
     [Dependency] private InventorySystem _inventorySystem = default!;
     [Dependency] private PopupSystem _popupSystem = default!;
     [Dependency] private RoleSystem _role = default!;
     [Dependency] private TabletopSystem _tabletopSystem = default!;
-    [Dependency] private WeldableSystem _weldableSystem = default!;
     [Dependency] private SharedTransformSystem _transformSystem = default!;
     [Dependency] private SlipperySystem _slipperySystem = default!;
     [Dependency] private AdminSmiteSystem _smiteSystem = default!;
@@ -87,29 +82,6 @@ public sealed partial class AdminVerbSystem
             Message = string.Join(": ", chessName, Loc.GetString("admin-smite-chess-dimension-description"))
         };
         args.Verbs.Add(chess);
-
-        var lockerName = Loc.GetString("admin-smite-locker-stuff-name").ToLowerInvariant();
-        Verb locker = new()
-        {
-            Text = lockerName,
-            Category = VerbCategory.Smite,
-            Icon = new SpriteSpecifier.Rsi(new("/Textures/Structures/Storage/closet.rsi"), "generic"),
-            Act = () =>
-            {
-                var xform = Transform(args.Target);
-                var locker = Spawn("ClosetMaintenance", xform.Coordinates);
-                if (TryComp<EntityStorageComponent>(locker, out var storage))
-                {
-                    _entityStorageSystem.ToggleOpen(args.Target, locker, storage);
-                    _entityStorageSystem.Insert(args.Target, locker, storage);
-                    _entityStorageSystem.ToggleOpen(args.Target, locker, storage);
-                }
-                _weldableSystem.SetWeldedState(locker, true);
-            },
-            Impact = LogImpact.Extreme,
-            Message = string.Join(": ", lockerName, Loc.GetString("admin-smite-locker-stuff-description"))
-        };
-        args.Verbs.Add(locker);
 
         var superslipName = Loc.GetString("admin-smite-super-slip-name").ToLowerInvariant();
         Verb superslip = new()

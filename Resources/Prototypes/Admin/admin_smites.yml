@@ -295,6 +295,17 @@
   - !type:YeetSmite
 
 - type: adminSmite
+  id: AdminSmiteLockerStuff
+  name: admin-smite-locker-stuff-name
+  description: admin-smite-locker-stuff-description
+  icon:
+    sprite: Structures/Storage/closet.rsi
+    state: generic
+  operations:
+  - !type:StuffIntoLockerSmite
+    prototype: ClosetMaintenance
+
+- type: adminSmite
   id: AdminSmiteHomingRod
   name: admin-smite-homing-rod-name
   description: admin-smite-homing-rod-description
