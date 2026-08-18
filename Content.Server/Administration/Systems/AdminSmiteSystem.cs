@@ -1,7 +1,11 @@
 using Content.Server.GhostKick;
+using Content.Server.Mind;
 using Content.Server.Polymorph.Systems;
 using Content.Server.Popups;
+using Content.Server.Roles;
+using Content.Server.Silicons.Laws;
 using Content.Server.Storage.EntitySystems;
+using Content.Shared.Actions;
 using Content.Shared.Administration.Prototypes;
 using Content.Shared.Administration.Smites;
 using Content.Shared.Body;
@@ -13,6 +17,7 @@ using Content.Shared.Nutrition.EntitySystems;
 using Content.Shared.Slippery;
 using Content.Shared.Stunnable;
 using Content.Shared.Tools.Systems;
+using Robust.Server.GameObjects;
 using Robust.Shared.Physics.Systems;
 using Robust.Shared.Random;
 
@@ -23,6 +28,7 @@ namespace Content.Server.Administration.Systems;
 /// </summary>
 public sealed partial class AdminSmiteSystem : EntitySystem, ISmiteOperationRaiser
 {
+    [Dependency] private SharedActionsSystem _actions = default!;
     [Dependency] private BodySystem _body = default!;
     [Dependency] private BloodstreamSystem _bloodstream = default!;
     [Dependency] private SharedCreamPieSystem _creamPie = default!;
@@ -31,14 +37,18 @@ public sealed partial class AdminSmiteSystem : EntitySystem, ISmiteOperationRais
     [Dependency] private FixtureSystem _fixtures = default!;
     [Dependency] private GhostKickManager _ghostKick = default!;
     [Dependency] private InventorySystem _inventory = default!;
+    [Dependency] private MindSystem _mind = default!;
     [Dependency] private PolymorphSystem _polymorph = default!;
     [Dependency] private PopupSystem _popup = default!;
     [Dependency] private SharedPhysicsSystem _physics = default!;
     [Dependency] private IRobustRandom _random = default!;
+    [Dependency] private RoleSystem _role = default!;
+    [Dependency] private SiliconLawSystem _siliconLaws = default!;
     [Dependency] private SlipperySystem _slippery = default!;
     [Dependency] private SharedStunSystem _stun = default!;
     [Dependency] private SharedTransformSystem _transform = default!;
     [Dependency] private TileFrictionController _tileFriction = default!;
+    [Dependency] private UserInterfaceSystem _ui = default!;
     [Dependency] private WeldableSystem _weldable = default!;
 
     public void Apply(EntityUid target, EntityUid user, AdminSmitePrototype prototype)
@@ -46,7 +56,7 @@ public sealed partial class AdminSmiteSystem : EntitySystem, ISmiteOperationRais
         Apply(target, user, prototype.Operations);
     }
 
-    public void Apply(EntityUid target, EntityUid user, SmiteOperation[] operations)
+    private void Apply(EntityUid target, EntityUid user, SmiteOperation[] operations)
     {
         foreach (var operation in operations)
         {
