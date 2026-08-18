@@ -295,6 +295,16 @@
   - !type:YeetSmite
 
 - type: adminSmite
+  id: AdminSmiteSuperSlip
+  name: admin-smite-super-slip-name
+  description: admin-smite-super-slip-description
+  icon:
+    sprite: Objects/Specific/Janitorial/soap.rsi
+    state: omega-4
+  operations:
+  - !type:SuperSlipSmite
+
+- type: adminSmite
   id: AdminSmiteLockerStuff
   name: admin-smite-locker-stuff-name
   description: admin-smite-locker-stuff-description

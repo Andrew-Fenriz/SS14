@@ -10,7 +10,6 @@ using Content.Shared.Inventory;
 using Content.Shared.Popups;
 using Content.Shared.Silicons.Laws;
 using Content.Shared.Silicons.Laws.Components;
-using Content.Shared.Slippery;
 using Content.Shared.Tabletop.Components;
 using Content.Shared.Verbs;
 using Content.Shared.Whitelist;
@@ -30,7 +29,6 @@ public sealed partial class AdminVerbSystem
     [Dependency] private RoleSystem _role = default!;
     [Dependency] private TabletopSystem _tabletopSystem = default!;
     [Dependency] private SharedTransformSystem _transformSystem = default!;
-    [Dependency] private SlipperySystem _slipperySystem = default!;
     [Dependency] private AdminSmiteSystem _smiteSystem = default!;
     [Dependency] private EntityWhitelistSystem _whitelistSystem = default!;
 
@@ -82,33 +80,6 @@ public sealed partial class AdminVerbSystem
             Message = string.Join(": ", chessName, Loc.GetString("admin-smite-chess-dimension-description"))
         };
         args.Verbs.Add(chess);
-
-        var superslipName = Loc.GetString("admin-smite-super-slip-name").ToLowerInvariant();
-        Verb superslip = new()
-        {
-            Text = superslipName,
-            Category = VerbCategory.Smite,
-            Icon = new SpriteSpecifier.Rsi(new("Objects/Specific/Janitorial/soap.rsi"), "omega-4"),
-            Act = () =>
-            {
-                var hadSlipComponent = EnsureComp(args.Target, out SlipperyComponent slipComponent);
-                if (!hadSlipComponent)
-                {
-                    slipComponent.SlipData.SuperSlippery = true;
-                    slipComponent.SlipData.StunTime = TimeSpan.FromSeconds(5);
-                    slipComponent.SlipData.LaunchForwardsMultiplier = 20;
-                }
-
-                _slipperySystem.TrySlip(args.Target, slipComponent, args.Target, requiresContact: false);
-                if (!hadSlipComponent)
-                {
-                    RemComp(args.Target, slipComponent);
-                }
-            },
-            Impact = LogImpact.Extreme,
-            Message = string.Join(": ", superslipName, Loc.GetString("admin-smite-super-slip-description"))
-        };
-        args.Verbs.Add(superslip);
 
         var siliconName = Loc.GetString("admin-smite-silicon-laws-bound-name").ToLowerInvariant();
         Verb silicon = new()
