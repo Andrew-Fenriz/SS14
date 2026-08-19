@@ -1,15 +1,15 @@
-using Content.Shared.Administration.Smites;
+using Content.Shared.Administration.Verbs.Operations;
 using Content.Shared.Clothing.Components;
 using Content.Shared.Interaction.Components;
 using Content.Shared.Inventory;
 
-namespace Content.Server.Administration.Systems;
+namespace Content.Server.Administration.Systems.Verbs.Operations;
 
-public sealed partial class AdminSmiteSystem
+public sealed partial class AdminOperationSystem
 {
     [SubscribeLocalEvent]
     private void OnSetEquipment(Entity<InventoryComponent> entity,
-        ref SmiteOperationEvent<SetEquipmentSmite> args)
+        ref AdminOperationEvent<SetEquipmentOperation> args)
     {
         if (args.Operation.ClearOtherSlots && _inventory.TryGetSlots(entity, out var slots))
         {

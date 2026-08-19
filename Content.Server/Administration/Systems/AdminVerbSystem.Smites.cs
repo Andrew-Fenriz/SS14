@@ -1,5 +1,6 @@
+using Content.Server.Administration.Systems.Verbs.Operations;
 using Content.Shared.Administration;
-using Content.Shared.Administration.Prototypes;
+using Content.Shared.Administration.Verbs.Prototypes;
 using Content.Shared.Database;
 using Content.Shared.Verbs;
 using Content.Shared.Whitelist;
@@ -10,7 +11,7 @@ namespace Content.Server.Administration.Systems;
 
 public sealed partial class AdminVerbSystem
 {
-    [Dependency] private AdminSmiteSystem _smiteSystem = default!;
+    [Dependency] private AdminOperationSystem _adminOperations = default!;
     [Dependency] private EntityWhitelistSystem _whitelistSystem = default!;
 
     // All smite verbs have names so invokeverb works.
@@ -30,7 +31,7 @@ public sealed partial class AdminVerbSystem
 
         foreach (var prototype in ProtoMan.EnumeratePrototypes<AdminSmitePrototype>())
         {
-            if (!_whitelistSystem.CheckBoth(args.Target, whitelist: prototype.Whitelist))
+            if (!_whitelistSystem.CheckBoth(args.Target, prototype.Blacklist, prototype.Whitelist))
                 continue;
 
             var name = Loc.GetString(prototype.Name).ToLowerInvariant();
@@ -39,7 +40,7 @@ public sealed partial class AdminVerbSystem
                 Text = name,
                 Category = VerbCategory.Smite,
                 Icon = prototype.Icon,
-                Act = () => _smiteSystem.Apply(args.Target, args.User, prototype),
+                Act = () => _adminOperations.Execute(args.Target, args.User, prototype.Operations),
                 Impact = LogImpact.Extreme,
                 Message = prototype.Description is { } description
                     ? string.Join(": ", name, Loc.GetString(description))

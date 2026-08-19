@@ -1,21 +1,14 @@
-using Content.Shared.Administration.Smites;
+using Content.Shared.Administration.Verbs.Operations;
+using Content.Shared.Administration.Verbs.Operations.Smites;
 using Content.Shared.Body;
-using Content.Shared.Body.Components;
-using Content.Shared.Nutrition.Components;
 
-namespace Content.Server.Administration.Systems;
+namespace Content.Server.Administration.Systems.Verbs.Operations;
 
-public sealed partial class AdminSmiteSystem
+public sealed partial class AdminOperationSystem
 {
     [SubscribeLocalEvent]
-    private void OnCreamPie(Entity<CreamPiedComponent> entity, ref SmiteOperationEvent<CreamPieSmite> args)
-    {
-        _creamPie.SetCreamPied(entity.AsNullable(), true);
-    }
-
-    [SubscribeLocalEvent]
     private void OnRemoveOrgans(Entity<BodyComponent> entity,
-        ref SmiteOperationEvent<RemoveOrgansSmite> args)
+        ref AdminOperationEvent<RemoveOrgansOperation> args)
     {
         if (args.Operation.MaxCount is <= 0)
             return;
@@ -45,12 +38,5 @@ public sealed partial class AdminSmiteSystem
             else
                 _transform.AttachToGridOrMap(organ);
         }
-    }
-
-    [SubscribeLocalEvent]
-    private void OnSpillBloodstream(Entity<BloodstreamComponent> entity,
-        ref SmiteOperationEvent<SpillBloodstreamSmite> args)
-    {
-        _bloodstream.SpillAllSolutions(entity.AsNullable());
     }
 }

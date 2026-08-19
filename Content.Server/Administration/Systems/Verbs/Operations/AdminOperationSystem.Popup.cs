@@ -1,12 +1,12 @@
-using Content.Shared.Administration.Smites;
+using Content.Shared.Administration.Verbs.Operations;
 using Robust.Shared.Player;
 
-namespace Content.Server.Administration.Systems;
+namespace Content.Server.Administration.Systems.Verbs.Operations;
 
-public sealed partial class AdminSmiteSystem
+public sealed partial class AdminOperationSystem
 {
     [SubscribeLocalEvent]
-    private void OnPopup(Entity<MetaDataComponent> entity, ref SmiteOperationEvent<PopupSmite> args)
+    private void OnPopup(Entity<MetaDataComponent> entity, ref AdminOperationEvent<PopupOperation> args)
     {
         var message = Loc.GetString(args.Operation.Message,
             ("name", entity.Owner),

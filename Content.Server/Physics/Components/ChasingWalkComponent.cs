@@ -1,5 +1,5 @@
 
-using Content.Server.Administration.Systems;
+using Content.Server.Administration.Systems.Verbs.Operations;
 using Content.Server.Physics.Controllers;
 using Content.Server.Weapons.Ranged.Systems;
 using Robust.Shared.Prototypes;
@@ -10,7 +10,7 @@ namespace Content.Server.Physics.Components;
 /// <summary>
 /// A component which makes its entity chasing entity with selected component.
 /// </summary>
-[RegisterComponent, Access(typeof(ChasingWalkSystem), typeof(AdminSmiteSystem), typeof(GunSystem)), AutoGenerateComponentPause]
+[RegisterComponent, Access(typeof(ChasingWalkSystem), typeof(AdminOperationSystem), typeof(GunSystem)), AutoGenerateComponentPause]
 public sealed partial class ChasingWalkComponent : Component
 {
     /// <summary>

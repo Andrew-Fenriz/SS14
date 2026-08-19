@@ -1,11 +1,11 @@
 using Content.Shared.Popups;
 
-namespace Content.Shared.Administration.Smites;
+namespace Content.Shared.Administration.Verbs.Operations;
 
 /// <summary>
-/// Displays one localized popup for a smite target.
+/// Displays one localized popup for a target.
 /// </summary>
-public sealed partial class PopupSmite : SmiteOperationBase<PopupSmite>
+public sealed partial class PopupOperation : AdminOperationBase<PopupOperation>
 {
     [DataField(required: true)]
     public LocId Message { get; private set; }

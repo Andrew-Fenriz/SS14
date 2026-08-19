@@ -1,14 +1,13 @@
 using Content.Server.GhostKick;
-using Content.Server.Tabletop;
 using Content.Server.Mind;
 using Content.Server.Polymorph.Systems;
 using Content.Server.Popups;
 using Content.Server.Roles;
 using Content.Server.Silicons.Laws;
 using Content.Server.Storage.EntitySystems;
+using Content.Server.Tabletop;
 using Content.Shared.Actions;
-using Content.Shared.Administration.Prototypes;
-using Content.Shared.Administration.Smites;
+using Content.Shared.Administration.Verbs.Operations;
 using Content.Shared.Body;
 using Content.Shared.Body.Systems;
 using Content.Shared.Damage.Systems;
@@ -22,12 +21,12 @@ using Robust.Server.GameObjects;
 using Robust.Shared.Physics.Systems;
 using Robust.Shared.Random;
 
-namespace Content.Server.Administration.Systems;
+namespace Content.Server.Administration.Systems.Verbs.Operations;
 
 /// <summary>
-/// Executes the ordered operations belonging to declarative admin smites.
+/// Executes ordered operations belonging to declarative admin verbs.
 /// </summary>
-public sealed partial class AdminSmiteSystem : EntitySystem, ISmiteOperationRaiser
+public sealed partial class AdminOperationSystem : EntitySystem, IAdminOperationRaiser
 {
     [Dependency] private SharedActionsSystem _actions = default!;
     [Dependency] private BodySystem _body = default!;
@@ -53,12 +52,7 @@ public sealed partial class AdminSmiteSystem : EntitySystem, ISmiteOperationRais
     [Dependency] private UserInterfaceSystem _ui = default!;
     [Dependency] private WeldableSystem _weldable = default!;
 
-    public void Apply(EntityUid target, EntityUid user, AdminSmitePrototype prototype)
-    {
-        Apply(target, user, prototype.Operations);
-    }
-
-    private void Apply(EntityUid target, EntityUid user, SmiteOperation[] operations)
+    public void Execute(EntityUid target, EntityUid user, IReadOnlyList<AdminOperation> operations)
     {
         foreach (var operation in operations)
         {
@@ -67,9 +61,9 @@ public sealed partial class AdminSmiteSystem : EntitySystem, ISmiteOperationRais
     }
 
     public void RaiseOperationEvent<T>(EntityUid target, EntityUid user, T operation)
-        where T : SmiteOperationBase<T>
+        where T : AdminOperationBase<T>
     {
-        var operationEvent = new SmiteOperationEvent<T>(operation, user);
+        var operationEvent = new AdminOperationEvent<T>(operation, user);
         RaiseLocalEvent(target, ref operationEvent);
     }
 }

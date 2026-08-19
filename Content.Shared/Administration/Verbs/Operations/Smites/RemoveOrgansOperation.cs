@@ -1,17 +1,12 @@
 using Content.Shared.Body;
 using Robust.Shared.Prototypes;
 
-namespace Content.Shared.Administration.Smites;
+namespace Content.Shared.Administration.Verbs.Operations.Smites;
 
 /// <summary>
-/// Applies the effects of a cream pie hit to the smite target.
+/// Removes matching organs from a body and leaves them in the world or deletes them.
 /// </summary>
-public sealed partial class CreamPieSmite : SmiteOperationBase<CreamPieSmite>;
-
-/// <summary>
-/// Removes matching organs from a body and leaves them in the world.
-/// </summary>
-public sealed partial class RemoveOrgansSmite : SmiteOperationBase<RemoveOrgansSmite>
+public sealed partial class RemoveOrgansOperation : AdminOperationBase<RemoveOrgansOperation>
 {
     /// <summary>
     /// Categories eligible for removal. Null allows organs of any category.
@@ -37,8 +32,3 @@ public sealed partial class RemoveOrgansSmite : SmiteOperationBase<RemoveOrgansS
     [DataField]
     public int? MaxCount { get; private set; }
 }
-
-/// <summary>
-/// Spills every solution in the smite target's bloodstream.
-/// </summary>
-public sealed partial class SpillBloodstreamSmite : SmiteOperationBase<SpillBloodstreamSmite>;

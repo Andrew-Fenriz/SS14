@@ -1,11 +1,11 @@
 using Robust.Shared.Prototypes;
 
-namespace Content.Shared.Administration.Smites;
+namespace Content.Shared.Administration.Verbs.Operations;
 
 /// <summary>
 /// Force-equips configured entity prototypes into inventory slots.
 /// </summary>
-public sealed partial class SetEquipmentSmite : SmiteOperationBase<SetEquipmentSmite>
+public sealed partial class SetEquipmentOperation : AdminOperationBase<SetEquipmentOperation>
 {
     [DataField(required: true)]
     public Dictionary<string, EntProtoId> Equipment { get; private set; } = new();

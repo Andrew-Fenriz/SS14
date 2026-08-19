@@ -6,7 +6,7 @@
     sprite: Structures/Furniture/Tables/glass.rsi
     state: full
   operations:
-  - !type:AddComponentsSmite
+  - !type:AddComponentsOperation
     components:
     - type: SuperBonk
       stopWhenDead: true
@@ -19,7 +19,7 @@
     sprite: Structures/Furniture/Tables/generic.rsi
     state: full
   operations:
-  - !type:AddComponentsSmite
+  - !type:AddComponentsOperation
     components:
     - type: SuperBonk
       stopWhenDead: false
@@ -35,7 +35,7 @@
     components:
     - Inventory
   operations:
-  - !type:SetEquipmentSmite
+  - !type:SetEquipmentOperation
     unremoveable: true
     equipment:
       head: ClothingHeadHatCatEars
@@ -51,7 +51,7 @@
     components:
     - Inventory
   operations:
-  - !type:SetEquipmentSmite
+  - !type:SetEquipmentOperation
     clearOtherSlots: true
     unremoveable: true
     equipment:
@@ -61,7 +61,7 @@
       head: ClothingHeadHatCatEars
       ears: ClothingHeadsetService
       belt: ClothingBeltJanitorFilled
-  - !type:EntityEffectsSmite
+  - !type:EntityEffectsOperation
     effects:
     - !type:ModifyStatusEffect
       effectProto: StatusEffectClumsyMaid
@@ -74,7 +74,7 @@
   description: admin-smite-explode-description
   icon: Interface/VerbIcons/smite.svg.192dpi.png
   operations:
-  - !type:AddComponentsSmite
+  - !type:AddComponentsOperation
     replaceExisting: true
     components:
     - type: Explosive
@@ -84,7 +84,7 @@
       maxIntensity: 800
       maxTileBreak: 0
       canCreateVacuum: false
-  - !type:EntityEffectsSmite
+  - !type:EntityEffectsOperation
     effects:
     - !type:Explode
       delete: false
@@ -102,7 +102,7 @@
     - Damageable
     - MobState
   operations:
-  - !type:EntityEffectsSmite
+  - !type:EntityEffectsOperation
     effects:
     - !type:Electrocute
       shockDamage: 100
@@ -116,7 +116,7 @@
   description: admin-smite-zoom-in-description
   icon: Interface/AdminActions/zoom.png
   operations:
-  - !type:AddComponentsSmite
+  - !type:AddComponentsOperation
     replaceExisting: true
     components:
     - type: ContentEye
@@ -128,7 +128,7 @@
   description: admin-smite-flip-eye-description
   icon: Interface/AdminActions/flip.png
   operations:
-  - !type:AddComponentsSmite
+  - !type:AddComponentsOperation
     replaceExisting: true
     components:
     - type: ContentEye
@@ -140,14 +140,14 @@
   description: admin-smite-super-speed-description
   icon: Interface/AdminActions/super_speed.png
   operations:
-  - !type:AddComponentsSmite
+  - !type:AddComponentsOperation
     replaceExisting: true
     components:
     - type: MovementSpeedModifier
       baseWalkSpeed: 400
       baseSprintSpeed: 8000
       baseAcceleration: 40
-  - !type:PopupSmite
+  - !type:PopupOperation
     message: admin-smite-super-speed-prompt
     recipients: Target
     location: Entity
@@ -162,17 +162,17 @@
     components:
     - Flammable
   operations:
-  - !type:EntityEffectsSmite
+  - !type:EntityEffectsOperation
     effects:
     - !type:Flammable
       multiplier: 1000
     - !type:Ignite
-  - !type:PopupSmite
+  - !type:PopupOperation
     message: admin-smite-set-alight-self
     recipients: Target
     location: Entity
     type: LargeCaution
-  - !type:PopupSmite
+  - !type:PopupOperation
     message: admin-smite-set-alight-others
     recipients: PvsExceptTarget
     location: Coordinates
@@ -186,7 +186,7 @@
     sprite: Interface/Actions/voice-mask.rsi
     state: icon
   operations:
-  - !type:AddComponentsSmite
+  - !type:AddComponentsOperation
     components:
     - type: BarkAccent
     - type: BleatingAccent
@@ -209,7 +209,7 @@
     sprite: Clothing/Mask/gas.rsi
     state: icon
   operations:
-  - !type:AddComponentsSmite
+  - !type:AddComponentsOperation
     replaceExisting: true
     components:
     - type: GasMiner
@@ -230,7 +230,7 @@
     components:
     - Inventory
   operations:
-  - !type:AddComponentsSmite
+  - !type:AddComponentsOperation
     replaceExisting: true
     components:
     - type: KillSign
@@ -247,7 +247,7 @@
     components:
     - Inventory
   operations:
-  - !type:AddComponentsSmite
+  - !type:AddComponentsOperation
     replaceExisting: true
     components:
     - type: KillSign
@@ -261,7 +261,7 @@
     sprite: Structures/Machines/gravity_generator.rsi
     state: off
   operations:
-  - !type:AddComponentsSmite
+  - !type:AddComponentsOperation
     replaceExisting: true
     components:
     - type: MovementIgnoreGravity
@@ -280,7 +280,7 @@
     - Physics
     - Fixtures
   operations:
-  - !type:PinballSmite
+  - !type:PinballOperation
 
 - type: adminSmite
   id: AdminSmiteYeet
@@ -293,7 +293,7 @@
     - Physics
     - Fixtures
   operations:
-  - !type:YeetSmite
+  - !type:YeetOperation
 
 - type: adminSmite
   id: AdminSmiteSuperSlip
@@ -303,7 +303,7 @@
     sprite: Objects/Specific/Janitorial/soap.rsi
     state: omega-4
   operations:
-  - !type:SuperSlipSmite
+  - !type:SuperSlipOperation
 
 - type: adminSmite
   id: AdminSmiteSiliconLawBound
@@ -313,21 +313,21 @@
     sprite: Interface/Actions/actions_borg.rsi
     state: state-laws
   operations:
-  - !type:AddComponentsSmite
+  - !type:AddComponentsOperation
     replaceExisting: true
     components:
     - type: SiliconLawProvider
       laws: Crewsimov
-  - !type:AddUserInterfacesSmite
+  - !type:AddUserInterfacesOperation
     interfaces:
       enum.SiliconLawsUiKey.Key:
         type: SiliconLawBoundUserInterface
-  - !type:SiliconLawBoundSmite
-  - !type:AddActionSmite
+  - !type:SiliconLawBoundOperation
+  - !type:AddActionOperation
     action: ActionViewLaws
-  - !type:AddMindRoleSmite
+  - !type:AddMindRoleOperation
     role: MindRoleSiliconBrain
-  - !type:PopupSmite
+  - !type:PopupOperation
     message: admin-smite-silicon-laws-bound-self
     recipients: Target
     location: Entity
@@ -341,22 +341,22 @@
     sprite: Objects/Fun/Tabletop/chessboard.rsi
     state: chessboard
   operations:
-  - !type:SetGodmodeSmite
+  - !type:SetGodmodeOperation
     enabled: true
-  - !type:AddComponentsSmite
+  - !type:AddComponentsOperation
     components:
     - type: TabletopDraggable
-  - !type:PopupSmite
+  - !type:PopupOperation
     message: admin-smite-chess-self
     recipients: Target
     location: Entity
     type: LargeCaution
-  - !type:PopupSmite
+  - !type:PopupOperation
     message: admin-smite-chess-others
     recipients: PvsExceptTarget
     location: Coordinates
     type: MediumCaution
-  - !type:TabletopDimensionSmite
+  - !type:TabletopDimensionOperation
     prototype: ChessBoard
 
 - type: adminSmite
@@ -367,7 +367,7 @@
     sprite: Structures/Storage/closet.rsi
     state: generic
   operations:
-  - !type:StuffIntoLockerSmite
+  - !type:StuffIntoLockerOperation
     prototype: ClosetMaintenance
 
 - type: adminSmite
@@ -378,7 +378,7 @@
     sprite: Objects/Specific/Security/target.rsi
     state: target_s
   operations:
-  - !type:HomingRodSmite
+  - !type:HomingRodOperation
     prototype: ImmovableRodKeepTilesStill
     distance: 350
     speed: 25
@@ -391,7 +391,7 @@
     sprite: Objects/Specific/Security/target.rsi
     state: target_c
   operations:
-  - !type:HomingRodSmite
+  - !type:HomingRodOperation
     prototype: ImmovableRodKeepTilesStill
     distance: 200
     speed: 5
@@ -408,7 +408,7 @@
     components:
     - CreamPied
   operations:
-  - !type:CreamPieSmite
+  - !type:CreamPieOperation
 
 - type: adminSmite
   id: AdminSmiteDust
@@ -418,12 +418,12 @@
     sprite: Objects/Materials/materials.rsi
     state: ash
   operations:
-  - !type:PopupSmite
+  - !type:PopupOperation
     message: admin-smite-turned-ash-other
     recipients: Pvs
     location: Entity
     type: LargeCaution
-  - !type:AddComponentsSmite
+  - !type:AddComponentsOperation
     replaceExisting: true
     components:
     - type: SpawnOnDespawn
@@ -440,7 +440,7 @@
     components:
     - Actor
   operations:
-  - !type:GhostKickSmite
+  - !type:GhostKickOperation
 
 - type: adminSmite
   id: AdminSmiteRunWalkSwap
@@ -448,8 +448,8 @@
   description: admin-smite-run-walk-swap-description
   icon: Interface/AdminActions/run-walk-swap.png
   operations:
-  - !type:SwapMovementSpeedsSmite
-  - !type:PopupSmite
+  - !type:SwapMovementSpeedsOperation
+  - !type:PopupOperation
     message: admin-smite-run-walk-swap-prompt
     recipients: Target
     location: Entity
@@ -466,13 +466,13 @@
     components:
     - Bloodstream
   operations:
-  - !type:SpillBloodstreamSmite
-  - !type:PopupSmite
+  - !type:SpillBloodstreamOperation
+  - !type:PopupOperation
     message: admin-smite-remove-blood-self
     recipients: Target
     location: Entity
     type: LargeCaution
-  - !type:PopupSmite
+  - !type:PopupOperation
     message: admin-smite-remove-blood-others
     recipients: PvsExceptTarget
     location: Coordinates
@@ -484,7 +484,7 @@
   description: admin-smite-buffering-description
   icon: Interface/Misc/buffering_smite_icon.png
   operations:
-  - !type:AddComponentsSmite
+  - !type:AddComponentsOperation
     components:
     - type: Buffering
 
@@ -499,7 +499,7 @@
     components:
     - Inventory
   operations:
-  - !type:AddComponentsSmite
+  - !type:AddComponentsOperation
     components:
     - type: Cluwne
 
@@ -511,7 +511,7 @@
     sprite: Interface/Misc/pointing.rsi
     state: pointing
   operations:
-  - !type:AddComponentsSmite
+  - !type:AddComponentsOperation
     components:
     - type: PointingArrowAngering
 
@@ -521,7 +521,7 @@
   description: admin-smite-headstand-description
   icon: Interface/VerbIcons/refresh.svg.192dpi.png
   operations:
-  - !type:AddComponentsSmite
+  - !type:AddComponentsOperation
     components:
     - type: Headstand
 
@@ -531,7 +531,7 @@
   description: admin-smite-speak-backwards-description
   icon: Interface/AdminActions/help-backwards.png
   operations:
-  - !type:AddComponentsSmite
+  - !type:AddComponentsOperation
     components:
     - type: BackwardsAccent
 
@@ -541,7 +541,7 @@
   description: admin-smite-disarm-prone-description
   icon: Interface/Actions/disarm.png
   operations:
-  - !type:AddComponentsSmite
+  - !type:AddComponentsOperation
     components:
     - type: DisarmProne
 
@@ -553,7 +553,7 @@
     sprite: Mobs/Animals/snake.rsi
     state: icon
   operations:
-  - !type:AddComponentsSmite
+  - !type:AddComponentsOperation
     components:
     - type: Worm
 
@@ -565,7 +565,7 @@
     sprite: Mobs/Animals/monkey.rsi
     state: monkey
   operations:
-  - !type:PolymorphSmite
+  - !type:PolymorphOperation
     prototype: AdminMonkeySmite
 
 - type: adminSmite
@@ -576,7 +576,7 @@
     sprite: Structures/Piping/disposal.rsi
     state: disposal
   operations:
-  - !type:PolymorphSmite
+  - !type:PolymorphOperation
     prototype: AdminDisposalsSmite
 
 - type: adminSmite
@@ -587,7 +587,7 @@
     sprite: Objects/Consumable/Food/Baked/bread.rsi
     state: plain
   operations:
-  - !type:PolymorphSmite
+  - !type:PolymorphOperation
     prototype: AdminBreadSmite
 
 - type: adminSmite
@@ -598,7 +598,7 @@
     sprite: Mobs/Animals/mouse.rsi
     state: icon-0
   operations:
-  - !type:PolymorphSmite
+  - !type:PolymorphOperation
     prototype: AdminMouseSmite
 
 - type: adminSmite
@@ -609,7 +609,7 @@
     sprite: Objects/Fun/Instruments/h_synthesizer.rsi
     state: supersynth
   operations:
-  - !type:PolymorphSmite
+  - !type:PolymorphOperation
     prototype: AdminInstrumentSmite
 
 - type: adminSmite
@@ -620,7 +620,7 @@
     sprite: Objects/Fun/Plushies/lizard.rsi
     state: icon
   operations:
-  - !type:PolymorphSmite
+  - !type:PolymorphOperation
     prototype: AdminLizardSmite
 
 - type: adminSmite
@@ -631,7 +631,7 @@
     sprite: Objects/Fun/Balls/tennisball.rsi
     state: icon
   operations:
-  - !type:PolymorphSmite
+  - !type:PolymorphOperation
     prototype: AdminVulpSmite
 
 - type: adminSmite
@@ -643,16 +643,16 @@
     components:
     - Body
   operations:
-  - !type:RemoveOrgansSmite
+  - !type:RemoveOrgansOperation
     categories:
     - HandLeft
     - HandRight
-  - !type:PopupSmite
+  - !type:PopupOperation
     message: admin-smite-remove-hands-self
     recipients: Target
     location: Entity
     type: LargeCaution
-  - !type:PopupSmite
+  - !type:PopupOperation
     message: admin-smite-remove-hands-other
     recipients: PvsExceptTarget
     location: Coordinates
@@ -667,17 +667,17 @@
     components:
     - Body
   operations:
-  - !type:RemoveOrgansSmite
+  - !type:RemoveOrgansOperation
     categories:
     - HandLeft
     - HandRight
     maxCount: 1
-  - !type:PopupSmite
+  - !type:PopupOperation
     message: admin-smite-remove-hands-self
     recipients: Target
     location: Entity
     type: LargeCaution
-  - !type:PopupSmite
+  - !type:PopupOperation
     message: admin-smite-remove-hands-other
     recipients: PvsExceptTarget
     location: Coordinates
@@ -694,11 +694,11 @@
     components:
     - Body
   operations:
-  - !type:RemoveOrgansSmite
+  - !type:RemoveOrgansOperation
     categories:
     - Stomach
     delete: true
-  - !type:PopupSmite
+  - !type:PopupOperation
     message: admin-smite-stomach-removal-self
     recipients: Target
     location: Entity
@@ -715,11 +715,11 @@
     components:
     - Body
   operations:
-  - !type:RemoveOrgansSmite
+  - !type:RemoveOrgansOperation
     categories:
     - Lungs
     delete: true
-  - !type:PopupSmite
+  - !type:PopupOperation
     message: admin-smite-lung-removal-self
     recipients: Target
     location: Entity
@@ -736,21 +736,21 @@
     components:
     - Body
   operations:
-  - !type:EntityEffectsSmite
+  - !type:EntityEffectsOperation
     effects:
     - !type:Vomit
       thirstAmount: -1000
       hungerAmount: -1000
-  - !type:RemoveOrgansSmite
+  - !type:RemoveOrgansOperation
     excludedCategories:
     - Brain
     - Eyes
-  - !type:PopupSmite
+  - !type:PopupOperation
     message: admin-smite-vomit-organs-self
     recipients: Target
     location: Entity
     type: LargeCaution
-  - !type:PopupSmite
+  - !type:PopupOperation
     message: admin-smite-vomit-organs-others
     recipients: PvsExceptTarget
     location: Coordinates
