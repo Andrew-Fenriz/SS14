@@ -5,9 +5,6 @@ using Robust.Shared.Utility;
 
 namespace Content.Shared.Administration.Verbs.Prototypes;
 
-/// <summary>
-/// Common prototype data for admin entity verbs.
-/// </summary>
 [DataDefinition]
 public abstract partial class AdminVerbPrototype : IPrototype
 {

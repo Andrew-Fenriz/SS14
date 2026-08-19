@@ -3,10 +3,7 @@ using Robust.Shared.Prototypes;
 
 namespace Content.Shared.Administration.Verbs.Operations;
 
-// TODO: Use EntityEffectsOperation once the Polymorph entity effect no longer requires PolymorphableComponent.
-/// <summary>
-/// Polymorphs the target using a polymorph prototype.
-/// </summary>
+// TODO: Use EntityEffectsOperation once the Polymorph effect supports targets without PolymorphableComponent.
 public sealed partial class PolymorphOperation : AdminOperationBase<PolymorphOperation>
 {
     [DataField(required: true)]

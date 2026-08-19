@@ -2,9 +2,6 @@ using Content.Shared.Popups;
 
 namespace Content.Shared.Administration.Verbs.Operations;
 
-/// <summary>
-/// Shows a localized popup to the configured recipients.
-/// </summary>
 public sealed partial class PopupOperation : AdminOperationBase<PopupOperation>
 {
     /// <summary>

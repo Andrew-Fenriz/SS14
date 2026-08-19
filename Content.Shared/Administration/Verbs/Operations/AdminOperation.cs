@@ -1,8 +1,5 @@
 namespace Content.Shared.Administration.Verbs.Operations;
 
-/// <summary>
-/// An operation executed by a prototype-backed admin verb.
-/// </summary>
 [ImplicitDataDefinitionForInheritors]
 public abstract partial class AdminOperation
 {
@@ -10,7 +7,7 @@ public abstract partial class AdminOperation
 }
 
 /// <summary>
-/// Keeps the concrete operation type when dispatching it to a handler.
+/// Gives each operation a strongly typed local event without reflection.
 /// </summary>
 public abstract partial class AdminOperationBase<T> : AdminOperation where T : AdminOperationBase<T>
 {
@@ -20,16 +17,10 @@ public abstract partial class AdminOperationBase<T> : AdminOperation where T : A
     }
 }
 
-/// <summary>
-/// Dispatches typed admin operations to their target.
-/// </summary>
 public interface IAdminOperationRaiser
 {
     void RaiseOperationEvent<T>(EntityUid target, EntityUid user, T operation) where T : AdminOperationBase<T>;
 }
 
-/// <summary>
-/// Carries a typed operation and the admin that invoked it.
-/// </summary>
 [ByRefEvent]
 public readonly record struct AdminOperationEvent<T>(T Operation, EntityUid User) where T : AdminOperationBase<T>;

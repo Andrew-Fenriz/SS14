@@ -18,13 +18,15 @@ public sealed partial class AdminOperationSystem
             TryComp<MovementSpeedModifierComponent>(entity, out var movement))
             speed = movement.CurrentSprintSpeed + 0.001f;
 
+        // TODO: Reuse the immovable rod rule's spawning logic once it exposes a suitable API.
         IRobustRandom random = new RobustRandom();
         random.SetSeed(entity.Owner.Id);
         var offset = random.NextAngle().RotateVec(new Vector2(args.Operation.Distance, 0));
         var spawnCoords = _transform.GetMapCoordinates(entity).Offset(offset);
         var rod = Spawn(args.Operation.Prototype, spawnCoords);
 
-        // Pin the controller to this target instead of using its normal retargeting logic.
+        // TODO: ChasingWalkSystem needs an API for pinning a target and configuring its movement.
+        // Remove AdminOperationSystem from ChasingWalkComponent's Access list once that exists.
         EnsureComp<ChasingWalkComponent>(rod, out var chasing);
         chasing.NextChangeVectorTime = TimeSpan.MaxValue;
         chasing.ChasingEntity = entity.Owner;

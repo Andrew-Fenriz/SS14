@@ -2,9 +2,6 @@ using Robust.Shared.Prototypes;
 
 namespace Content.Shared.Administration.Verbs.Operations;
 
-/// <summary>
-/// Adds configured components, optionally replacing existing ones.
-/// </summary>
 public sealed partial class AddComponentsOperation : AdminOperationBase<AddComponentsOperation>
 {
     [DataField(required: true)]

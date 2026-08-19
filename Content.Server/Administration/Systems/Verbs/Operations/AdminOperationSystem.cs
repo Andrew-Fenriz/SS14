@@ -24,9 +24,6 @@ using Robust.Shared.Random;
 
 namespace Content.Server.Administration.Systems.Verbs.Operations;
 
-/// <summary>
-/// Executes operations from prototype-backed admin verbs.
-/// </summary>
 public sealed partial class AdminOperationSystem : EntitySystem, IAdminOperationRaiser
 {
     [Dependency] private SharedActionsSystem _actions = default!;
@@ -54,16 +51,12 @@ public sealed partial class AdminOperationSystem : EntitySystem, IAdminOperation
     [Dependency] private UserInterfaceSystem _ui = default!;
     [Dependency] private WeldableSystem _weldable = default!;
 
-    public void RaiseOperationEvent<T>(EntityUid target, EntityUid user, T operation)
-        where T : AdminOperationBase<T>
+    public void RaiseOperationEvent<T>(EntityUid target, EntityUid user, T operation) where T : AdminOperationBase<T>
     {
         var operationEvent = new AdminOperationEvent<T>(operation, user);
         RaiseLocalEvent(target, ref operationEvent);
     }
 
-    /// <summary>
-    /// Executes operations synchronously in prototype order.
-    /// </summary>
     public void Execute(EntityUid target, EntityUid user, IReadOnlyList<AdminOperation> operations)
     {
         foreach (var operation in operations)
