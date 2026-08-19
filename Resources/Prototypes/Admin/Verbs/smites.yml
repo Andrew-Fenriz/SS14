@@ -119,14 +119,15 @@
   - !type:ScaleEyeZoomOperation
     factor: 0.2
 
-- type: adminSmite
-  id: AdminSmiteFlipEye
-  name: admin-smite-flip-eye-name
-  description: admin-smite-flip-eye-description
-  icon: Interface/AdminActions/flip.png
-  operations:
-  - !type:ScaleEyeZoomOperation
-    factor: -1
+# BROKEN: Negative eye zoom crashes viewport rendering.
+#- type: adminSmite
+#  id: AdminSmiteFlipEye
+#  name: admin-smite-flip-eye-name
+#  description: admin-smite-flip-eye-description
+#  icon: Interface/AdminActions/flip.png
+#  operations:
+#  - !type:ScaleEyeZoomOperation
+#    factor: -1
 
 - type: adminSmite
   id: AdminSmiteSuperSpeed
@@ -261,33 +262,35 @@
     - type: MovementIgnoreGravity
       weightless: true
 
-- type: adminSmite
-  id: AdminSmitePinball
-  name: admin-smite-pinball-name
-  description: admin-smite-pinball-description
-  icon:
-    sprite: Objects/Fun/Balls/basketball.rsi
-    state: icon
-  whitelist:
-    requireAll: true
-    components:
-    - Physics
-    - Fixtures
-  operations:
-  - !type:PinballOperation
+# BROKEN: Setting an input mover's body type to Dynamic causes a movement assertion.
+#- type: adminSmite
+#  id: AdminSmitePinball
+#  name: admin-smite-pinball-name
+#  description: admin-smite-pinball-description
+#  icon:
+#    sprite: Objects/Fun/Balls/basketball.rsi
+#    state: icon
+#  whitelist:
+#    requireAll: true
+#    components:
+#    - Physics
+#    - Fixtures
+#  operations:
+#  - !type:PinballOperation
 
-- type: adminSmite
-  id: AdminSmiteYeet
-  name: admin-smite-yeet-name
-  description: admin-smite-yeet-description
-  icon: Interface/VerbIcons/eject.svg.192dpi.png
-  whitelist:
-    requireAll: true
-    components:
-    - Physics
-    - Fixtures
-  operations:
-  - !type:YeetOperation
+# BROKEN: Setting an input mover's body type to Dynamic causes a movement assertion.
+#- type: adminSmite
+#  id: AdminSmiteYeet
+#  name: admin-smite-yeet-name
+#  description: admin-smite-yeet-description
+#  icon: Interface/VerbIcons/eject.svg.192dpi.png
+#  whitelist:
+#    requireAll: true
+#    components:
+#    - Physics
+#    - Fixtures
+#  operations:
+#  - !type:YeetOperation
 
 - type: adminSmite
   id: AdminSmiteSuperSlip
@@ -737,9 +740,12 @@
       thirstAmount: -1000
       hungerAmount: -1000
   - !type:RemoveOrgansOperation
-    excludedCategories:
-    - Brain
-    - Eyes
+    categories:
+    - Heart
+    - Lungs
+    - Stomach
+    - Liver
+    - Kidneys
   - !type:PopupOperation
     message: admin-smite-vomit-organs-self
     recipients: Target
