@@ -26,6 +26,12 @@ public sealed partial class RemoveOrgansSmite : SmiteOperationBase<RemoveOrgansS
     public HashSet<ProtoId<OrganCategoryPrototype>> ExcludedCategories { get; private set; } = [];
 
     /// <summary>
+    /// Whether matching selected organs are queued for deletion instead of detached into the world.
+    /// </summary>
+    [DataField]
+    public bool Delete { get; private set; }
+
+    /// <summary>
     /// Maximum number of matching organs to remove. Null removes every match.
     /// </summary>
     [DataField]

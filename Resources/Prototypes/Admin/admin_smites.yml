@@ -97,6 +97,7 @@
     sprite: Clothing/Hands/Gloves/Color/yellow.rsi
     state: icon
   whitelist:
+    requireAll: true
     components:
     - Damageable
     - MobState
@@ -646,6 +647,16 @@
     categories:
     - HandLeft
     - HandRight
+  - !type:PopupSmite
+    message: admin-smite-remove-hands-self
+    recipients: Target
+    location: Entity
+    type: LargeCaution
+  - !type:PopupSmite
+    message: admin-smite-remove-hands-other
+    recipients: PvsExceptTarget
+    location: Coordinates
+    type: Medium
 
 - type: adminSmite
   id: AdminSmiteRemoveHand
@@ -661,6 +672,16 @@
     - HandLeft
     - HandRight
     maxCount: 1
+  - !type:PopupSmite
+    message: admin-smite-remove-hands-self
+    recipients: Target
+    location: Entity
+    type: LargeCaution
+  - !type:PopupSmite
+    message: admin-smite-remove-hands-other
+    recipients: PvsExceptTarget
+    location: Coordinates
+    type: Medium
 
 - type: adminSmite
   id: AdminSmiteStomachRemoval
@@ -676,6 +697,12 @@
   - !type:RemoveOrgansSmite
     categories:
     - Stomach
+    delete: true
+  - !type:PopupSmite
+    message: admin-smite-stomach-removal-self
+    recipients: Target
+    location: Entity
+    type: LargeCaution
 
 - type: adminSmite
   id: AdminSmiteLungRemoval
@@ -691,6 +718,12 @@
   - !type:RemoveOrgansSmite
     categories:
     - Lungs
+    delete: true
+  - !type:PopupSmite
+    message: admin-smite-lung-removal-self
+    recipients: Target
+    location: Entity
+    type: LargeCaution
 
 - type: adminSmite
   id: AdminSmiteVomitOrgans
@@ -712,3 +745,13 @@
     excludedCategories:
     - Brain
     - Eyes
+  - !type:PopupSmite
+    message: admin-smite-vomit-organs-self
+    recipients: Target
+    location: Entity
+    type: LargeCaution
+  - !type:PopupSmite
+    message: admin-smite-vomit-organs-others
+    recipients: PvsExceptTarget
+    location: Coordinates
+    type: MediumCaution

@@ -17,7 +17,6 @@ using Content.Shared.Friction;
 using Content.Shared.Inventory;
 using Content.Shared.Nutrition.EntitySystems;
 using Content.Shared.Slippery;
-using Content.Shared.Stunnable;
 using Content.Shared.Tools.Systems;
 using Robust.Server.GameObjects;
 using Robust.Shared.Physics.Systems;
@@ -48,7 +47,6 @@ public sealed partial class AdminSmiteSystem : EntitySystem, ISmiteOperationRais
     [Dependency] private RoleSystem _role = default!;
     [Dependency] private SiliconLawSystem _siliconLaws = default!;
     [Dependency] private SlipperySystem _slippery = default!;
-    [Dependency] private SharedStunSystem _stun = default!;
     [Dependency] private SharedTransformSystem _transform = default!;
     [Dependency] private TabletopSystem _tabletop = default!;
     [Dependency] private TileFrictionController _tileFriction = default!;

@@ -10,7 +10,6 @@ public sealed partial class AdminSmiteSystem
     [SubscribeLocalEvent]
     private void OnCreamPie(Entity<CreamPiedComponent> entity, ref SmiteOperationEvent<CreamPieSmite> args)
     {
-        _stun.TryUpdateParalyzeDuration(entity.Owner, TimeSpan.FromSeconds(1));
         _creamPie.SetCreamPied(entity.AsNullable(), true);
     }
 
@@ -41,7 +40,10 @@ public sealed partial class AdminSmiteSystem
 
         foreach (var organ in selected)
         {
-            _transform.AttachToGridOrMap(organ);
+            if (args.Operation.Delete)
+                QueueDel(organ);
+            else
+                _transform.AttachToGridOrMap(organ);
         }
     }
 

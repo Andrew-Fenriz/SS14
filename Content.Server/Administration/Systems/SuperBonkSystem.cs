@@ -3,6 +3,7 @@ using Content.Shared.Climbing.Components;
 using Content.Shared.Climbing.Systems;
 using Content.Shared.Mobs;
 using Content.Shared.Mobs.Components;
+using JetBrains.Annotations;
 using Robust.Shared.Timing;
 
 namespace Content.Server.Administration.Systems;
@@ -69,6 +70,25 @@ public sealed partial class SuperBonkSystem : EntitySystem
 
             comp.NextBonk += comp.BonkCooldown;
         }
+    }
+
+    /// <summary>
+    /// Begin a grand journey to bonk every table.
+    /// </summary>
+    [PublicAPI]
+    public void StartSuperBonk(EntityUid target, bool stopWhenDead = false)
+    {
+        // The lifecycle check cannot prevent the component from being added if the target is already dead.
+        if (stopWhenDead && TryComp<MobStateComponent>(target, out var mobState) && mobState.CurrentState == MobState.Dead)
+            return;
+
+        if (HasComp<SuperBonkComponent>(target))
+            return;
+
+        AddComp(target, new SuperBonkComponent
+        {
+            StopWhenDead = stopWhenDead,
+        });
     }
 
     private bool TryBonk(EntityUid uid, EntityUid tableUid)
