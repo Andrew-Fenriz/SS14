@@ -441,6 +441,7 @@
     - Actor
   operations:
   - !type:GhostKickOperation
+    reason: admin-smite-ghostkick-reason
 
 - type: adminSmite
   id: AdminSmiteRunWalkSwap
