@@ -6,7 +6,7 @@ namespace Content.Shared.Administration.Verbs.Operations.Smites;
 public sealed partial class GhostKickOperation : AdminOperationBase<GhostKickOperation>
 {
     /// <summary>
-    /// The reason that will be displayed in the server log when the target is disconnected.
+    /// Localization key used as the disconnect reason.
     /// </summary>
     [DataField(required: true)]
     public LocId Reason { get; private set; }

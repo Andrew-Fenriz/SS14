@@ -8,6 +8,9 @@ namespace Content.Shared.Administration.Verbs.Operations.Smites;
 /// </summary>
 public sealed partial class TabletopDimensionOperation : AdminOperationBase<TabletopDimensionOperation>
 {
+    /// <summary>
+    /// Tabletop game prototype used to create the session.
+    /// </summary>
     [DataField(required: true)]
     public EntProtoId<TabletopGameComponent> Prototype { get; private set; }
 }

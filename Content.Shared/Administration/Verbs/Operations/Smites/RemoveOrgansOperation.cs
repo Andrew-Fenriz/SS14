@@ -4,7 +4,7 @@ using Robust.Shared.Prototypes;
 namespace Content.Shared.Administration.Verbs.Operations.Smites;
 
 /// <summary>
-/// Removes matching organs from a body and leaves them in the world or deletes them.
+/// Removes matching organs from a body, either detaching them into the world or queueing them for deletion.
 /// </summary>
 public sealed partial class RemoveOrgansOperation : AdminOperationBase<RemoveOrgansOperation>
 {
@@ -15,7 +15,7 @@ public sealed partial class RemoveOrgansOperation : AdminOperationBase<RemoveOrg
     public HashSet<ProtoId<OrganCategoryPrototype>>? Categories { get; private set; }
 
     /// <summary>
-    /// Categories that are never eligible for removal.
+    /// Categories that are never eligible for removal. Exclusions take precedence over <see cref="Categories"/>.
     /// </summary>
     [DataField]
     public HashSet<ProtoId<OrganCategoryPrototype>> ExcludedCategories { get; private set; } = [];
@@ -27,7 +27,8 @@ public sealed partial class RemoveOrgansOperation : AdminOperationBase<RemoveOrg
     public bool Delete { get; private set; }
 
     /// <summary>
-    /// Maximum number of matching organs to remove. Null removes every match.
+    /// Maximum number of matching organs to remove.
+    /// <see langword="null"/> removes every match; values less than or equal to zero remove nothing.
     /// </summary>
     [DataField]
     public int? MaxCount { get; private set; }

@@ -52,6 +52,12 @@ public sealed partial class AdminOperationSystem : EntitySystem, IAdminOperation
     [Dependency] private UserInterfaceSystem _ui = default!;
     [Dependency] private WeldableSystem _weldable = default!;
 
+    /// <summary>
+    /// Executes the supplied operations synchronously in their configured order.
+    /// </summary>
+    /// <param name="target">Entity each operation acts on.</param>
+    /// <param name="user">Entity that invoked the parent admin verb.</param>
+    /// <param name="operations">Ordered operations to execute.</param>
     public void Execute(EntityUid target, EntityUid user, IReadOnlyList<AdminOperation> operations)
     {
         foreach (var operation in operations)
@@ -60,6 +66,7 @@ public sealed partial class AdminOperationSystem : EntitySystem, IAdminOperation
         }
     }
 
+    /// <inheritdoc />
     public void RaiseOperationEvent<T>(EntityUid target, EntityUid user, T operation)
         where T : AdminOperationBase<T>
     {

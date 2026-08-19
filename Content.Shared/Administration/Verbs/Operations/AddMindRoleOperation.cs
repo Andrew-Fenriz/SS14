@@ -7,6 +7,9 @@ namespace Content.Shared.Administration.Verbs.Operations;
 /// </summary>
 public sealed partial class AddMindRoleOperation : AdminOperationBase<AddMindRoleOperation>
 {
+    /// <summary>
+    /// Entity prototype of the mind role to add.
+    /// </summary>
     [DataField(required: true)]
     public EntProtoId Role { get; private set; }
 }

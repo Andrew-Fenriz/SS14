@@ -26,6 +26,7 @@ public sealed partial class AdminOperationSystem
         var spawnCoords = _transform.GetMapCoordinates(entity).Offset(offset);
         var rod = Spawn(args.Operation.Prototype, spawnCoords);
 
+        // Pin the controller to this target instead of using its normal retargeting logic.
         EnsureComp<ChasingWalkComponent>(rod, out var chasing);
         chasing.NextChangeVectorTime = TimeSpan.MaxValue;
         chasing.ChasingEntity = entity.Owner;

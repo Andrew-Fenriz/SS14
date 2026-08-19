@@ -7,6 +7,9 @@ namespace Content.Shared.Administration.Verbs.Operations;
 /// </summary>
 public sealed partial class AddComponentsOperation : AdminOperationBase<AddComponentsOperation>
 {
+    /// <summary>
+    /// Components to add to the target.
+    /// </summary>
     [DataField(required: true)]
     public ComponentRegistry Components { get; private set; } = new();
 

@@ -14,22 +14,22 @@ public sealed partial class AdminOperationSystem
 
         switch ((args.Operation.Recipients, args.Operation.Location))
         {
-            case (SmitePopupRecipients.Target, SmitePopupLocation.Entity):
+            case (PopupRecipients.Target, PopupLocation.Entity):
                 _popup.PopupEntity(message, entity, entity, args.Operation.Type);
                 break;
-            case (SmitePopupRecipients.Target, SmitePopupLocation.Coordinates):
+            case (PopupRecipients.Target, PopupLocation.Coordinates):
                 _popup.PopupCoordinates(message, Transform(entity).Coordinates, entity, args.Operation.Type);
                 break;
-            case (SmitePopupRecipients.Pvs, SmitePopupLocation.Entity):
+            case (PopupRecipients.Pvs, PopupLocation.Entity):
                 _popup.PopupEntity(message, entity, args.Operation.Type);
                 break;
-            case (SmitePopupRecipients.Pvs, SmitePopupLocation.Coordinates):
+            case (PopupRecipients.Pvs, PopupLocation.Coordinates):
                 _popup.PopupCoordinates(message, Transform(entity).Coordinates, args.Operation.Type);
                 break;
-            case (SmitePopupRecipients.PvsExceptTarget, SmitePopupLocation.Entity):
+            case (PopupRecipients.PvsExceptTarget, PopupLocation.Entity):
                 _popup.PopupEntity(message, entity, Filter.PvsExcept(entity), true, args.Operation.Type);
                 break;
-            case (SmitePopupRecipients.PvsExceptTarget, SmitePopupLocation.Coordinates):
+            case (PopupRecipients.PvsExceptTarget, PopupLocation.Coordinates):
                 _popup.PopupCoordinates(
                     message,
                     Transform(entity).Coordinates,

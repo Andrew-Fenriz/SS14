@@ -7,6 +7,9 @@ namespace Content.Shared.Administration.Verbs.Operations;
 /// </summary>
 public sealed partial class EntityEffectsOperation : AdminOperationBase<EntityEffectsOperation>
 {
+    /// <summary>
+    /// Entity effects to apply in order.
+    /// </summary>
     [DataField(required: true)]
     public EntityEffect[] Effects { get; private set; } = [];
 }

@@ -33,7 +33,6 @@ public sealed partial class SuperBonkSystem : EntitySystem
 
         var tables = EntityQueryEnumerator<BonkableComponent>();
         var bonks = new List<EntityUid>();
-        // This is done so we don't crash if something like a new table is spawned.
         while (tables.MoveNext(out var table, out _))
         {
             bonks.Add(table);

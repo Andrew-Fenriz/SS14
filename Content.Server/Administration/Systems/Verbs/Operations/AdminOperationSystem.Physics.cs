@@ -6,7 +6,7 @@ namespace Content.Server.Administration.Systems.Verbs.Operations;
 
 public sealed partial class AdminOperationSystem
 {
-    private void PreparePhysicsSmite(Entity<PhysicsComponent> entity, FixturesComponent fixtures)
+    private void PreparePhysicsTarget(Entity<PhysicsComponent> entity, FixturesComponent fixtures)
     {
         _transform.Unanchor(entity);
         _physics.SetBodyType(entity, BodyType.Dynamic, manager: fixtures, body: entity.Comp);

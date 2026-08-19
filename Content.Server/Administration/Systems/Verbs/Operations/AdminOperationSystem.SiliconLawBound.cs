@@ -7,13 +7,13 @@ namespace Content.Server.Administration.Systems.Verbs.Operations;
 public sealed partial class AdminOperationSystem
 {
     [SubscribeLocalEvent]
-    private void OnSiliconLawBound(Entity<MetaDataComponent> entity,
-        ref AdminOperationEvent<SiliconLawBoundOperation> args)
+    private void OnSiliconLawBound(Entity<SiliconLawProviderComponent> entity, ref AdminOperationEvent<SiliconLawBoundOperation> args)
     {
         EnsureComp<SiliconLawBoundComponent>(entity);
 
+        // The provider is configured by an earlier operation
+        // resolve its runtime lawset before notifying the target.
         _siliconLaws.GetLaws(entity.Owner);
-        var provider = Comp<SiliconLawProviderComponent>(entity);
-        _siliconLaws.NotifyLawsChanged((entity.Owner, provider));
+        _siliconLaws.NotifyLawsChanged(entity);
     }
 }

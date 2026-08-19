@@ -7,6 +7,9 @@ namespace Content.Shared.Administration.Verbs.Operations;
 /// </summary>
 public sealed partial class AddActionOperation : AdminOperationBase<AddActionOperation>
 {
+    /// <summary>
+    /// Entity prototype of the action to grant.
+    /// </summary>
     [DataField(required: true)]
     public EntProtoId Action { get; private set; }
 }

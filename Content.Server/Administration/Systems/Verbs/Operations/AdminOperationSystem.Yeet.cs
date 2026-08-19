@@ -13,7 +13,7 @@ public sealed partial class AdminOperationSystem
         if (!TryComp<FixturesComponent>(entity, out var fixtures))
             return;
 
-        PreparePhysicsSmite(entity, fixtures);
+        PreparePhysicsTarget(entity, fixtures);
 
         foreach (var fixture in fixtures.Fixtures.Values)
         {
