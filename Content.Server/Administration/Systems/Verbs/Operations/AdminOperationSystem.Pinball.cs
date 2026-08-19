@@ -14,7 +14,7 @@ public sealed partial class AdminOperationSystem
             return;
 
         _transform.Unanchor(entity);
-        _physics.SetBodyType(entity, BodyType.Dynamic, manager: fixtures, body: entity.Comp);
+        _physics.SetBodyType(entity, BodyType.Dynamic, fixtures, entity.Comp);
         _physics.SetBodyStatus(entity, entity.Comp, BodyStatus.InAir);
         _physics.WakeBody(entity, manager: fixtures, body: entity.Comp);
 

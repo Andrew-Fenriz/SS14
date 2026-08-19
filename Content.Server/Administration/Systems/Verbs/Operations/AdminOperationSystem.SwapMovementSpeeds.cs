@@ -7,8 +7,7 @@ namespace Content.Server.Administration.Systems.Verbs.Operations;
 public sealed partial class AdminOperationSystem
 {
     [SubscribeLocalEvent]
-    private void OnSwapMovementSpeeds(Entity<MetaDataComponent> entity,
-        ref AdminOperationEvent<SwapMovementSpeedsOperation> args)
+    private void OnSwapMovementSpeeds(Entity<MetaDataComponent> entity, ref AdminOperationEvent<SwapMovementSpeedsOperation> args)
     {
         var movementSpeed = EnsureComp<MovementSpeedModifierComponent>(entity);
         (movementSpeed.BaseSprintSpeed, movementSpeed.BaseWalkSpeed) =

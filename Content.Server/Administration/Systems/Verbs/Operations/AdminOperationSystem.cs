@@ -30,8 +30,9 @@ namespace Content.Server.Administration.Systems.Verbs.Operations;
 public sealed partial class AdminOperationSystem : EntitySystem, IAdminOperationRaiser
 {
     [Dependency] private SharedActionsSystem _actions = default!;
-    [Dependency] private BodySystem _body = default!;
     [Dependency] private BloodstreamSystem _bloodstream = default!;
+    [Dependency] private BodySystem _body = default!;
+    [Dependency] private ContentEyeSystem _contentEye = default!;
     [Dependency] private SharedCreamPieSystem _creamPie = default!;
     [Dependency] private SharedEntityEffectsSystem _entityEffects = default!;
     [Dependency] private EntityStorageSystem _entityStorage = default!;
@@ -40,19 +41,25 @@ public sealed partial class AdminOperationSystem : EntitySystem, IAdminOperation
     [Dependency] private SharedGodmodeSystem _godmode = default!;
     [Dependency] private InventorySystem _inventory = default!;
     [Dependency] private MindSystem _mind = default!;
+    [Dependency] private OutfitSystem _outfit = default!;
+    [Dependency] private SharedPhysicsSystem _physics = default!;
     [Dependency] private PolymorphSystem _polymorph = default!;
     [Dependency] private PopupSystem _popup = default!;
-    [Dependency] private SharedPhysicsSystem _physics = default!;
     [Dependency] private IRobustRandom _random = default!;
     [Dependency] private RoleSystem _role = default!;
     [Dependency] private SiliconLawSystem _siliconLaws = default!;
     [Dependency] private SlipperySystem _slippery = default!;
-    [Dependency] private SharedTransformSystem _transform = default!;
     [Dependency] private TabletopSystem _tabletop = default!;
+    [Dependency] private SharedTransformSystem _transform = default!;
     [Dependency] private UserInterfaceSystem _ui = default!;
     [Dependency] private WeldableSystem _weldable = default!;
-    [Dependency] private ContentEyeSystem _contentEye = default!;
-    [Dependency] private OutfitSystem _outfit = default!;
+
+    public void RaiseOperationEvent<T>(EntityUid target, EntityUid user, T operation)
+        where T : AdminOperationBase<T>
+    {
+        var operationEvent = new AdminOperationEvent<T>(operation, user);
+        RaiseLocalEvent(target, ref operationEvent);
+    }
 
     /// <summary>
     /// Executes operations synchronously in prototype order.
@@ -63,12 +70,5 @@ public sealed partial class AdminOperationSystem : EntitySystem, IAdminOperation
         {
             operation.RaiseEvent(target, user, this);
         }
-    }
-
-    public void RaiseOperationEvent<T>(EntityUid target, EntityUid user, T operation)
-        where T : AdminOperationBase<T>
-    {
-        var operationEvent = new AdminOperationEvent<T>(operation, user);
-        RaiseLocalEvent(target, ref operationEvent);
     }
 }

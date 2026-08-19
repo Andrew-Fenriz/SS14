@@ -5,8 +5,7 @@ namespace Content.Server.Administration.Systems.Verbs.Operations;
 public sealed partial class AdminOperationSystem
 {
     [SubscribeLocalEvent]
-    private void OnAddUserInterfaces(Entity<MetaDataComponent> entity,
-        ref AdminOperationEvent<AddUserInterfacesOperation> args)
+    private void OnAddUserInterfaces(Entity<MetaDataComponent> entity, ref AdminOperationEvent<AddUserInterfacesOperation> args)
     {
         var userInterface = EnsureComp<UserInterfaceComponent>(entity);
 

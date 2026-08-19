@@ -16,9 +16,7 @@ public sealed partial class AdminOperationSystem
         var speed = args.Operation.Speed;
         if (args.Operation.MatchTargetSprintSpeed &&
             TryComp<MovementSpeedModifierComponent>(entity, out var movement))
-        {
             speed = movement.CurrentSprintSpeed + 0.001f;
-        }
 
         IRobustRandom random = new RobustRandom();
         random.SetSeed(entity.Owner.Id);

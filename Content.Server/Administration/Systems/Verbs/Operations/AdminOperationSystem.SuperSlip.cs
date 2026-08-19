@@ -17,7 +17,7 @@ public sealed partial class AdminOperationSystem
             slipComponent.SlipData.LaunchForwardsMultiplier = 20;
         }
 
-        _slippery.TrySlip(entity, slipComponent, entity, requiresContact: false);
+        _slippery.TrySlip(entity, slipComponent, entity, false);
         if (!hadSlipComponent)
             RemComp(entity, slipComponent);
     }

@@ -12,7 +12,7 @@ public sealed partial class AdminOperationSystem
             ("name", entity.Owner),
             ("entity", entity.Owner));
 
-        switch ((args.Operation.Recipients, args.Operation.Location))
+        switch (args.Operation.Recipients, args.Operation.Location)
         {
             case (PopupRecipients.Target, PopupLocation.Entity):
                 _popup.PopupEntity(message, entity, entity, args.Operation.Type);

@@ -20,7 +20,7 @@ public sealed partial class AdminOperationSystem
 
         foreach (var fixture in fixtures.Fixtures.Values)
         {
-            _physics.SetHard(entity, fixture, false, manager: fixtures);
+            _physics.SetHard(entity, fixture, false, fixtures);
         }
 
         _physics.SetLinearVelocity(entity, _random.NextVector2(8f, 8f), manager: fixtures, body: entity.Comp);

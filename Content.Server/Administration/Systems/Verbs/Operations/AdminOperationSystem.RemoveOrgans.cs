@@ -7,8 +7,7 @@ namespace Content.Server.Administration.Systems.Verbs.Operations;
 public sealed partial class AdminOperationSystem
 {
     [SubscribeLocalEvent]
-    private void OnRemoveOrgans(Entity<BodyComponent> entity,
-        ref AdminOperationEvent<RemoveOrgansOperation> args)
+    private void OnRemoveOrgans(Entity<BodyComponent> entity, ref AdminOperationEvent<RemoveOrgansOperation> args)
     {
         if (args.Operation.MaxCount is <= 0)
             return;
@@ -19,9 +18,7 @@ public sealed partial class AdminOperationSystem
             var category = organ.Comp1.Category;
             if (args.Operation.Categories != null &&
                 (category == null || !args.Operation.Categories.Contains(category.Value)))
-            {
                 continue;
-            }
 
             if (category != null && args.Operation.ExcludedCategories.Contains(category.Value))
                 continue;
