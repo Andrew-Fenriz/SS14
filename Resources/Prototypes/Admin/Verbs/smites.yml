@@ -116,11 +116,8 @@
   description: admin-smite-zoom-in-description
   icon: Interface/AdminActions/zoom.png
   operations:
-  - !type:AddComponentsOperation
-    replaceExisting: true
-    components:
-    - type: ContentEye
-      targetZoom: 0.2, 0.2
+  - !type:ScaleEyeZoomOperation
+    factor: 0.2
 
 - type: adminSmite
   id: AdminSmiteFlipEye
@@ -128,11 +125,8 @@
   description: admin-smite-flip-eye-description
   icon: Interface/AdminActions/flip.png
   operations:
-  - !type:AddComponentsOperation
-    replaceExisting: true
-    components:
-    - type: ContentEye
-      targetZoom: -1, -1
+  - !type:ScaleEyeZoomOperation
+    factor: -1
 
 - type: adminSmite
   id: AdminSmiteSuperSpeed

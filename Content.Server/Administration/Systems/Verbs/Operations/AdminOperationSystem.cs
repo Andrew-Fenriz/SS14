@@ -1,5 +1,6 @@
 using Content.Server.GhostKick;
 using Content.Server.Mind;
+using Content.Server.Movement.Systems;
 using Content.Server.Polymorph.Systems;
 using Content.Server.Popups;
 using Content.Server.Roles;
@@ -51,6 +52,7 @@ public sealed partial class AdminOperationSystem : EntitySystem, IAdminOperation
     [Dependency] private TileFrictionController _tileFriction = default!;
     [Dependency] private UserInterfaceSystem _ui = default!;
     [Dependency] private WeldableSystem _weldable = default!;
+    [Dependency] private ContentEyeSystem _contentEye = default!;
 
     /// <summary>
     /// Executes the supplied operations synchronously in their configured order.
