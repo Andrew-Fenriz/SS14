@@ -13,7 +13,7 @@ public sealed partial class SetEquipmentOperation : AdminOperationBase<SetEquipm
     /// <summary>
     /// Inventory slot IDs mapped to entity prototypes to spawn and equip.
     /// </summary>
-    [DataField(required: true)]
+    [DataField]
     public Dictionary<string, EntProtoId> Equipment { get; private set; } = new();
 
     [DataField]
