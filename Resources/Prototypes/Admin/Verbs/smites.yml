@@ -52,15 +52,8 @@
     - Inventory
   operations:
   - !type:SetEquipmentOperation
-    clearOtherSlots: true
+    startingGear: JanitorMaidGear
     unremoveable: true
-    equipment:
-      jumpsuit: ClothingUniformJumpskirtJanimaid
-      id: JanitorPDA
-      gloves: ClothingHandsGlovesJanitor
-      head: ClothingHeadHatCatEars
-      ears: ClothingHeadsetService
-      belt: ClothingBeltJanitorFilled
   - !type:EntityEffectsOperation
     effects:
     - !type:ModifyStatusEffect

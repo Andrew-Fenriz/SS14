@@ -1,3 +1,4 @@
+using Content.Server.Clothing.Systems;
 using Content.Server.GhostKick;
 using Content.Server.Mind;
 using Content.Server.Movement.Systems;
@@ -51,6 +52,7 @@ public sealed partial class AdminOperationSystem : EntitySystem, IAdminOperation
     [Dependency] private UserInterfaceSystem _ui = default!;
     [Dependency] private WeldableSystem _weldable = default!;
     [Dependency] private ContentEyeSystem _contentEye = default!;
+    [Dependency] private OutfitSystem _outfit = default!;
 
     /// <summary>
     /// Executes the supplied operations synchronously in their configured order.

@@ -1,4 +1,5 @@
 using Content.Shared.Interaction.Components;
+using Content.Shared.Roles;
 using Robust.Shared.Prototypes;
 
 namespace Content.Shared.Administration.Verbs.Operations;
@@ -14,6 +15,9 @@ public sealed partial class SetEquipmentOperation : AdminOperationBase<SetEquipm
     /// </summary>
     [DataField(required: true)]
     public Dictionary<string, EntProtoId> Equipment { get; private set; } = new();
+
+    [DataField]
+    public ProtoId<StartingGearPrototype>? StartingGear { get; private set; }
 
     /// <summary>
     /// Whether every inventory slot is force-unequipped before applying <see cref="Equipment"/>.

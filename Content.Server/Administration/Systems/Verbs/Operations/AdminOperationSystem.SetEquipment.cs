@@ -8,24 +8,33 @@ namespace Content.Server.Administration.Systems.Verbs.Operations;
 public sealed partial class AdminOperationSystem
 {
     [SubscribeLocalEvent]
-    private void OnSetEquipment(Entity<InventoryComponent> entity,
-        ref AdminOperationEvent<SetEquipmentOperation> args)
+    private void OnSetEquipment(Entity<InventoryComponent> entity, ref AdminOperationEvent<SetEquipmentOperation> args)
     {
-        if (args.Operation.ClearOtherSlots && _inventory.TryGetSlots(entity, out var slots))
+        if (args.Operation.StartingGear is { } startingGear)
+        {
+            _outfit.SetOutfit(
+                entity,
+                startingGear,
+                unremovable: args.Operation.Unremoveable);
+        }
+
+        if (args.Operation.ClearOtherSlots &&
+            args.Operation.StartingGear == null &&
+            _inventory.TryGetSlots(entity, out var slots))
         {
             foreach (var slot in slots)
             {
-                _inventory.TryUnequip(entity, slot.Name, silent: true, force: true, inventory: entity.Comp);
+                _inventory.TryUnequip(entity, slot.Name, true, true, inventory: entity.Comp);
             }
         }
 
         foreach (var (slot, prototype) in args.Operation.Equipment)
         {
-            if (!args.Operation.ClearOtherSlots)
-                _inventory.TryUnequip(entity, slot, silent: true, force: true, inventory: entity.Comp);
+            if (!args.Operation.ClearOtherSlots || args.Operation.StartingGear != null)
+                _inventory.TryUnequip(entity, slot, true, true, inventory: entity.Comp);
 
             var equipment = Spawn(prototype, Transform(entity).Coordinates);
-            if (!_inventory.TryEquip(entity, equipment, slot, silent: true, force: true, inventory: entity.Comp))
+            if (!_inventory.TryEquip(entity, equipment, slot, true, true, inventory: entity.Comp))
             {
                 QueueDel(equipment);
                 continue;
