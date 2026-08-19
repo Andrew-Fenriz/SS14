@@ -3,13 +3,10 @@ using Robust.Shared.Prototypes;
 namespace Content.Shared.Administration.Verbs.Operations;
 
 /// <summary>
-/// Adds an action to the target if it does not already have one from the same prototype.
+/// Adds an action unless the target already has one from the same prototype.
 /// </summary>
 public sealed partial class AddActionOperation : AdminOperationBase<AddActionOperation>
 {
-    /// <summary>
-    /// Entity prototype of the action to grant.
-    /// </summary>
     [DataField(required: true)]
     public EntProtoId Action { get; private set; }
 }

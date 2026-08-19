@@ -3,13 +3,10 @@ using Content.Shared.EntityEffects;
 namespace Content.Shared.Administration.Verbs.Operations;
 
 /// <summary>
-/// Applies a configured set of entity effects to the target.
+/// Runs configured entity effects in order.
 /// </summary>
 public sealed partial class EntityEffectsOperation : AdminOperationBase<EntityEffectsOperation>
 {
-    /// <summary>
-    /// Entity effects to apply in order.
-    /// </summary>
     [DataField(required: true)]
     public EntityEffect[] Effects { get; private set; } = [];
 }

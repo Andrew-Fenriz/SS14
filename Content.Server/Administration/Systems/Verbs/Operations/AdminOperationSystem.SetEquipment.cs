@@ -12,10 +12,13 @@ public sealed partial class AdminOperationSystem
     {
         if (args.Operation.StartingGear is { } startingGear)
         {
-            _outfit.SetOutfit(
-                entity,
-                startingGear,
-                unremovable: args.Operation.Unremoveable);
+            var unremoveable = args.Operation.Unremoveable;
+
+            _outfit.SetOutfit(entity, startingGear, (_, equipment) =>
+            {
+                if (unremoveable && HasComp<ClothingComponent>(equipment))
+                    EnsureComp<UnremoveableComponent>(equipment);
+            });
         }
 
         if (args.Operation.ClearOtherSlots &&

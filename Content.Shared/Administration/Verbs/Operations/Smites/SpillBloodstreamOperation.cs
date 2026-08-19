@@ -1,6 +1,7 @@
 namespace Content.Shared.Administration.Verbs.Operations.Smites;
 
+// TODO: Use EntityEffectsOperation once spilling bloodstream solutions has an entity effect.
 /// <summary>
-/// Spills all solutions managed by the target's bloodstream into the world.
+/// Spills the target's bloodstream solutions.
 /// </summary>
 public sealed partial class SpillBloodstreamOperation : AdminOperationBase<SpillBloodstreamOperation>;

@@ -11,8 +11,7 @@ public sealed partial class AdminOperationSystem
     {
         EnsureComp<SiliconLawBoundComponent>(entity);
 
-        // The provider is configured by an earlier operation
-        // resolve its runtime lawset before notifying the target.
+        // The provider was configured by an earlier operation; resolve its laws before notifying the target.
         _siliconLaws.GetLaws(entity.Owner);
         _siliconLaws.NotifyLawsChanged(entity);
     }
