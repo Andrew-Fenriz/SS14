@@ -13,7 +13,6 @@ using Content.Shared.Body;
 using Content.Shared.Body.Systems;
 using Content.Shared.Damage.Systems;
 using Content.Shared.EntityEffects;
-using Content.Shared.Friction;
 using Content.Shared.Inventory;
 using Content.Shared.Nutrition.EntitySystems;
 using Content.Shared.Slippery;
@@ -49,7 +48,6 @@ public sealed partial class AdminOperationSystem : EntitySystem, IAdminOperation
     [Dependency] private SlipperySystem _slippery = default!;
     [Dependency] private SharedTransformSystem _transform = default!;
     [Dependency] private TabletopSystem _tabletop = default!;
-    [Dependency] private TileFrictionController _tileFriction = default!;
     [Dependency] private UserInterfaceSystem _ui = default!;
     [Dependency] private WeldableSystem _weldable = default!;
     [Dependency] private ContentEyeSystem _contentEye = default!;

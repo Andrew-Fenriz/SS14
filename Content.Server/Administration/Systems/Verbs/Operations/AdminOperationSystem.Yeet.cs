@@ -13,7 +13,10 @@ public sealed partial class AdminOperationSystem
         if (!TryComp<FixturesComponent>(entity, out var fixtures))
             return;
 
-        PreparePhysicsTarget(entity, fixtures);
+        _transform.Unanchor(entity);
+        _physics.SetBodyType(entity, BodyType.Dynamic, body: entity.Comp);
+        _physics.SetBodyStatus(entity, entity.Comp, BodyStatus.InAir);
+        _physics.WakeBody(entity, manager: fixtures, body: entity.Comp);
 
         foreach (var fixture in fixtures.Fixtures.Values)
         {
@@ -22,5 +25,7 @@ public sealed partial class AdminOperationSystem
 
         _physics.SetLinearVelocity(entity, _random.NextVector2(8f, 8f), manager: fixtures, body: entity.Comp);
         _physics.SetAngularVelocity(entity, MathF.PI * 12, manager: fixtures, body: entity.Comp);
+        _physics.SetLinearDamping(entity, entity.Comp, 0f);
+        _physics.SetAngularDamping(entity, entity.Comp, 0f);
     }
 }
