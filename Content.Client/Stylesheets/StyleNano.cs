@@ -66,7 +66,6 @@ namespace Content.Client.Stylesheets
         public const string StyleClassChatLineEdit = "chatLineEdit";
         public const string StyleClassChatChannelSelectorButton = "chatSelectorOptionButton";
         public const string StyleClassChatFilterOptionButton = "chatFilterOptionButton";
-        public const string StyleClassStorageButton = "storageButton";
 
         public const string StyleClassConsoleHeading = "ConsoleHeading";
         public const string StyleClassConsoleSubHeading = "ConsoleSubHeading";
@@ -100,9 +99,7 @@ namespace Content.Client.Stylesheets
         public static readonly Color DisabledFore = Color.FromHex("#5A5A5A");
 
         public static readonly Color ButtonColorDefault = Color.FromHex("#464966");
-        public static readonly Color ButtonColorDefaultRed = Color.FromHex("#D43B3B");
         public static readonly Color ButtonColorHovered = Color.FromHex("#575b7f");
-        public static readonly Color ButtonColorHoveredRed = Color.FromHex("#DF6B6B");
         public static readonly Color ButtonColorPressed = Color.FromHex("#3e6c45");
         public static readonly Color ButtonColorDisabled = Color.FromHex("#30313c");
 
@@ -149,10 +146,6 @@ namespace Content.Client.Stylesheets
         //Background
         public const string StyleClassBackgroundBaseDark = "PanelBackgroundBaseDark";
 
-        //Buttons
-        public const string StyleClassCrossButtonRed = "CrossButtonRed";
-        public const string StyleClassButtonColorRed = "ButtonColorRed";
-
         public static readonly Color ChatBackgroundColor = Color.FromHex("#25252ADD");
 
         // i'm not sure what the missing symbols were referencing, and this is getting obseleted anyway so:
@@ -163,11 +156,9 @@ namespace Content.Client.Stylesheets
         public const string ButtonCaution = "negative";
         public const string StyleClassLabelHeading = "LabelHeading";
         public const string StyleClassLabelSubText = "LabelSubText";
-        public const string StyleClassRedTopButton = "negative";
         public const string ClassHighDivider = "HighDivider";
         public const string ClassLowDivider = "LowDivider";
         public const string ClassAngleRect = "AngleRect";
-
 
         public override Stylesheet Stylesheet { get; }
 
@@ -249,12 +240,6 @@ namespace Content.Client.Stylesheets
             };
             hotbarBackground.SetPatchMargin(StyleBox.Margin.All, 2);
             hotbarBackground.SetExpandMargin(StyleBox.Margin.All, 4);
-
-            var buttonStorage = new StyleBoxTexture(BaseButton);
-            buttonStorage.SetPatchMargin(StyleBox.Margin.All, 10);
-            buttonStorage.SetPadding(StyleBox.Margin.All, 0);
-            buttonStorage.SetContentMarginOverride(StyleBox.Margin.Vertical, 0);
-            buttonStorage.SetContentMarginOverride(StyleBox.Margin.Horizontal, 4);
 
             var buttonContext = new StyleBoxTexture { Texture = Texture.White };
 
@@ -784,25 +769,6 @@ namespace Content.Client.Stylesheets
                 Element<DirectionIcon>().Class(DirectionIcon.StyleClassDirectionIconHere)
                     .Prop(TextureRect.StylePropertyTexture, directionIconHereTex),
 
-                // Thin buttons (No padding nor vertical margin)
-                Element<ContainerButton>().Class(StyleClassStorageButton)
-                    .Prop(ContainerButton.StylePropertyStyleBox, buttonStorage),
-
-                Element<ContainerButton>().Class(StyleClassStorageButton)
-                    .Pseudo(ContainerButton.StylePseudoClassNormal)
-                    .Prop(Control.StylePropertyModulateSelf, ButtonColorDefault),
-
-                Element<ContainerButton>().Class(StyleClassStorageButton)
-                    .Pseudo(ContainerButton.StylePseudoClassHover)
-                    .Prop(Control.StylePropertyModulateSelf, ButtonColorHovered),
-
-                Element<ContainerButton>().Class(StyleClassStorageButton)
-                    .Pseudo(ContainerButton.StylePseudoClassPressed)
-                    .Prop(Control.StylePropertyModulateSelf, ButtonColorPressed),
-
-                Element<ContainerButton>().Class(StyleClassStorageButton)
-                    .Pseudo(ContainerButton.StylePseudoClassDisabled)
-                    .Prop(Control.StylePropertyModulateSelf, ButtonColorDisabled),
 // ListContainer
                 Element<ContainerButton>().Class(ListContainer.StyleClassListContainerButton)
                     .Prop(ContainerButton.StylePropertyStyleBox, listContainerButton),
@@ -1443,17 +1409,6 @@ namespace Content.Client.Stylesheets
 
                 Element<LineEdit>().Class("PaperLineEdit")
                     .Prop(LineEdit.StylePropertyStyleBox, new StyleBoxEmpty()),
-
-                // Red Button ---
-                Element<Button>().Class("ButtonColorRed")
-                    .Prop(Control.StylePropertyModulateSelf, ButtonColorDefaultRed),
-
-                Element<Button>().Class("ButtonColorRed").Pseudo(ContainerButton.StylePseudoClassNormal)
-                    .Prop(Control.StylePropertyModulateSelf, ButtonColorDefaultRed),
-
-                Element<Button>().Class("ButtonColorRed").Pseudo(ContainerButton.StylePseudoClassHover)
-                    .Prop(Control.StylePropertyModulateSelf, ButtonColorHoveredRed),
-                // ---
 
                 // Accept button (merge with green button?) ---
                 Element<Button>().Class("ButtonAccept")
