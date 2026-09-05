@@ -103,17 +103,10 @@ namespace Content.Client.Stylesheets
         public static readonly Color ButtonColorCautionPressed = Color.FromHex("#3e6c45");
         public static readonly Color ButtonColorCautionDisabled = Color.FromHex("#602a2a");
 
-        public static readonly Color ButtonColorGoodDefault = Color.FromHex("#3E6C45");
-        public static readonly Color ButtonColorGoodHovered = Color.FromHex("#31843E");
-        public static readonly Color ButtonColorGoodDisabled = Color.FromHex("#164420");
-
         //NavMap
         public static readonly Color PointRed = Color.FromHex("#B02E26");
         public static readonly Color PointGreen = Color.FromHex("#38b026");
         public static readonly Color PointMagenta = Color.FromHex("#FF00FF");
-
-
-
 
         //Used by the APC and SMES menus
         public const string StyleClassPowerStateNone = "PowerStateNone";
@@ -1078,17 +1071,6 @@ namespace Content.Client.Stylesheets
                     .Prop(LineEdit.StylePropertyStyleBox, new StyleBoxEmpty()),
 
                 // Accept button (merge with green button?) ---
-                Element<Button>().Class("ButtonAccept")
-                    .Prop(Control.StylePropertyModulateSelf, ButtonColorGoodDefault),
-
-                Element<Button>().Class("ButtonAccept").Pseudo(ContainerButton.StylePseudoClassNormal)
-                    .Prop(Control.StylePropertyModulateSelf, ButtonColorGoodDefault),
-
-                Element<Button>().Class("ButtonAccept").Pseudo(ContainerButton.StylePseudoClassHover)
-                    .Prop(Control.StylePropertyModulateSelf, ButtonColorGoodHovered),
-
-                Element<Button>().Class("ButtonAccept").Pseudo(ContainerButton.StylePseudoClassDisabled)
-                    .Prop(Control.StylePropertyModulateSelf, ButtonColorGoodDisabled),
                 // ---
 
                 Element<Label>().Class("StatusFieldTitle")
