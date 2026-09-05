@@ -361,7 +361,7 @@ namespace Content.Client.Construction.UI
 
                 var itemButtonPanelContainer = new PanelContainer
                 {
-                    PanelOverride = new StyleBoxFlat { BackgroundColor = StyleNano.ButtonColorDefault },
+                    StyleClasses = { StyleClass.PanelLight },
                     Children = { itemButton },
                 };
 
