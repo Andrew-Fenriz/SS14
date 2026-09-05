@@ -175,13 +175,13 @@ public sealed partial class AtmosAlarmEntryContainer : BoxContainer
 
     public void SetAsFocus()
     {
-        FocusButton.AddStyleClass(StyleNano.StyleClassButtonColorGreen);
+        FocusButton.AddStyleClass(StyleClass.Positive);
         ArrowTexture.TexturePath = "/Textures/Interface/Nano/inverted_triangle.svg.png";
     }
 
     public void RemoveAsFocus()
     {
-        FocusButton.RemoveStyleClass(StyleNano.StyleClassButtonColorGreen);
+        FocusButton.RemoveStyleClass(StyleClass.Positive);
         ArrowTexture.TexturePath = "/Textures/Interface/Nano/triangle_right.png";
         FocusContainer.Visible = false;
     }

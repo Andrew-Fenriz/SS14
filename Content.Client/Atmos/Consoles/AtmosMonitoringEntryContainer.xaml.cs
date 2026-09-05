@@ -1,5 +1,4 @@
 using Content.Client.Stylesheets;
-using Content.Shared.Atmos;
 using Content.Shared.Atmos.Components;
 using Content.Shared.Atmos.EntitySystems;
 using Content.Shared.FixedPoint;
@@ -155,14 +154,14 @@ public sealed partial class AtmosMonitoringEntryContainer : BoxContainer
 
     public void SetAsFocus()
     {
-        FocusButton.AddStyleClass(StyleNano.StyleClassButtonColorGreen);
+        FocusButton.AddStyleClass(StyleClass.Positive);
         ArrowTexture.TexturePath = "/Textures/Interface/Nano/inverted_triangle.svg.png";
         FocusContainer.Visible = true;
     }
 
     public void RemoveAsFocus()
     {
-        FocusButton.RemoveStyleClass(StyleNano.StyleClassButtonColorGreen);
+        FocusButton.RemoveStyleClass(StyleClass.Positive);
         ArrowTexture.TexturePath = "/Textures/Interface/Nano/triangle_right.png";
         FocusContainer.Visible = false;
     }

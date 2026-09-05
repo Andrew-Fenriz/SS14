@@ -152,7 +152,6 @@ namespace Content.Client.Stylesheets
         //Buttons
         public const string StyleClassCrossButtonRed = "CrossButtonRed";
         public const string StyleClassButtonColorRed = "ButtonColorRed";
-        public const string StyleClassButtonColorGreen = "ButtonColorGreen";
 
         public static readonly Color ChatBackgroundColor = Color.FromHex("#25252ADD");
 
@@ -1455,16 +1454,6 @@ namespace Content.Client.Stylesheets
                 Element<Button>().Class("ButtonColorRed").Pseudo(ContainerButton.StylePseudoClassHover)
                     .Prop(Control.StylePropertyModulateSelf, ButtonColorHoveredRed),
                 // ---
-
-                // Green Button ---
-                Element<Button>().Class("ButtonColorGreen")
-                    .Prop(Control.StylePropertyModulateSelf, ButtonColorGoodDefault),
-
-                Element<Button>().Class("ButtonColorGreen").Pseudo(ContainerButton.StylePseudoClassNormal)
-                    .Prop(Control.StylePropertyModulateSelf, ButtonColorGoodDefault),
-
-                Element<Button>().Class("ButtonColorGreen").Pseudo(ContainerButton.StylePseudoClassHover)
-                    .Prop(Control.StylePropertyModulateSelf, ButtonColorGoodHovered),
 
                 // Accept button (merge with green button?) ---
                 Element<Button>().Class("ButtonAccept")
