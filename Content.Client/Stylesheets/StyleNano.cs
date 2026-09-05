@@ -98,11 +98,6 @@ namespace Content.Client.Stylesheets
         public static readonly Color ButtonColorPressed = Color.FromHex("#3e6c45");
         public static readonly Color ButtonColorDisabled = Color.FromHex("#30313c");
 
-        public static readonly Color ButtonColorCautionDefault = Color.FromHex("#ab3232");
-        public static readonly Color ButtonColorCautionHovered = Color.FromHex("#cf2f2f");
-        public static readonly Color ButtonColorCautionPressed = Color.FromHex("#3e6c45");
-        public static readonly Color ButtonColorCautionDisabled = Color.FromHex("#602a2a");
-
         //NavMap
         public static readonly Color PointRed = Color.FromHex("#B02E26");
         public static readonly Color PointGreen = Color.FromHex("#38b026");
@@ -209,55 +204,6 @@ namespace Content.Client.Stylesheets
             };
             hotbarBackground.SetPatchMargin(StyleBox.Margin.All, 2);
             hotbarBackground.SetExpandMargin(StyleBox.Margin.All, 4);
-
-
-            var buttonRectTex = resCache.GetTexture("/Textures/Interface/Nano/light_panel_background_bordered.png");
-            var buttonRect = new StyleBoxTexture(BaseButton)
-            {
-                Texture = buttonRectTex
-            };
-            buttonRect.SetPatchMargin(StyleBox.Margin.All, 2);
-            buttonRect.SetPadding(StyleBox.Margin.All, 2);
-            buttonRect.SetContentMarginOverride(StyleBox.Margin.Vertical, 2);
-            buttonRect.SetContentMarginOverride(StyleBox.Margin.Horizontal, 2);
-
-            var buttonRectHover = new StyleBoxTexture(buttonRect)
-            {
-                Modulate = ButtonColorHovered
-            };
-
-            var buttonRectPressed = new StyleBoxTexture(buttonRect)
-            {
-                Modulate = ButtonColorPressed
-            };
-
-            var buttonRectDisabled = new StyleBoxTexture(buttonRect)
-            {
-                Modulate = ButtonColorDisabled
-            };
-
-            var buttonRectActionMenuItemTex = resCache.GetTexture("/Textures/Interface/Nano/black_panel_light_thin_border.png");
-            var buttonRectActionMenuRevokedItemTex = resCache.GetTexture("/Textures/Interface/Nano/black_panel_red_thin_border.png");
-            var buttonRectActionMenuItem = new StyleBoxTexture(BaseButton)
-            {
-                Texture = buttonRectActionMenuItemTex
-            };
-            buttonRectActionMenuItem.SetPatchMargin(StyleBox.Margin.All, 2);
-            buttonRectActionMenuItem.SetPadding(StyleBox.Margin.All, 2);
-            buttonRectActionMenuItem.SetContentMarginOverride(StyleBox.Margin.Vertical, 2);
-            buttonRectActionMenuItem.SetContentMarginOverride(StyleBox.Margin.Horizontal, 2);
-            var buttonRectActionMenuItemRevoked = new StyleBoxTexture(buttonRectActionMenuItem)
-            {
-                Texture = buttonRectActionMenuRevokedItemTex
-            };
-            var buttonRectActionMenuItemHover = new StyleBoxTexture(buttonRectActionMenuItem)
-            {
-                Modulate = ButtonColorHovered
-            };
-            var buttonRectActionMenuItemPressed = new StyleBoxTexture(buttonRectActionMenuItem)
-            {
-                Modulate = ButtonColorPressed
-            };
 
             var chatChannelButtonTex = resCache.GetTexture("/Textures/Interface/Nano/rounded_button.svg.96dpi.png");
             var chatChannelButton = new StyleBoxTexture
