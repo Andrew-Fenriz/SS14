@@ -146,11 +146,15 @@ public sealed partial class ThermoregulatorSystem : SharedThermoregulatorSystem
         if (!Resolve(ent, ref ent.Comp))
             return;
 
+        var originalTemperature = ent.Comp.Temperature;
         HeatContainerHelpers.ConductHeat(
             ref ent.Comp,
             ref otherHeatContainer,
             (float) ent.Comp.UpdateInterval.TotalSeconds,
             ent.Comp.ThermalConductance);
+
+        if (!MathHelper.CloseTo(originalTemperature, ent.Comp.Temperature))
+            DirtyField(ent.AsNullable(), nameof(ThermoregulatorComponent.Temperature));
     }
 }
 

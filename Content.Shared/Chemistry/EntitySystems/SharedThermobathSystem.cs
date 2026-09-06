@@ -40,10 +40,11 @@ public abstract partial class SharedThermobathSystem : EntitySystem
         if (args.Container.ID != ThermobathComponent.BeakerSlotId)
             return;
 
-        UpdateUi(ent);
-
         if (_timing.ApplyingState)
+        {
+            UpdateUi(ent);
             return;
+        }
 
         UpdateState(ent);
     }
