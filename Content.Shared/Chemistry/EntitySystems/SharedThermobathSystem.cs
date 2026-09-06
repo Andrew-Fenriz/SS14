@@ -53,7 +53,10 @@ public abstract partial class SharedThermobathSystem : EntitySystem
     private void OnPowerChanged(Entity<ThermobathComponent> ent, ref PowerChangedEvent args)
     {
         if (_timing.ApplyingState)
+        {
+            UpdateUi(ent);
             return;
+        }
 
         UpdateState(ent, powered: args.Powered);
     }
