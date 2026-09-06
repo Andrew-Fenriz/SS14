@@ -21,6 +21,7 @@ network-configurator-start-link = Start link
 network-configurator-link = Link
 
 # ui
+network-configurator-title-link-devices = Network Configurator
 network-configurator-title-saved-devices = Saved Devices
 network-configurator-title-device-configuration = Device Configuration
 network-configurator-ui-clear-button = Clear

@@ -1,3 +1,4 @@
+comp-gas-pump-ui-title = Volume Pump
 comp-gas-pump-ui-pump-set-rate = Set
 comp-gas-pump-ui-pump-set-max = Max
 

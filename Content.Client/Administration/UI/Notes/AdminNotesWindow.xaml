@@ -2,6 +2,6 @@
             xmlns:notes="clr-namespace:Content.Client.Administration.UI.Notes"
             xmlns:ui="clr-namespace:Content.Client.UserInterface.Controls"
             SetSize="600 400"
-            Title="Loading...">
+            Title="{Loc admin-notes-loading}">
     <notes:AdminNotesControl Name="Notes" Access="Public" Margin="4"/>
 </ui:FancyWindow>

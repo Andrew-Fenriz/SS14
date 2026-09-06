@@ -15,19 +15,19 @@
                     ToggleMode="True"
                     HorizontalExpand="True"
                     VerticalExpand="True"
-                    Text="NAV"
+                    Text="{Loc shuttle-console-nav-button}"
                     Margin="5"/>
             <Button Name="MapModeButton"
                     ToggleMode="True"
                     HorizontalExpand="True"
                     VerticalExpand="True"
-                    Text="MAP"
+                    Text="{Loc shuttle-console-map-button}"
                     Margin="5"/>
             <Button Name="DockModeButton"
                     ToggleMode="True"
                     HorizontalExpand="True"
                     VerticalExpand="True"
-                    Text="DOCK"
+                    Text="{Loc shuttle-console-dock-button}"
                     Margin="5"/>
         </BoxContainer>
         <!-- Contents box -->

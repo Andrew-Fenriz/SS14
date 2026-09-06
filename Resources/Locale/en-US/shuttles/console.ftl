@@ -7,6 +7,7 @@ shuttle-console-prevent = You are unable to pilot this ship
 
 # NAV
 
+shuttle-console-nav-button = NAV
 shuttle-console-display-label = Display
 
 shuttle-console-position = Position:
@@ -31,6 +32,7 @@ shuttle-console-iff-toggle = Show IFF
 
 # MAP
 
+shuttle-console-map-button = MAP
 shuttle-console-ftl-label = FTL Status
 shuttle-console-ftl-state-Available = Available
 shuttle-console-ftl-state-Starting = Starting
@@ -49,6 +51,7 @@ shuttle-console-no-signal = No signal
 shuttle-console-map-objects = Sector objects
 
 # DOCK
+shuttle-console-dock-button = DOCK
 shuttle-console-docked = Docked objects
 
 shuttle-console-view = View

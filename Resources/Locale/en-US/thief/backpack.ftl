@@ -1,4 +1,6 @@
 thief-backpack-window-title = Thieving Kit
+thief-backpack-set-name = Set
+thief-backpack-set-description = Description
 
 thief-backpack-window-description =
     Inside are your tools of the trade, which will dissolve when you're ready.
