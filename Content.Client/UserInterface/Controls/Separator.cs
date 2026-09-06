@@ -5,7 +5,7 @@ using Robust.Client.UserInterface;
 namespace Content.Client.UserInterface.Controls;
 
 /// <summary>
-/// A horizontal or vertical rule. Its length is determined by the surrounding layout.
+/// A horizontal or vertical separator.
 /// </summary>
 public sealed class Separator : Control
 {
@@ -13,9 +13,6 @@ public sealed class Separator : Control
 
     private static readonly Color DefaultColor = Color.FromHex("#3D4059");
 
-    /// <summary>
-    /// The direction along which the line extends.
-    /// </summary>
     public OrientationMode Orientation
     {
         get;
@@ -33,8 +30,7 @@ public sealed class Separator : Control
     }
 
     /// <summary>
-    /// The line thickness in logical UI units. Must be finite and non-negative.
-    /// Extra space across the line centers it without increasing its thickness.
+    /// Line thickness in UI units. The line is centered when the layout allocates extra space.
     /// </summary>
     public float Thickness
     {
@@ -44,7 +40,7 @@ public sealed class Separator : Control
             if (!float.IsFinite(value) || value < 0)
                 throw new ArgumentOutOfRangeException(nameof(value));
 
-            if (field == value)
+            if (field.Equals(value))
                 return;
 
             field = value;
@@ -53,7 +49,7 @@ public sealed class Separator : Control
     } = 2;
 
     /// <summary>
-    /// Optional color override. Set to null to use the current stylesheet again.
+    /// Overrides the stylesheet color when set.
     /// </summary>
     public Color? ColorOverride { get; set; }
 
