@@ -11,7 +11,6 @@ public sealed class SeparatorSheetlet : Sheetlet<PalettedStylesheet>
     {
         return
         [
-            E<Separator>().Prop(Separator.StylePropertyColor, sheet.SecondaryPalette.TextDark),
             E<Separator>().Class(StyleClass.LowDivider)
                 .Prop(Separator.StylePropertyColor, sheet.SecondaryPalette.TextDark),
             E<Separator>().Class(StyleClass.HighDivider)
