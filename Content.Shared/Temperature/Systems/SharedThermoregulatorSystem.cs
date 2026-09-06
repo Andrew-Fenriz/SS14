@@ -3,7 +3,6 @@ using JetBrains.Annotations;
 
 namespace Content.Shared.Temperature.Systems;
 
-/// Handles shared thermoregulator state changes.
 public abstract partial class SharedThermoregulatorSystem : EntitySystem
 {
     [PublicAPI]

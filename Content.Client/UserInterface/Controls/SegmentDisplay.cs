@@ -168,18 +168,27 @@ public sealed class SegmentDisplay : Control
         _bitmaskOverrides[_digitCount - 1 - position] = null;
     }
 
+    /// <summary>
+    /// Overrides all digits with the specified raw segment bitmask.
+    /// </summary>
     [PublicAPI]
     public void SetGlobalBitmaskOverride(byte bitmask)
     {
         _globalBitmaskOverride = bitmask;
     }
 
+    /// <summary>
+    /// Clears the global bitmask override.
+    /// </summary>
     [PublicAPI]
     public void ClearGlobalBitmaskOverride()
     {
         _globalBitmaskOverride = null;
     }
 
+    /// <summary>
+    /// Clears all per-digit and global bitmask overrides.
+    /// </summary>
     [PublicAPI]
     public void ClearAllBitmaskOverrides()
     {

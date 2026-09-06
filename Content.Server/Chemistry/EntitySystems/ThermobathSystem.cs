@@ -22,7 +22,7 @@ public sealed partial class ThermobathSystem : SharedThermobathSystem
         var thermoregulator = Comp<ThermoregulatorComponent>(ent);
         if (TryGetSolutionFromContainer(ent, out var soln, out var solution) && solution.Volume > 0)
         {
-            // TODO: Use HeatContainerQuerySystem after https://github.com/space-wizards/space-station-14/pull/45554 is merged.
+            // TODO: Replace this with HeatContainerQuerySystem once #45554 is merged.
             var solutionHeatContainer = new HeatContainer(solution.GetHeatCapacity(_proto), solution.Temperature);
             _thermoregulator.ConductHeatWith((ent, thermoregulator), ref solutionHeatContainer);
             _solutionContainer.SetTemperature(soln.Value, solutionHeatContainer.Temperature);
