@@ -1,4 +1,4 @@
-﻿<DefaultWindow xmlns="https://spacestation14.io"
+<DefaultWindow xmlns="https://spacestation14.io"
             Title="{Loc stat-values-ui-title}"
             MinSize="600 400">
     <BoxContainer Orientation="Vertical">
