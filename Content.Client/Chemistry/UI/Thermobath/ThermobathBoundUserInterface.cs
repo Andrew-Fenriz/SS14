@@ -12,7 +12,7 @@ using Robust.Client.UserInterface;
 namespace Content.Client.Chemistry.UI.Thermobath;
 
 [UsedImplicitly]
-public sealed class ThermobathBoundUserInterface : BoundUserInterface, IBuiPreTickUpdate
+public sealed class ThermobathBoundUserInterface : BoundUserInterface
 {
     private readonly SharedPowerReceiverSystem _power;
     private readonly SharedSolutionContainerSystem _solutions;
@@ -37,17 +37,12 @@ public sealed class ThermobathBoundUserInterface : BoundUserInterface, IBuiPreTi
         _window = this.CreateWindow<ThermobathMenu>();
         _window.SetInfoFromEntity(EntMan, Owner);
 
-        _window.OnPowerToggled += () => SendPredictedMessage(new ThermobathTogglePowerMessage());
+        _window.OnPowerChanged += enabled => SendPredictedMessage(new ThermobathPowerChangedMessage(enabled));
         _window.OnSetpointChanged += setpoint => SendPredictedMessage(new ThermobathSetpointChangedMessage(setpoint));
         _window.OnModeChanged += mode => SendPredictedMessage(new ThermobathModeChangedMessage(mode));
 
         EntMan.TryGetComponent(Owner, out _thermoregulator);
         UpdateWindow();
-    }
-
-    void IBuiPreTickUpdate.PreTickUpdate()
-    {
-        UpdatePower();
     }
 
     public override void Update()

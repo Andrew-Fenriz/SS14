@@ -22,7 +22,6 @@ public sealed partial class ThermoregulatorSystem : SharedThermoregulatorSystem
             if (!_power.IsPowered(uid))
             {
                 SetActiveMode((uid, comp), ThermoregulatorActiveMode.Idle);
-                continue;
             }
 
             if (curTime < comp.NextUpdate)
@@ -89,7 +88,7 @@ public sealed partial class ThermoregulatorSystem : SharedThermoregulatorSystem
     {
         var dt = (float) ent.Comp.UpdateInterval.TotalSeconds;
         var energyToSetpoint = HeatContainerHelpers.ConductHeatToTempQuery(ref ent.Comp, ent.Comp.Setpoint);
-        var newState = GetActiveMode(ent.Comp);
+        var newState = _power.IsPowered(ent.Owner) ? GetActiveMode(ent.Comp) : ThermoregulatorActiveMode.Idle;
         var energy = newState switch
         {
             ThermoregulatorActiveMode.Heating => Math.Clamp(energyToSetpoint, 0f, ent.Comp.HeatingPower * dt),

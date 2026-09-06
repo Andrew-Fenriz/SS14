@@ -25,8 +25,8 @@ public sealed partial class ThermobathMenu : FancyWindow
     private readonly StyleBoxFlat _heatingIndicatorStyle;
     private readonly StyleBoxFlat _coolingIndicatorStyle;
 
-    private readonly AdjustmentState _increaseAdjustment = new();
-    private readonly AdjustmentState _decreaseAdjustment = new();
+    private int _adjustmentDirection;
+    private float _heldTime;
     private bool _setpointDirty;
 
     private bool _powered;
@@ -36,10 +36,9 @@ public sealed partial class ThermobathMenu : FancyWindow
     private float _setpoint;
     private ThermoregulatorActiveMode _activeMode;
 
-    private bool IsAdjustingSetpoint => _increaseAdjustment.Pressed || _decreaseAdjustment.Pressed;
-    private int AdjustmentDirection => (_increaseAdjustment.Pressed ? 1 : 0) - (_decreaseAdjustment.Pressed ? 1 : 0);
+    private bool IsAdjustingSetpoint => _adjustmentDirection != 0;
 
-    public event Action? OnPowerToggled;
+    public event Action<bool>? OnPowerChanged;
     public event Action<float>? OnSetpointChanged;
     public event Action<ThermoregulatorMode>? OnModeChanged;
 
@@ -65,10 +64,10 @@ public sealed partial class ThermobathMenu : FancyWindow
         };
         CoolingIndicator.PanelOverride = _coolingIndicatorStyle;
 
-        PowerButton.StateChanged += _ => OnPowerToggled?.Invoke();
+        PowerButton.StateChanged += enabled => OnPowerChanged?.Invoke(enabled);
 
-        BindAdjustmentButton(IncreaseButton, _increaseAdjustment, 1);
-        BindAdjustmentButton(DecreaseButton, _decreaseAdjustment, -1);
+        BindAdjustmentButton(IncreaseButton, 1);
+        BindAdjustmentButton(DecreaseButton, -1);
 
         ModeSlider.OnValueChanged += value => OnModeChanged?.Invoke((ThermoregulatorMode) value.Value);
 
@@ -91,8 +90,9 @@ public sealed partial class ThermobathMenu : FancyWindow
 
     public void SetTemperatureLimits(float min, float max)
     {
-        _minTemperature = min;
-        _maxTemperature = max;
+        // Only offer setpoints that can be represented by the display and are inside the device's limits.
+        _minTemperature = MathF.Ceiling(min * 10) / 10;
+        _maxTemperature = MathF.Floor(max * 10) / 10;
     }
 
     public void SetSolutionTemperature(float? temperature) => UpdateSolutionTemperatureDisplay(temperature);
@@ -181,22 +181,24 @@ public sealed partial class ThermobathMenu : FancyWindow
             : DisabledColor;
     }
 
-    private void BindAdjustmentButton(Button button, AdjustmentState state, int direction)
+    private void BindAdjustmentButton(Button button, int direction)
     {
         button.OnButtonDown += _ =>
         {
-            state.Pressed = true;
-            state.HeldTime = 0;
+            _setpoint = Math.Clamp(MathF.Round(_setpoint * 10) / 10, _minTemperature, _maxTemperature);
+            _adjustmentDirection = direction;
+            _heldTime = 0;
         };
         button.OnButtonUp += _ =>
         {
-            state.Pressed = false;
+            if (_adjustmentDirection != direction)
+                return;
 
-            if (state.HeldTime < ButtonHoldThreshold)
+            if (_heldTime <= ButtonHoldThreshold)
                 AdjustSetpoint(direction * InitialAdjustmentRate);
 
-            if (!IsAdjustingSetpoint)
-                CommitSetpoint();
+            _adjustmentDirection = 0;
+            CommitSetpoint();
         };
     }
 
@@ -206,6 +208,8 @@ public sealed partial class ThermobathMenu : FancyWindow
             return;
 
         _setpointDirty = false;
+        _setpoint = Math.Clamp(MathF.Round(_setpoint * 10) / 10, _minTemperature, _maxTemperature);
+        UpdateSetpointDisplay();
         OnSetpointChanged?.Invoke(_setpoint);
     }
 
@@ -213,42 +217,28 @@ public sealed partial class ThermobathMenu : FancyWindow
     {
         base.FrameUpdate(args);
 
-        if (_increaseAdjustment.Pressed)
-            _increaseAdjustment.HeldTime += args.DeltaSeconds;
-
-        if (_decreaseAdjustment.Pressed)
-            _decreaseAdjustment.HeldTime += args.DeltaSeconds;
-
-        var direction = AdjustmentDirection;
-        if (direction == 0)
+        if (!IsAdjustingSetpoint)
             return;
 
-        var heldTime = direction > 0 ? _increaseAdjustment.HeldTime : _decreaseAdjustment.HeldTime;
-        var previousHeldTime = heldTime - args.DeltaSeconds;
+        var previousHeldTime = _heldTime;
+        _heldTime += args.DeltaSeconds;
 
-        if (heldTime <= ButtonHoldThreshold)
+        if (_heldTime <= ButtonHoldThreshold)
             return;
 
         if (previousHeldTime <= ButtonHoldThreshold)
-            AdjustSetpoint(direction * InitialAdjustmentRate);
+            AdjustSetpoint(_adjustmentDirection * InitialAdjustmentRate);
 
         var adjustmentRate = Math.Min(
             MaxAdjustmentRate,
-            InitialAdjustmentRate + (heldTime - ButtonHoldThreshold) * AdjustmentAcceleration);
-        AdjustSetpoint(direction * adjustmentRate * args.DeltaSeconds);
+            InitialAdjustmentRate + (_heldTime - ButtonHoldThreshold) * AdjustmentAcceleration);
+        AdjustSetpoint(_adjustmentDirection * adjustmentRate * args.DeltaSeconds);
     }
 
     public override void Close()
     {
-        _increaseAdjustment.Pressed = false;
-        _decreaseAdjustment.Pressed = false;
+        _adjustmentDirection = 0;
         CommitSetpoint();
         base.Close();
-    }
-
-    private sealed class AdjustmentState
-    {
-        public bool Pressed;
-        public float HeldTime;
     }
 }

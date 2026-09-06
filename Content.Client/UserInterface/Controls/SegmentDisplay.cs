@@ -7,6 +7,7 @@ namespace Content.Client.UserInterface.Controls;
 
 /// <summary>
 /// Displays an integer using a configurable number of seven-segment digits.
+/// Values are clamped to the range representable by the configured number of digits.
 /// </summary>
 public sealed class SegmentDisplay : Control
 {
@@ -14,6 +15,7 @@ public sealed class SegmentDisplay : Control
     private const int BlankDigit = -1;
     private const int MinusSign = -2;
     private const float DigitAspectRatio = 0.625f;
+    private const float DefaultHeight = 60f;
 
     private static readonly Color DefaultActiveColor = Color.FromHex("#94DACA");
     private static readonly Color DefaultInactiveColor = Color.FromHex("#46635C");
@@ -69,7 +71,6 @@ public sealed class SegmentDisplay : Control
         set
         {
             var newValue = ClampValue(value);
-
             if (_value == newValue)
                 return;
 
@@ -363,13 +364,6 @@ public sealed class SegmentDisplay : Control
         }
     }
 
-    private int ClampValue(int value)
-    {
-        var maximum = GetMaximumValue(_digitCount);
-        var minimum = -GetMaximumValue(_digitCount - 1);
-        return Math.Clamp(value, minimum, maximum);
-    }
-
     private static int GetMaximumValue(int digits)
     {
         if (digits <= 0)
@@ -387,9 +381,16 @@ public sealed class SegmentDisplay : Control
         return maximum - 1;
     }
 
+    private int ClampValue(int value)
+    {
+        var maximum = GetMaximumValue(_digitCount);
+        var minimum = -GetMaximumValue(_digitCount - 1);
+        return Math.Clamp(value, minimum, maximum);
+    }
+
     protected override Vector2 MeasureOverride(Vector2 availableSize)
     {
-        var height = availableSize.Y;
+        var height = float.IsFinite(availableSize.Y) ? availableSize.Y : DefaultHeight;
         var width = height * _digitCount * DigitAspectRatio;
 
         if (width <= availableSize.X)

@@ -15,7 +15,10 @@ public sealed partial class ThermobathComponent : Component
 }
 
 [Serializable, NetSerializable]
-public sealed class ThermobathTogglePowerMessage : BoundUserInterfaceMessage;
+public sealed class ThermobathPowerChangedMessage(bool enabled) : BoundUserInterfaceMessage
+{
+    public readonly bool Enabled = enabled;
+}
 
 [Serializable, NetSerializable]
 public sealed class ThermobathSetpointChangedMessage(float setpoint) : BoundUserInterfaceMessage

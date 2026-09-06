@@ -2,6 +2,7 @@ using Content.Shared.Chemistry.Components;
 using Content.Shared.Containers.ItemSlots;
 using Content.Shared.Power;
 using Content.Shared.Power.EntitySystems;
+using Content.Shared.Power.Components;
 using Content.Shared.Temperature.Components;
 using Content.Shared.Temperature.Systems;
 using Robust.Shared.Containers;
@@ -44,7 +45,7 @@ public abstract partial class SharedThermobathSystem : EntitySystem
         if (_timing.ApplyingState)
             return;
 
-        UpdateAppearance(ent);
+        UpdateState(ent);
     }
 
     [SubscribeLocalEvent]
@@ -53,18 +54,24 @@ public abstract partial class SharedThermobathSystem : EntitySystem
         if (_timing.ApplyingState)
             return;
 
-        UpdateUi(ent);
-        UpdateAppearance(ent, powered: args.Powered);
+        UpdateState(ent, powered: args.Powered);
     }
 
     [SubscribeLocalEvent]
-    private void OnTogglePowerMessage(Entity<ThermobathComponent> ent, ref ThermobathTogglePowerMessage args)
+    private void OnPowerChangeMessage(Entity<ThermobathComponent> ent, ref ThermobathPowerChangedMessage args)
     {
-        var powerEnabled = _power.TogglePower(ent, user: args.Actor);
-        var powered = powerEnabled && _power.IsPowered(ent.Owner);
+        SharedApcPowerReceiverComponent? receiver = null;
+        if (!_power.ResolveApc(ent, ref receiver) || !receiver.NeedsPower)
+            return;
 
-        UpdateUi(ent);
-        UpdateAppearance(ent, powered: powered);
+        var currentEnabled = !receiver.PowerDisabled;
+        if (currentEnabled == args.Enabled)
+            return;
+
+        _power.TogglePower(ent, receiver: receiver, user: args.Actor);
+        var powered = args.Enabled && _power.IsPowered(ent.Owner);
+
+        UpdateState(ent, powered: powered);
     }
 
     [SubscribeLocalEvent]
@@ -83,6 +90,12 @@ public abstract partial class SharedThermobathSystem : EntitySystem
 
     private bool HasBeaker(EntityUid uid) =>
         _itemSlots.GetItemOrNull(uid, ThermobathComponent.BeakerSlotId) != null;
+
+    private void UpdateState(Entity<ThermobathComponent> ent, bool? powered = null)
+    {
+        UpdateUi(ent);
+        UpdateAppearance(ent, powered: powered);
+    }
 
     protected void UpdateAppearance(
         Entity<ThermobathComponent> ent,
