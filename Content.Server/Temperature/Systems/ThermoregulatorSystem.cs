@@ -35,54 +35,7 @@ public sealed partial class ThermoregulatorSystem : SharedThermoregulatorSystem
     [SubscribeLocalEvent]
     private void OnMapInit(Entity<ThermoregulatorComponent> ent, ref MapInitEvent args)
     {
-        ValidateConfiguration(ent);
         ent.Comp.NextUpdate = _timing.CurTime + ent.Comp.UpdateInterval;
-    }
-
-    private void ValidateConfiguration(Entity<ThermoregulatorComponent> ent)
-    {
-        var comp = ent.Comp;
-
-        if (!float.IsFinite(comp.MinTemperature) ||
-            !float.IsFinite(comp.MaxTemperature) ||
-            comp.MinTemperature > comp.MaxTemperature)
-        {
-            throw new InvalidOperationException(
-                $"Invalid thermoregulator temperature range on {ToPrettyString(ent)}: " +
-                $"{comp.MinTemperature} to {comp.MaxTemperature}.");
-        }
-
-        if (!float.IsFinite(comp.Setpoint) ||
-            comp.Setpoint < comp.MinTemperature ||
-            comp.Setpoint > comp.MaxTemperature)
-        {
-            throw new InvalidOperationException(
-                $"Invalid thermoregulator setpoint on {ToPrettyString(ent)}: {comp.Setpoint}.");
-        }
-
-        if (!float.IsFinite(comp.TemperatureTolerance) || comp.TemperatureTolerance < 0f)
-            throw new InvalidOperationException($"Invalid thermoregulator temperature tolerance on {ToPrettyString(ent)}.");
-
-        if (!float.IsFinite(comp.Temperature))
-            throw new InvalidOperationException($"Invalid thermoregulator temperature on {ToPrettyString(ent)}.");
-
-        if (!float.IsFinite(comp.HeatCapacity) || comp.HeatCapacity <= 0f)
-            throw new InvalidOperationException($"Invalid thermoregulator heat capacity on {ToPrettyString(ent)}.");
-
-        if (!float.IsFinite(comp.HeatingPower) || comp.HeatingPower < 0f ||
-            !float.IsFinite(comp.CoolingPower) || comp.CoolingPower < 0f)
-        {
-            throw new InvalidOperationException($"Invalid thermoregulator power on {ToPrettyString(ent)}.");
-        }
-
-        if (!float.IsFinite(comp.ThermalConductance) || comp.ThermalConductance < 0f)
-            throw new InvalidOperationException($"Invalid thermoregulator conductance on {ToPrettyString(ent)}.");
-
-        if (comp.UpdateInterval <= TimeSpan.Zero)
-            throw new InvalidOperationException($"Invalid thermoregulator update interval on {ToPrettyString(ent)}.");
-
-        if (!Enum.IsDefined(comp.Mode))
-            throw new InvalidOperationException($"Invalid thermoregulator mode on {ToPrettyString(ent)}.");
     }
 
     private void UpdateThermoregulator(Entity<ThermoregulatorComponent> ent, bool powered)
