@@ -73,7 +73,7 @@ public abstract partial class SharedThermobathSystem : EntitySystem
             return;
 
         _power.TogglePower(ent, receiver: receiver, user: args.Actor);
-        var powered = args.Enabled && _power.IsPowered(ent.Owner);
+        var powered = args.Enabled && receiver.Powered;
 
         UpdateState(ent, powered: powered);
     }

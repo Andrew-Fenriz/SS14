@@ -12,7 +12,7 @@ using Robust.Client.UserInterface;
 namespace Content.Client.Chemistry.UI.Thermobath;
 
 [UsedImplicitly]
-public sealed class ThermobathBoundUserInterface : BoundUserInterface
+public sealed class ThermobathBoundUserInterface : BoundUserInterface, IBuiPreTickUpdate
 {
     private readonly SharedPowerReceiverSystem _power;
     private readonly SharedSolutionContainerSystem _solutions;
@@ -50,12 +50,18 @@ public sealed class ThermobathBoundUserInterface : BoundUserInterface
         UpdateWindow();
     }
 
+    void IBuiPreTickUpdate.PreTickUpdate()
+    {
+        if (_window != null)
+            UpdatePower(_window);
+    }
+
     private void UpdateWindow()
     {
         if (_window == null)
             return;
 
-        UpdatePower();
+        UpdatePower(_window);
         UpdateThermobath(_window);
 
         if (_thermoregulator == null)
@@ -64,24 +70,23 @@ public sealed class ThermobathBoundUserInterface : BoundUserInterface
         _window.SetMode(_thermoregulator.Mode);
 
         _window.SetTemperatureLimits(_thermoregulator.MinTemperature, _thermoregulator.MaxTemperature);
-        UpdateThermoregulator(_window, _thermoregulator);
+        _window.SetCurrentTemperature(_thermoregulator.Temperature);
+        _window.SetSetpoint(_thermoregulator.Setpoint);
+        _window.SetActiveMode(_thermoregulator.ActiveMode);
     }
 
-    private void UpdatePower()
+    private void UpdatePower(ThermobathMenu window)
     {
-        if (_window == null)
-            return;
-
         SharedApcPowerReceiverComponent? receiver = null;
         if (!_power.ResolveApc(Owner, ref receiver))
         {
-            _window.SetPowerSwitchState(true);
-            _window.SetPowered(true);
+            window.SetPowerSwitchState(true);
+            window.SetPowered(true);
             return;
         }
 
-        _window.SetPowerSwitchState(!receiver.PowerDisabled);
-        _window.SetPowered(receiver.Powered);
+        window.SetPowerSwitchState(!receiver.PowerDisabled);
+        window.SetPowered(receiver.Powered);
     }
 
     private void UpdateThermobath(ThermobathMenu window)
@@ -97,12 +102,5 @@ public sealed class ThermobathBoundUserInterface : BoundUserInterface
         }
 
         window.SetSolutionTemperature(null);
-    }
-
-    private static void UpdateThermoregulator(ThermobathMenu window, ThermoregulatorComponent comp)
-    {
-        window.SetCurrentTemperature(comp.Temperature);
-        window.SetSetpoint(comp.Setpoint);
-        window.SetActiveMode(comp.ActiveMode);
     }
 }

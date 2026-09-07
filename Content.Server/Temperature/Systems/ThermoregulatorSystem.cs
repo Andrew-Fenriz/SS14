@@ -19,7 +19,8 @@ public sealed partial class ThermoregulatorSystem : SharedThermoregulatorSystem
         var query = EntityQueryEnumerator<ThermoregulatorComponent>();
         while (query.MoveNext(out var uid, out var comp))
         {
-            if (!_power.IsPowered(uid))
+            var powered = _power.IsPowered(uid);
+            if (!powered)
             {
                 SetActiveMode((uid, comp), ThermoregulatorActiveMode.Idle);
             }
@@ -27,7 +28,7 @@ public sealed partial class ThermoregulatorSystem : SharedThermoregulatorSystem
             if (curTime < comp.NextUpdate)
                 continue;
 
-            UpdateThermoregulator((uid, comp), curTime);
+            UpdateThermoregulator((uid, comp), powered);
         }
     }
 
@@ -84,11 +85,11 @@ public sealed partial class ThermoregulatorSystem : SharedThermoregulatorSystem
             throw new InvalidOperationException($"Invalid thermoregulator mode on {ToPrettyString(ent)}.");
     }
 
-    private void UpdateThermoregulator(Entity<ThermoregulatorComponent> ent, TimeSpan curTime)
+    private void UpdateThermoregulator(Entity<ThermoregulatorComponent> ent, bool powered)
     {
         var dt = (float) ent.Comp.UpdateInterval.TotalSeconds;
         var energyToSetpoint = HeatContainerHelpers.ConductHeatToTempQuery(ref ent.Comp, ent.Comp.Setpoint);
-        var newState = _power.IsPowered(ent.Owner) ? GetActiveMode(ent.Comp) : ThermoregulatorActiveMode.Idle;
+        var newState = powered ? GetActiveMode(ent.Comp) : ThermoregulatorActiveMode.Idle;
         var energy = newState switch
         {
             ThermoregulatorActiveMode.Heating => Math.Clamp(energyToSetpoint, 0f, ent.Comp.HeatingPower * dt),
@@ -100,7 +101,7 @@ public sealed partial class ThermoregulatorSystem : SharedThermoregulatorSystem
         HeatContainerHelpers.AddHeat(ref ent.Comp, energy);
         SetActiveMode(ent, newState);
 
-        ent.Comp.NextUpdate = curTime + ent.Comp.UpdateInterval;
+        ent.Comp.NextUpdate += ent.Comp.UpdateInterval;
 
         var ev = new ThermoregulatorUpdatedEvent();
         RaiseLocalEvent(ent, ref ev);

@@ -11,21 +11,23 @@ public sealed partial class ThermobathSystem : SharedThermobathSystem
 {
     [Dependency] private SharedUserInterfaceSystem _ui = default!;
     [Dependency] private SharedContainerSystem _container = default!;
+    [Dependency] private EntityQuery<ContainedSolutionComponent> _containedSolutionQuery = default!;
+    [Dependency] private EntityQuery<ThermobathComponent> _thermobathQuery = default!;
 
     [SubscribeLocalEvent]
     private void OnThermoregulatorState(Entity<ThermoregulatorComponent> ent, ref AfterAutoHandleStateEvent args)
     {
-        if (TryComp<ThermobathComponent>(ent, out var thermobath))
+        if (_thermobathQuery.TryComp(ent, out var thermobath))
             UpdateUi((ent, thermobath));
     }
 
     [SubscribeLocalEvent]
     private void OnSolutionState(Entity<SolutionComponent> ent, ref AfterAutoHandleStateEvent args)
     {
-        if (!TryComp<ContainedSolutionComponent>(ent, out var contained) ||
+        if (!_containedSolutionQuery.TryComp(ent, out var contained) ||
             !_container.TryGetContainingContainer(contained.Container, out var container) ||
             container.ID != ThermobathComponent.BeakerSlotId ||
-            !TryComp<ThermobathComponent>(container.Owner, out var thermobath))
+            !_thermobathQuery.TryComp(container.Owner, out var thermobath))
             return;
 
         UpdateUi((container.Owner, thermobath));

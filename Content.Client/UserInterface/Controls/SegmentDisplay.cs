@@ -152,7 +152,7 @@ public sealed class SegmentDisplay : Control
         if (position < 0 || position >= _digitCount)
             return;
 
-        _bitmaskOverrides[_digitCount - 1 - position] = bitmask;
+        _bitmaskOverrides[position] = bitmask;
     }
 
     /// <summary>
@@ -165,7 +165,7 @@ public sealed class SegmentDisplay : Control
         if (position < 0 || position >= _digitCount)
             return;
 
-        _bitmaskOverrides[_digitCount - 1 - position] = null;
+        _bitmaskOverrides[position] = null;
     }
 
     /// <summary>
@@ -202,7 +202,7 @@ public sealed class SegmentDisplay : Control
 
         handle.DrawRect(PixelSizeBox, BackgroundColor);
 
-        var digitWidth = PixelWidth / _digitCount;
+        var digitWidth = (float) PixelWidth / _digitCount;
         var segmentHeight = PixelHeight * 0.9f;
         var segmentWidth = digitWidth * 0.7f;
         var spacing = digitWidth * 0.1f;
@@ -228,7 +228,7 @@ public sealed class SegmentDisplay : Control
     private byte GetPattern(int position)
     {
         var digit = _cachedDigits[position];
-        return _bitmaskOverrides[position]
+        return _bitmaskOverrides[_digitCount - 1 - position]
             ?? _globalBitmaskOverride
             ?? digit switch
             {
