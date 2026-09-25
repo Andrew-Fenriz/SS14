@@ -536,8 +536,8 @@
   parent: LockerBase
   id: LockerSyndicatePersonal
   name: blood-red locker
-  suffix: "Locked"
   description: It's a personal storage unit with a blood-red design.
+  suffix: "Locked"
   components:
   - type: Appearance
   - type: EntityStorageVisuals
