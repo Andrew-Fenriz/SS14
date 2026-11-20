@@ -3,7 +3,6 @@ using Content.Server.Atmos.EntitySystems;
 using Content.Server.Body.Systems;
 using Content.Server.Mech.Components;
 using Content.Shared.Atmos;
-using Content.Shared.Damage.Systems;
 using Content.Shared.DoAfter;
 using Content.Shared.FixedPoint;
 using Content.Shared.Interaction;
@@ -15,7 +14,6 @@ using Content.Shared.Power.EntitySystems;
 using Content.Shared.Tools;
 using Content.Shared.Tools.Components;
 using Content.Shared.Tools.Systems;
-using Content.Shared.Vehicle;
 using Content.Shared.Vehicle.Components;
 using Content.Shared.Wires;
 using Robust.Server.Containers;
@@ -31,19 +29,11 @@ public sealed partial class ServerMechSystem : MechSystem
     [Dependency] private AtmosphereSystem _atmosphere = default!;
     [Dependency] private SharedBatterySystem _battery = default!;
     [Dependency] private ContainerSystem _container = default!;
-    [Dependency] private DamageableSystem _damageable = default!;
     [Dependency] private SharedDoAfterSystem _doAfter = default!;
     [Dependency] private UserInterfaceSystem _ui = default!;
     [Dependency] private SharedToolSystem _toolSystem = default!;
 
     private static readonly ProtoId<ToolQualityPrototype> PryingQuality = "Prying";
-
-    [SubscribeLocalEvent]
-    private void OnMechCanMoveEvent(Entity<MechComponent> ent, ref VehicleCanRunEvent args)
-    {
-        if (ent.Comp.Broken || ent.Comp.Integrity <= 0 || ent.Comp.Energy <= 0)
-            args.CanRun = false;
-    }
 
     [SubscribeLocalEvent]
     private void OnInteractUsing(EntityUid uid, MechComponent component, InteractUsingEvent args)
@@ -57,16 +47,16 @@ public sealed partial class ServerMechSystem : MechSystem
             return;
         }
 
-        if (_toolSystem.HasQuality(args.Used, PryingQuality) && component.BatterySlot.ContainedEntity != null)
-        {
-            var doAfterEventArgs = new DoAfterArgs(EntityManager, args.User, component.BatteryRemovalDelay,
-                new RemoveBatteryEvent(), uid, target: uid, used: args.Used)
-            {
-                BreakOnMove = true
-            };
+        if (!_toolSystem.HasQuality(args.Used, PryingQuality) || component.BatterySlot.ContainedEntity == null)
+            return;
 
-            _doAfter.TryStartDoAfter(doAfterEventArgs);
-        }
+        var doAfterEventArgs = new DoAfterArgs(EntityManager, args.User, component.BatteryRemovalDelay,
+            new RemoveBatteryEvent(), uid, target: uid, used: args.Used)
+        {
+            BreakOnMove = true
+        };
+
+        _doAfter.TryStartDoAfter(doAfterEventArgs);
     }
 
     [SubscribeLocalEvent]
@@ -134,35 +124,15 @@ public sealed partial class ServerMechSystem : MechSystem
     }
 
     [SubscribeLocalEvent]
-    private void OnDamageChanged(EntityUid uid, MechComponent component, DamageChangedEvent args)
-    {
-        var integrity = component.MaxIntegrity - _damageable.GetTotalDamage((uid, args.Damageable));
-        SetIntegrity(uid, integrity, component);
-    }
-
-    [SubscribeLocalEvent]
     private void RelayGrabberUiMessage(EntityUid uid, MechComponent component, ref MechGrabberEjectMessage args)
     {
-        ReceiveEquipmentUiMesssages(component, args);
+        ReceiveEquipmentUiMessages(component, args);
     }
 
     [SubscribeLocalEvent]
     private void RelaySoundboardUiMessage(EntityUid uid, MechComponent component, ref MechSoundboardPlayMessage args)
     {
-        ReceiveEquipmentUiMesssages(component, args);
-    }
-
-    private void ReceiveEquipmentUiMesssages<T>(MechComponent component, T args) where T : MechEquipmentUiMessage
-    {
-        var ev = new MechEquipmentUiMessageRelayEvent(args);
-        var allEquipment = new List<EntityUid>(component.EquipmentContainer.ContainedEntities);
-        var argEquip = GetEntity(args.Equipment);
-
-        foreach (var equipment in allEquipment)
-        {
-            if (argEquip == equipment)
-                RaiseLocalEvent(equipment, ev);
-        }
+        ReceiveEquipmentUiMessages(component, args);
     }
 
     public override void UpdateUserInterface(EntityUid uid, MechComponent? component = null)

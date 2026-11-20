@@ -3,7 +3,7 @@ using Content.Shared.DoAfter;
 using Robust.Shared.Audio;
 using Robust.Shared.Containers;
 
-namespace Content.Server.Mech.Equipment.Components;
+namespace Content.Shared.Mech.Equipment.Components;
 
 /// <summary>
 /// A piece of mech equipment that grabs entities and stores them

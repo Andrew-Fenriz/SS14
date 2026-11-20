@@ -1,21 +1,22 @@
-using Content.Server.Popups;
 using Content.Shared.DoAfter;
 using Content.Shared.Interaction;
 using Content.Shared.Mech.Components;
 using Content.Shared.Mech.Equipment.Components;
+using Content.Shared.Mech.Systems;
+using Content.Shared.Popups;
 using Content.Shared.Vehicle.Systems;
 using Content.Shared.Whitelist;
 
-namespace Content.Server.Mech.Systems;
+namespace Content.Shared.Mech.Equipment.Systems;
 
 /// <summary>
 /// Handles the insertion of mech equipment into mechs.
 /// </summary>
 public sealed partial class MechEquipmentSystem : EntitySystem
 {
-    [Dependency] private ServerMechSystem _serverMech = default!;
+    [Dependency] private MechSystem _mech = default!;
     [Dependency] private SharedDoAfterSystem _doAfter = default!;
-    [Dependency] private PopupSystem _popup = default!;
+    [Dependency] private SharedPopupSystem _popup = default!;
     [Dependency] private EntityWhitelistSystem _whitelistSystem = default!;
     [Dependency] private VehicleSystem _vehicle = default!;
 
@@ -58,7 +59,7 @@ public sealed partial class MechEquipmentSystem : EntitySystem
             return;
 
         _popup.PopupEntity(Loc.GetString("mech-equipment-finish-install", ("item", uid)), args.Args.Target.Value);
-        _serverMech.InsertEquipment(args.Args.Target.Value, uid);
+        _mech.InsertEquipment(args.Args.Target.Value, uid);
 
         args.Handled = true;
     }

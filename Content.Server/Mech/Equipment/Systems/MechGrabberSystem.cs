@@ -1,6 +1,5 @@
 using System.Linq;
 using Content.Server.Interaction;
-using Content.Server.Mech.Equipment.Components;
 using Content.Server.Mech.Systems;
 using Content.Shared.DoAfter;
 using Content.Shared.Interaction;

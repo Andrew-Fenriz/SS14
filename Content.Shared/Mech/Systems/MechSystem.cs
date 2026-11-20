@@ -1,5 +1,6 @@
 using System.Linq;
 using Content.Shared.Actions;
+using Content.Shared.Damage.Systems;
 using Content.Shared.Destructible;
 using Content.Shared.DoAfter;
 using Content.Shared.FixedPoint;
@@ -32,11 +33,26 @@ public abstract partial class MechSystem : EntitySystem
     [Dependency] private SharedActionsSystem _actions = default!;
     [Dependency] private SharedAppearanceSystem _appearance = default!;
     [Dependency] private SharedContainerSystem _container = default!;
+    [Dependency] private DamageableSystem _damageable = default!;
     [Dependency] private SharedInteractionSystem _interaction = default!;
     [Dependency] private SharedPopupSystem _popup = default!;
     [Dependency] private SharedUserInterfaceSystem _userInterface = default!;
     [Dependency] protected VehicleSystem Vehicle = default!;
     [Dependency] private EntityWhitelistSystem _whitelistSystem = default!;
+
+    [SubscribeLocalEvent]
+    private void OnMechCanMoveEvent(Entity<MechComponent> ent, ref VehicleCanRunEvent args)
+    {
+        if (ent.Comp.Broken || ent.Comp.Integrity <= 0 || ent.Comp.Energy <= 0)
+            args.CanRun = false;
+    }
+
+    [SubscribeLocalEvent]
+    private void OnDamageChanged(EntityUid uid, MechComponent component, DamageChangedEvent args)
+    {
+        var integrity = component.MaxIntegrity - _damageable.GetTotalDamage((uid, args.Damageable));
+        SetIntegrity(uid, integrity, component);
+    }
 
     [SubscribeLocalEvent]
     private void OnToggleEquipmentAction(EntityUid uid, MechComponent component, MechToggleEquipmentEvent args)
@@ -338,6 +354,19 @@ public abstract partial class MechSystem : EntitySystem
 
         _userInterface.TryToggleUi(uid, MechUiKey.Key, user.Value);
         UpdateUserInterface(uid, component);
+    }
+
+    protected void ReceiveEquipmentUiMessages<T>(MechComponent component, T args) where T : MechEquipmentUiMessage
+    {
+        var ev = new MechEquipmentUiMessageRelayEvent(args);
+        var allEquipment = new List<EntityUid>(component.EquipmentContainer.ContainedEntities);
+        var argEquip = GetEntity(args.Equipment);
+
+        foreach (var equipment in allEquipment)
+        {
+            if (argEquip == equipment)
+                RaiseLocalEvent(equipment, ev);
+        }
     }
 
     [SubscribeLocalEvent]
