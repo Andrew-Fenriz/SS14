@@ -98,18 +98,13 @@ public sealed partial class MechComponent : Component
     [DataField]
     public bool Airtight;
 
-    /// <summary>
-    /// The equipment that the mech initially has when it spawns.
-    /// Good for things like nukie mechs that start with guns.
-    /// </summary>
-    [DataField]
-    public List<EntProtoId> StartingEquipment = new();
-
     #region Action Prototypes
     [DataField]
     public EntProtoId MechCycleAction = "ActionMechCycleEquipment";
+
     [DataField]
     public EntProtoId MechUiAction = "ActionMechOpenUI";
+
     [DataField]
     public EntProtoId MechEjectAction = "ActionMechEject";
     #endregion
@@ -117,8 +112,10 @@ public sealed partial class MechComponent : Component
     #region Visualizer States
     [DataField]
     public string? BaseState;
+
     [DataField]
     public string? OpenState;
+
     [DataField]
     public string? BrokenState;
     #endregion

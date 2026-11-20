@@ -86,14 +86,6 @@ public sealed partial class ServerMechSystem : MechSystem
     [SubscribeLocalEvent]
     private void OnMapInit(EntityUid uid, MechComponent component, MapInitEvent args)
     {
-        var xform = Transform(uid);
-        // TODO: this should use containerfill?
-        foreach (var equipment in component.StartingEquipment)
-        {
-            var ent = Spawn(equipment, xform.Coordinates);
-            InsertEquipment(uid, ent, component);
-        }
-
         // TODO: this should just be damage and battery
         component.Integrity = component.MaxIntegrity;
         component.Energy = component.MaxEnergy;
