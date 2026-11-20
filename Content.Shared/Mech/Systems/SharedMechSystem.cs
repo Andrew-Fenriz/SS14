@@ -20,7 +20,7 @@ using Robust.Shared.Network;
 using Robust.Shared.Serialization;
 using Robust.Shared.Timing;
 
-namespace Content.Shared.Mech.EntitySystems;
+namespace Content.Shared.Mech.Systems;
 
 /// <summary>
 /// Handles all of the interactions, UI handling, and items shennanigans for <see cref="MechComponent"/>

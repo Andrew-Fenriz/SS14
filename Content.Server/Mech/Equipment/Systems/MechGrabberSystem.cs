@@ -17,7 +17,7 @@ using Robust.Shared.Map;
 using Robust.Shared.Physics;
 using Robust.Shared.Physics.Components;
 
-namespace Content.Server.Mech.Equipment.EntitySystems;
+namespace Content.Server.Mech.Equipment.Systems;
 
 /// <summary>
 /// Handles <see cref="MechGrabberComponent"/> and all related UI logic

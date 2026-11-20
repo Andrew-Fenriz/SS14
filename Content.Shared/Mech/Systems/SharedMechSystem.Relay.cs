@@ -1,7 +1,7 @@
 using Content.Shared.Interaction.Events;
 using Content.Shared.Mech.Components;
 
-namespace Content.Shared.Mech.EntitySystems;
+namespace Content.Shared.Mech.Systems;
 
 public abstract partial class SharedMechSystem
 {

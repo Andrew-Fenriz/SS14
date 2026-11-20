@@ -9,7 +9,7 @@ using Content.Shared.FixedPoint;
 using Content.Shared.Interaction;
 using Content.Shared.Mech;
 using Content.Shared.Mech.Components;
-using Content.Shared.Mech.EntitySystems;
+using Content.Shared.Mech.Systems;
 using Content.Shared.Power.Components;
 using Content.Shared.Power.EntitySystems;
 using Content.Shared.Tools;
