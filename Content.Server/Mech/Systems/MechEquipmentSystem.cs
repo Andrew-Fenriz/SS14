@@ -13,7 +13,7 @@ namespace Content.Server.Mech.Systems;
 /// </summary>
 public sealed partial class MechEquipmentSystem : EntitySystem
 {
-    [Dependency] private MechSystem _mech = default!;
+    [Dependency] private ServerMechSystem _serverMech = default!;
     [Dependency] private SharedDoAfterSystem _doAfter = default!;
     [Dependency] private PopupSystem _popup = default!;
     [Dependency] private EntityWhitelistSystem _whitelistSystem = default!;
@@ -58,7 +58,7 @@ public sealed partial class MechEquipmentSystem : EntitySystem
             return;
 
         _popup.PopupEntity(Loc.GetString("mech-equipment-finish-install", ("item", uid)), args.Args.Target.Value);
-        _mech.InsertEquipment(args.Args.Target.Value, uid);
+        _serverMech.InsertEquipment(args.Args.Target.Value, uid);
 
         args.Handled = true;
     }

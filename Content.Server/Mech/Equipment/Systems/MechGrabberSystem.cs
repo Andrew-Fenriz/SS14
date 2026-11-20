@@ -25,7 +25,7 @@ namespace Content.Server.Mech.Equipment.Systems;
 public sealed partial class MechGrabberSystem : EntitySystem
 {
     [Dependency] private SharedContainerSystem _container = default!;
-    [Dependency] private MechSystem _mech = default!;
+    [Dependency] private ServerMechSystem _mech = default!;
     [Dependency] private SharedDoAfterSystem _doAfter = default!;
     [Dependency] private InteractionSystem _interaction = default!;
     [Dependency] private SharedAudioSystem _audio = default!;

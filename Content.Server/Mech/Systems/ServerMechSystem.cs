@@ -26,7 +26,7 @@ using Robust.Shared.Prototypes;
 namespace Content.Server.Mech.Systems;
 
 /// <inheritdoc/>
-public sealed partial class MechSystem : SharedMechSystem
+public sealed partial class ServerMechSystem : MechSystem
 {
     [Dependency] private AtmosphereSystem _atmosphere = default!;
     [Dependency] private SharedBatterySystem _battery = default!;

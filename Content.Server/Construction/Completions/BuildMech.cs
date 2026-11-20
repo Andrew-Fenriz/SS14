@@ -34,7 +34,7 @@ public sealed partial class BuildMech : IGraphAction
         }
 
         var containerSystem = entityManager.EntitySysManager.GetEntitySystem<ContainerSystem>();
-        var mechSys = entityManager.System<MechSystem>();
+        var mechSys = entityManager.System<ServerMechSystem>();
 
         if (!containerSystem.TryGetContainer(uid, Container, out var container, containerManager))
         {

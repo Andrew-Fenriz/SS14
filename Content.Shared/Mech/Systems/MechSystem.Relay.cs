@@ -3,7 +3,7 @@ using Content.Shared.Mech.Components;
 
 namespace Content.Shared.Mech.Systems;
 
-public abstract partial class SharedMechSystem
+public abstract partial class MechSystem
 {
     [SubscribeLocalEvent]
     private void OnGettingAttackedAttempt(Entity<MechComponent> ent, ref GettingAttackedAttemptEvent args)
