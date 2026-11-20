@@ -40,6 +40,8 @@ public abstract partial class MechSystem : EntitySystem
     [Dependency] protected VehicleSystem Vehicle = default!;
     [Dependency] private EntityWhitelistSystem _whitelistSystem = default!;
 
+    [Dependency] protected EntityQuery<MechComponent> _mechQuery = default!;
+
     [SubscribeLocalEvent]
     private void OnMechCanMoveEvent(Entity<MechComponent> ent, ref VehicleCanRunEvent args)
     {
@@ -229,7 +231,7 @@ public abstract partial class MechSystem : EntitySystem
         // This /shouldn't/ be possible thanks to OnEntityStorageDump, but there's been quite a few regressions
         // with entities being hardlock stuck inside mechs.
         MechEquipmentComponent? equipmentComponent = null;
-        if (!forced && !TryComp<MechEquipmentComponent>(toRemove, out equipmentComponent))
+        if (!forced && !TryComp(toRemove, out equipmentComponent))
             return;
 
         if (!forced)
@@ -343,7 +345,7 @@ public abstract partial class MechSystem : EntitySystem
         if (ent.Comp.Vehicle is not { } vehicle)
             return;
 
-        if (!TryComp<MechComponent>(vehicle, out var mech))
+        if (!_mechQuery.TryGetComponent(vehicle, out var mech))
             return;
 
         var weapon = mech.CurrentSelectedEquipment ?? vehicle;
@@ -351,9 +353,9 @@ public abstract partial class MechSystem : EntitySystem
         args.Handled = true;
     }
 
-    private void UpdateAppearance(Entity<MechComponent> mech, AppearanceComponent? appearance = null)
+    private void UpdateAppearance(Entity<MechComponent> mech)
     {
-        if (!Resolve(mech, ref appearance, false))
+        if (!TryComp<AppearanceComponent>(mech.Owner, out var appearance))
             return;
 
         _appearance.SetData(mech.Owner, MechVisuals.Open, !Vehicle.HasOperator(mech.Owner), appearance);

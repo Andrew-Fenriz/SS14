@@ -33,6 +33,9 @@ public sealed partial class ServerMechSystem : MechSystem
     [Dependency] private UserInterfaceSystem _ui = default!;
     [Dependency] private SharedToolSystem _toolSystem = default!;
 
+    [Dependency] private EntityQuery<BatteryComponent> _batteryQuery;
+    [Dependency] private EntityQuery<MechAirComponent> _mechAirQuery;
+
     private static readonly ProtoId<ToolQualityPrototype> PryingQuality = "Prying";
 
     [SubscribeLocalEvent]
@@ -41,7 +44,7 @@ public sealed partial class ServerMechSystem : MechSystem
         if (TryComp<WiresPanelComponent>(uid, out var panel) && !panel.Open)
             return;
 
-        if (component.BatterySlot.ContainedEntity == null && TryComp<BatteryComponent>(args.Used, out var battery))
+        if (component.BatterySlot.ContainedEntity == null && _batteryQuery.TryGetComponent(args.Used, out var battery))
         {
             InsertBattery((uid, component), (args.Used, battery));
             return;
@@ -62,7 +65,7 @@ public sealed partial class ServerMechSystem : MechSystem
     [SubscribeLocalEvent]
     private void OnInsertBattery(EntityUid uid, MechComponent component, EntInsertedIntoContainerMessage args)
     {
-        if (args.Container != component.BatterySlot || !TryComp<BatteryComponent>(args.Entity, out var battery))
+        if (args.Container != component.BatterySlot || !_batteryQuery.TryGetComponent(args.Entity, out var battery))
             return;
 
         component.Energy = _battery.GetCharge((args.Entity, battery));
@@ -161,7 +164,7 @@ public sealed partial class ServerMechSystem : MechSystem
         if (battery == null)
             return false;
 
-        if (!TryComp<BatteryComponent>(battery, out var batteryComp))
+        if (!_batteryQuery.TryGetComponent(battery, out var batteryComp))
             return false;
 
         _battery.SetCharge((battery.Value, batteryComp), _battery.GetCharge((battery.Value, batteryComp)) + delta.Float());
@@ -206,8 +209,8 @@ public sealed partial class ServerMechSystem : MechSystem
     private void OnInhale(Entity<VehicleOperatorComponent> ent, ref InhaleLocationEvent args)
     {
         if (ent.Comp.Vehicle is not { } vehicle ||
-            !TryComp<MechComponent>(vehicle, out var mech) ||
-            !TryComp<MechAirComponent>(vehicle, out var mechAir))
+            !_mechQuery.TryGetComponent(vehicle, out var mech) ||
+            !_mechAirQuery.TryGetComponent(vehicle, out var mechAir))
         {
             return;
         }
@@ -220,8 +223,8 @@ public sealed partial class ServerMechSystem : MechSystem
     private void OnExhale(Entity<VehicleOperatorComponent> ent, ref ExhaleLocationEvent args)
     {
         if (ent.Comp.Vehicle is not { } vehicle ||
-            !TryComp<MechComponent>(vehicle, out var mech) ||
-            !TryComp<MechAirComponent>(vehicle, out var mechAir))
+            !_mechQuery.TryGetComponent(vehicle, out var mech) ||
+            !_mechAirQuery.TryGetComponent(vehicle, out var mechAir))
         {
             return;
         }
@@ -236,10 +239,10 @@ public sealed partial class ServerMechSystem : MechSystem
         if (args.Handled || ent.Comp.Vehicle is not { } vehicle)
             return;
 
-        if (!TryComp(vehicle, out MechComponent? mech))
+        if (!_mechQuery.TryGetComponent(vehicle, out var mech))
             return;
 
-        if (mech.Airtight && TryComp(vehicle, out MechAirComponent? air))
+        if (mech.Airtight && _mechAirQuery.TryGetComponent(vehicle, out var air))
         {
             args.Handled = true;
             args.Gas = air.Air;
@@ -257,7 +260,7 @@ public sealed partial class ServerMechSystem : MechSystem
             return;
 
         // only airtight mechs get internal air
-        if (!TryComp<MechComponent>(ent, out var mech) || !mech.Airtight)
+        if (!_mechQuery.TryGetComponent(ent.Owner, out var mech) || !mech.Airtight)
             return;
 
         args.Air = ent.Comp.Air;
