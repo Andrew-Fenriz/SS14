@@ -21,28 +21,18 @@ public sealed class MechEquipmentUiStateReadyEvent : EntityEventArgs
 /// <summary>
 /// Event raised to relay an equipment ui message
 /// </summary>
-public sealed class MechEquipmentUiMessageRelayEvent : EntityEventArgs
+public sealed class MechEquipmentUiMessageRelayEvent(MechEquipmentUiMessage message) : EntityEventArgs
 {
-    public MechEquipmentUiMessage Message;
-
-    public MechEquipmentUiMessageRelayEvent(MechEquipmentUiMessage message)
-    {
-        Message = message;
-    }
+    public MechEquipmentUiMessage Message = message;
 }
 
 /// <summary>
 /// UI event raised to remove a piece of equipment from a mech
 /// </summary>
 [Serializable, NetSerializable]
-public sealed class MechEquipmentRemoveMessage : BoundUserInterfaceMessage
+public sealed class MechEquipmentRemoveMessage(NetEntity equipment) : BoundUserInterfaceMessage
 {
-    public NetEntity Equipment;
-
-    public MechEquipmentRemoveMessage(NetEntity equipment)
-    {
-        Equipment = equipment;
-    }
+    public NetEntity Equipment = equipment;
 }
 
 /// <summary>

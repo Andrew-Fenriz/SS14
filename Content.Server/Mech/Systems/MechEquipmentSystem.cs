@@ -19,13 +19,7 @@ public sealed partial class MechEquipmentSystem : EntitySystem
     [Dependency] private EntityWhitelistSystem _whitelistSystem = default!;
     [Dependency] private VehicleSystem _vehicle = default!;
 
-    /// <inheritdoc/>
-    public override void Initialize()
-    {
-        SubscribeLocalEvent<MechEquipmentComponent, AfterInteractEvent>(OnUsed);
-        SubscribeLocalEvent<MechEquipmentComponent, InsertEquipmentEvent>(OnInsertEquipment);
-    }
-
+    [SubscribeLocalEvent]
     private void OnUsed(EntityUid uid, MechEquipmentComponent component, AfterInteractEvent args)
     {
         if (args.Handled || !args.CanReach || args.Target == null)
@@ -57,6 +51,7 @@ public sealed partial class MechEquipmentSystem : EntitySystem
         _doAfter.TryStartDoAfter(doAfterEventArgs);
     }
 
+    [SubscribeLocalEvent]
     private void OnInsertEquipment(EntityUid uid, MechEquipmentComponent component, InsertEquipmentEvent args)
     {
         if (args.Handled || args.Cancelled || args.Args.Target == null)

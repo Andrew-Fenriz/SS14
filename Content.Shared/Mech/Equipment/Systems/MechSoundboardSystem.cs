@@ -1,5 +1,4 @@
 using Content.Shared.Mech.Equipment.Components;
-using Content.Shared.Timing.Components;
 using Content.Shared.Timing.Systems;
 using Robust.Shared.Audio;
 using Robust.Shared.Audio.Systems;
@@ -15,14 +14,7 @@ public sealed partial class MechSoundboardSystem : EntitySystem
     [Dependency] private SharedAudioSystem _audio = default!;
     [Dependency] private UseDelaySystem _useDelay = default!;
 
-    public override void Initialize()
-    {
-        base.Initialize();
-
-        SubscribeLocalEvent<MechSoundboardComponent, MechEquipmentUiStateReadyEvent>(OnUiStateReady);
-        SubscribeLocalEvent<MechSoundboardComponent, MechEquipmentUiMessageRelayEvent>(OnSoundboardMessage);
-    }
-
+    [SubscribeLocalEvent]
     private void OnUiStateReady(EntityUid uid, MechSoundboardComponent comp, MechEquipmentUiStateReadyEvent args)
     {
         // TODO: Allocs
@@ -40,6 +32,7 @@ public sealed partial class MechSoundboardSystem : EntitySystem
         args.States.Add(GetNetEntity(uid), state);
     }
 
+    [SubscribeLocalEvent]
     private void OnSoundboardMessage(EntityUid uid, MechSoundboardComponent comp, MechEquipmentUiMessageRelayEvent args)
     {
         if (args.Message is not MechSoundboardPlayMessage msg)
