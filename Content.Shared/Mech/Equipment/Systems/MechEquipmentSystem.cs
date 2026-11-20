@@ -59,7 +59,8 @@ public sealed partial class MechEquipmentSystem : EntitySystem
             return;
 
         _popup.PopupEntity(Loc.GetString("mech-equipment-finish-install", ("item", uid)), args.Args.Target.Value);
-        _mech.InsertEquipment(args.Args.Target.Value, uid);
+        if (TryComp<MechComponent>(args.Args.Target.Value, out var mechComp))
+            _mech.InsertEquipment((args.Args.Target.Value, mechComp), (uid, component));
 
         args.Handled = true;
     }

@@ -62,7 +62,7 @@ public sealed partial class BuildMech : IGraphAction
 
         if (entityManager.TryGetComponent<MechComponent>(mech, out var mechComp) && mechComp.BatterySlot.ContainedEntity == null)
         {
-            mechSys.InsertBattery(mech, cell, mechComp, batteryComponent);
+            mechSys.InsertBattery((mech, mechComp), (cell, batteryComponent));
             containerSystem.Insert(cell, mechComp.BatterySlot);
         }
 

@@ -43,7 +43,7 @@ public sealed partial class ServerMechSystem : MechSystem
 
         if (component.BatterySlot.ContainedEntity == null && TryComp<BatteryComponent>(args.Used, out var battery))
         {
-            InsertBattery(uid, args.Used, component, battery);
+            InsertBattery((uid, component), (args.Used, battery));
             return;
         }
 
@@ -78,7 +78,7 @@ public sealed partial class ServerMechSystem : MechSystem
         if (args.Cancelled || args.Handled)
             return;
 
-        RemoveBattery(uid, component);
+        RemoveBattery((uid, component));
 
         args.Handled = true;
     }
@@ -105,7 +105,7 @@ public sealed partial class ServerMechSystem : MechSystem
         if (!component.EquipmentContainer.ContainedEntities.Contains(equip))
             return;
 
-        RemoveEquipment(uid, equip, component);
+        RemoveEquipment((uid, component), equip);
     }
 
     [SubscribeLocalEvent]
@@ -116,54 +116,48 @@ public sealed partial class ServerMechSystem : MechSystem
     }
 
     [SubscribeLocalEvent]
-    private void RelayGrabberUiMessage(EntityUid uid, MechComponent component, ref MechGrabberEjectMessage args)
+    private void RelayGrabberUiMessage(Entity<MechComponent> ent, ref MechGrabberEjectMessage args)
     {
-        ReceiveEquipmentUiMessages(component, args);
+        ReceiveEquipmentUiMessages(ent, args);
     }
 
     [SubscribeLocalEvent]
-    private void RelaySoundboardUiMessage(EntityUid uid, MechComponent component, ref MechSoundboardPlayMessage args)
+    private void RelaySoundboardUiMessage(Entity<MechComponent> ent, ref MechSoundboardPlayMessage args)
     {
-        ReceiveEquipmentUiMessages(component, args);
+        ReceiveEquipmentUiMessages(ent, args);
     }
 
-    public override void UpdateUserInterface(EntityUid uid, MechComponent? component = null)
+    public override void UpdateUserInterface(Entity<MechComponent> ent)
     {
-        if (!Resolve(uid, ref component))
-            return;
-
-        base.UpdateUserInterface(uid, component);
+        base.UpdateUserInterface(ent);
 
         var ev = new MechEquipmentUiStateReadyEvent();
-        foreach (var ent in component.EquipmentContainer.ContainedEntities)
+        foreach (var equip in ent.Comp.EquipmentContainer.ContainedEntities)
         {
-            RaiseLocalEvent(ent, ev);
+            RaiseLocalEvent(equip, ev);
         }
 
         var state = new MechBoundUiState
         {
             EquipmentStates = ev.States
         };
-        _ui.SetUiState(uid, MechUiKey.Key, state);
+        _ui.SetUiState(ent.Owner, MechUiKey.Key, state);
     }
 
-    public override void BreakMech(EntityUid uid, MechComponent? component = null)
+    public override void BreakMech(Entity<MechComponent> ent)
     {
-        base.BreakMech(uid, component);
+        base.BreakMech(ent);
 
-        _ui.CloseUi(uid, MechUiKey.Key);
-        Vehicle.RefreshCanRun(uid);
+        _ui.CloseUi(ent.Owner, MechUiKey.Key);
+        Vehicle.RefreshCanRun(ent.Owner);
     }
 
-    public override bool TryChangeEnergy(EntityUid uid, FixedPoint2 delta, MechComponent? component = null)
+    public override bool TryChangeEnergy(Entity<MechComponent> ent, FixedPoint2 delta)
     {
-        if (!Resolve(uid, ref component))
+        if (!base.TryChangeEnergy(ent, delta))
             return false;
 
-        if (!base.TryChangeEnergy(uid, delta, component))
-            return false;
-
-        var battery = component.BatterySlot.ContainedEntity;
+        var battery = ent.Comp.BatterySlot.ContainedEntity;
         if (battery == null)
             return false;
 
@@ -173,47 +167,38 @@ public sealed partial class ServerMechSystem : MechSystem
         _battery.SetCharge((battery.Value, batteryComp), _battery.GetCharge((battery.Value, batteryComp)) + delta.Float());
         // TODO: Power cells are predicted now, so no need to duplicate the charge level
         var charge = _battery.GetCharge((battery.Value, batteryComp));
-        if (charge != component.Energy) //if there's a discrepency, we have to resync them
+        if (charge != ent.Comp.Energy) //if there's a discrepency, we have to resync them
         {
-            Log.Debug($"Battery charge was not equal to mech charge. Battery {charge}. Mech {component.Energy}");
-            component.Energy = charge;
-            Dirty(uid, component);
+            Log.Debug($"Battery charge was not equal to mech charge. Battery {charge}. Mech {ent.Comp.Energy}");
+            ent.Comp.Energy = charge;
+            Dirty(ent);
         }
-        Vehicle.RefreshCanRun(uid);
+        Vehicle.RefreshCanRun(ent.Owner);
         return true;
     }
 
-    public void InsertBattery(EntityUid uid, EntityUid toInsert, MechComponent? component = null, BatteryComponent? battery = null)
+    public void InsertBattery(Entity<MechComponent> mech, Entity<BatteryComponent> toInsert)
     {
-        if (!Resolve(uid, ref component, false))
-            return;
+        _container.Insert(toInsert.Owner, mech.Comp.BatterySlot);
+        mech.Comp.Energy = _battery.GetCharge((toInsert.Owner, toInsert.Comp));
+        mech.Comp.MaxEnergy = toInsert.Comp.MaxCharge;
 
-        if (!Resolve(toInsert, ref battery, false))
-            return;
+        Vehicle.RefreshCanRun(mech.Owner);
 
-        _container.Insert(toInsert, component.BatterySlot);
-        component.Energy = _battery.GetCharge((toInsert, battery));
-        component.MaxEnergy = battery.MaxCharge;
-
-        Vehicle.RefreshCanRun(uid);
-
-        Dirty(uid, component);
-        UpdateUserInterface(uid, component);
+        Dirty(mech);
+        UpdateUserInterface(mech);
     }
 
-    public void RemoveBattery(EntityUid uid, MechComponent? component = null)
+    public void RemoveBattery(Entity<MechComponent> ent)
     {
-        if (!Resolve(uid, ref component))
-            return;
+        _container.EmptyContainer(ent.Comp.BatterySlot);
+        ent.Comp.Energy = 0;
+        ent.Comp.MaxEnergy = 0;
 
-        _container.EmptyContainer(component.BatterySlot);
-        component.Energy = 0;
-        component.MaxEnergy = 0;
+        Vehicle.RefreshCanRun(ent.Owner);
 
-        Vehicle.RefreshCanRun(uid);
-
-        Dirty(uid, component);
-        UpdateUserInterface(uid, component);
+        Dirty(ent);
+        UpdateUserInterface(ent);
     }
 
     #region Atmos Handling
@@ -266,16 +251,16 @@ public sealed partial class ServerMechSystem : MechSystem
     }
 
     [SubscribeLocalEvent]
-    private void OnGetFilterAir(EntityUid uid, MechAirComponent comp, ref GetFilterAirEvent args)
+    private void OnGetFilterAir(Entity<MechAirComponent> ent, ref GetFilterAirEvent args)
     {
         if (args.Air != null)
             return;
 
         // only airtight mechs get internal air
-        if (!TryComp<MechComponent>(uid, out var mech) || !mech.Airtight)
+        if (!TryComp<MechComponent>(ent, out var mech) || !mech.Airtight)
             return;
 
-        args.Air = comp.Air;
+        args.Air = ent.Comp.Air;
     }
     #endregion
 }

@@ -51,30 +51,27 @@ public sealed partial class MechGrabberSystem : EntitySystem
         if (!component.ItemContainer.Contains(item))
             return;
 
-        RemoveItem(uid, mech, item, component);
+        RemoveItem((uid, component), mech, item);
     }
 
     /// <summary>
     /// Removes an item from the grabber's container
     /// </summary>
-    /// <param name="uid">The mech grabber</param>
+    /// <param name="grabber">The mech grabber</param>
     /// <param name="mech">The mech it belongs to</param>
     /// <param name="toRemove">The item being removed</param>
-    /// <param name="component"></param>
-    public void RemoveItem(EntityUid uid, EntityUid mech, EntityUid toRemove, MechGrabberComponent? component = null)
+    public void RemoveItem(Entity<MechGrabberComponent> grabber, EntityUid mech, EntityUid toRemove)
     {
-        if (!Resolve(uid, ref component))
-            return;
-
-        _container.Remove(toRemove, component.ItemContainer);
+        _container.Remove(toRemove, grabber.Comp.ItemContainer);
         var mechxform = Transform(mech);
         var xform = Transform(toRemove);
         _transform.AttachToGridOrMap(toRemove, xform);
         var (mechPos, mechRot) = _transform.GetWorldPositionRotation(mechxform);
 
-        var offset = mechPos + mechRot.RotateVec(component.DepositOffset);
+        var offset = mechPos + mechRot.RotateVec(grabber.Comp.DepositOffset);
         _transform.SetWorldPositionRotation(toRemove, offset, Angle.Zero);
-        _mech.UpdateUserInterface(mech);
+        if (TryComp<MechComponent>(mech, out var mechComp))
+            _mech.UpdateUserInterface((mech, mechComp));
     }
 
     [SubscribeLocalEvent]
@@ -88,7 +85,7 @@ public sealed partial class MechGrabberSystem : EntitySystem
         var allItems = new List<EntityUid>(component.ItemContainer.ContainedEntities);
         foreach (var item in allItems)
         {
-            RemoveItem(uid, mech, item, component);
+            RemoveItem((uid, component), mech, item);
         }
     }
 
@@ -176,11 +173,13 @@ public sealed partial class MechGrabberSystem : EntitySystem
 
         if (!TryComp<MechEquipmentComponent>(uid, out var equipmentComponent) || equipmentComponent.EquipmentOwner == null)
             return;
-        if (!_mech.TryChangeEnergy(equipmentComponent.EquipmentOwner.Value, component.GrabEnergyDelta))
+        if (!TryComp<MechComponent>(equipmentComponent.EquipmentOwner.Value, out var mechComp))
+            return;
+        if (!_mech.TryChangeEnergy((equipmentComponent.EquipmentOwner.Value, mechComp), component.GrabEnergyDelta))
             return;
 
         _container.Insert(args.Args.Target.Value, component.ItemContainer);
-        _mech.UpdateUserInterface(equipmentComponent.EquipmentOwner.Value);
+        _mech.UpdateUserInterface((equipmentComponent.EquipmentOwner.Value, mechComp));
 
         args.Handled = true;
     }
